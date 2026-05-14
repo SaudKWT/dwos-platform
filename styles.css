@@ -121,45 +121,113 @@ aside h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; c
 .tag.unknown { background: var(--tag-unknown-bg); color: var(--tag-unknown-fg); }
 
 .leaflet-tile-pane { filter: var(--tile-filter); }
-.loc-marker {
+
+/* Berth markers (Shuaiba B20 / B4 / merged) */
+.berth-icon {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.berth-icon .berth-pin {
+  width: 10px; height: 10px;
+  background: var(--loc-berth-bg);
+  border: 2px solid #6e84ff;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.25);
+}
+.berth-icon .berth-label {
   background: var(--loc-bg);
-  border: 2px solid var(--primary);
-  border-radius: 4px;
-  text-align: center;
-  font-size: 10px; font-weight: 600;
   color: var(--loc-fg);
-  padding: 1px 4px;
+  border: 1px solid #6e84ff;
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 10px; font-weight: 700;
+  margin-top: 2px;
   white-space: nowrap;
 }
-.loc-marker.rig { border-color: #ff7849; background: var(--loc-rig-bg); color: var(--loc-rig-fg); }
-.loc-marker.port { border-color: #6e84ff; }
-.loc-marker.berth { border-color: #6e84ff; background: var(--loc-berth-bg); }
+.berth-icon .berth-sub {
+  font-size: 9px; color: var(--text-muted);
+  background: var(--loc-bg); border-radius: 0 0 4px 4px;
+  padding: 0 5px 1px;
+  margin-top: -1px;
+}
+.berth-icon.merged .berth-pin { width: 14px; height: 14px; }
 
-.vessel-marker {
+/* Port marker (North Port) */
+.port-icon {
   position: relative;
-  width: 28px; height: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.vessel-marker .hull {
-  position: absolute; left: 0; top: 0;
-  width: 100%; height: 100%;
-  background: var(--vc, #888);
-  border: 1px solid var(--vs, #333);
-  border-radius: 3px 6px 6px 3px;
-  transform-origin: 50% 50%;
+.port-icon .port-pin {
+  width: 12px; height: 12px;
+  background: #6e84ff;
+  border: 2px solid #2a3a8a;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.3);
 }
-.vessel-marker .label {
+.port-icon .port-label {
+  background: var(--loc-bg);
+  color: var(--loc-fg);
+  border: 1px solid #6e84ff;
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 10px; font-weight: 700;
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+/* Jack-up rig marker */
+.rig-marker {
+  position: relative;
+}
+.rig-marker .rig-body {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.6));
+}
+.rig-marker .rig-body svg { width: 100%; height: 100%; display: block; }
+.rig-marker .rig-label {
   position: absolute;
   left: 50%;
   top: 100%;
-  transform: translate(-50%, 4px);
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--vc, #fff);
-  text-shadow: 0 0 3px var(--bg), 0 0 3px var(--bg);
+  transform: translate(-50%, 2px);
+  background: var(--loc-rig-bg);
+  color: var(--loc-rig-fg);
+  border: 1px solid #7a3a14;
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 10px; font-weight: 700;
   white-space: nowrap;
   pointer-events: none;
 }
-.vessel-marker.small { width: 18px; height: 7px; }
+
+/* Vessel markers (SVG bodies, rotate with heading) */
+.vessel-marker {
+  position: relative;
+}
+.vessel-marker .vessel-body {
+  width: 100%; height: 100%;
+  transform-origin: center;
+  will-change: transform;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.5));
+}
+.vessel-marker .vessel-body svg { width: 100%; height: 100%; display: block; }
+.vessel-marker .vessel-label {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translate(-50%, 2px);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--vc, #fff);
+  text-shadow: 0 0 3px var(--bg), 0 0 3px var(--bg), 0 0 6px var(--bg);
+  white-space: nowrap;
+  pointer-events: none;
+}
 
 .legend { font-size: 11px; color: var(--text-dim); line-height: 1.55; }
 .legend .sw { display: inline-block; width: 14px; height: 6px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }

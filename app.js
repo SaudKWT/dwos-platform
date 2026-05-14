@@ -349,8 +349,148 @@ function applyTheme(theme) {
     if (state.tileLayer) state.map.removeLayer(state.tileLayer);
     state.tileLayer = L.tileLayer(TILE_URLS[theme], {
       attribution: '© OpenStreetMap, © CARTO',
-      maxZoom: 18,
+      maxZoom: 19,
     }).addTo(state.map);
+  }
+}
+
+function metersPerPixel() {
+  const lat = 29;
+  return 156543.03 * Math.cos(lat * Math.PI / 180) / Math.pow(2, state.map.getZoom());
+}
+
+function iconPx(realM, minPx) {
+  return Math.max(minPx || 14, Math.round(realM / metersPerPixel()));
+}
+
+function psvSvg(color, stroke) {
+  return `<svg viewBox="0 0 24 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M 1 95 L 1 14 Q 1 2 12 2 Q 23 2 23 14 L 23 95 Q 23 98.5 18 98.5 L 6 98.5 Q 1 98.5 1 95 Z"
+          fill="${color}" stroke="${stroke}" stroke-width="0.7"/>
+    <rect x="4" y="13" width="16" height="22" fill="white" stroke="${stroke}" stroke-width="0.4"/>
+    <rect x="5" y="15" width="14" height="4" fill="#88c5ff" stroke="${stroke}" stroke-width="0.25"/>
+    <rect x="7" y="21" width="3" height="3" fill="${stroke}" opacity="0.6"/>
+    <rect x="14" y="21" width="3" height="3" fill="${stroke}" opacity="0.6"/>
+    <rect x="3" y="38" width="18" height="55" fill="rgba(0,0,0,0.18)"/>
+    <rect x="5" y="44" width="6" height="9" fill="rgba(255,255,255,0.55)" stroke="${stroke}" stroke-width="0.25"/>
+    <rect x="13" y="44" width="6" height="9" fill="rgba(255,255,255,0.55)" stroke="${stroke}" stroke-width="0.25"/>
+    <rect x="5" y="55" width="6" height="9" fill="rgba(255,255,255,0.55)" stroke="${stroke}" stroke-width="0.25"/>
+    <rect x="13" y="55" width="6" height="9" fill="rgba(255,255,255,0.55)" stroke="${stroke}" stroke-width="0.25"/>
+    <circle cx="20.5" cy="72" r="1.8" fill="#fcc500" stroke="black" stroke-width="0.25"/>
+    <circle cx="3.5" cy="80" r="1.8" fill="#fcc500" stroke="black" stroke-width="0.25"/>
+    <line x1="12" y1="34" x2="12" y2="42" stroke="black" stroke-width="0.7"/>
+    <circle cx="12" cy="42" r="0.8" fill="black"/>
+  </svg>`;
+}
+
+function fastCrewSvg(color, stroke) {
+  return `<svg viewBox="0 0 22 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M 2 88 L 2 26 Q 2 2 11 2 Q 20 2 20 26 L 20 88 Q 20 96 15 98 L 7 98 Q 2 96 2 88 Z"
+          fill="${color}" stroke="${stroke}" stroke-width="0.7"/>
+    <path d="M 4 28 L 18 28 L 18 82 Q 18 86 14 87 L 8 87 Q 4 86 4 82 Z" fill="white" stroke="${stroke}" stroke-width="0.4"/>
+    <path d="M 5 28 L 11 12 L 17 28 Z" fill="#88c5ff" stroke="${stroke}" stroke-width="0.4"/>
+    <line x1="5" y1="42" x2="17" y2="42" stroke="${stroke}" stroke-width="0.3"/>
+    <line x1="5" y1="55" x2="17" y2="55" stroke="${stroke}" stroke-width="0.3"/>
+    <line x1="5" y1="68" x2="17" y2="68" stroke="${stroke}" stroke-width="0.3"/>
+    <line x1="11" y1="55" x2="11" y2="65" stroke="black" stroke-width="0.5"/>
+    <circle cx="11" cy="55" r="1.2" fill="#fcc500"/>
+  </svg>`;
+}
+
+function jackupRigSvg() {
+  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="12" y="12" width="76" height="76" rx="3" fill="#e8a06b" stroke="#7a3a14" stroke-width="2"/>
+    <circle cx="20" cy="20" r="7" fill="#3a3a3a" stroke="#111" stroke-width="0.8"/>
+    <circle cx="80" cy="20" r="7" fill="#3a3a3a" stroke="#111" stroke-width="0.8"/>
+    <circle cx="50" cy="83" r="7" fill="#3a3a3a" stroke="#111" stroke-width="0.8"/>
+    <rect x="22" y="55" width="34" height="22" fill="white" stroke="#7a3a14" stroke-width="1"/>
+    <line x1="22" y1="60" x2="56" y2="60" stroke="#7a3a14" stroke-width="0.6"/>
+    <line x1="22" y1="65" x2="56" y2="65" stroke="#7a3a14" stroke-width="0.6"/>
+    <line x1="22" y1="71" x2="56" y2="71" stroke="#7a3a14" stroke-width="0.6"/>
+    <circle cx="74" cy="68" r="13" fill="#fcd750" stroke="#7a3a14" stroke-width="1.2"/>
+    <text x="74" y="73.5" font-size="16" font-weight="900" text-anchor="middle" fill="#7a3a14">H</text>
+    <rect x="55" y="22" width="22" height="22" fill="#b02020" stroke="#5a0d0d" stroke-width="0.8"/>
+    <line x1="55" y1="22" x2="77" y2="44" stroke="#5a0d0d" stroke-width="0.9"/>
+    <line x1="77" y1="22" x2="55" y2="44" stroke="#5a0d0d" stroke-width="0.9"/>
+    <line x1="55" y1="33" x2="77" y2="33" stroke="#5a0d0d" stroke-width="0.6"/>
+    <line x1="66" y1="22" x2="66" y2="44" stroke="#5a0d0d" stroke-width="0.6"/>
+    <rect x="58" y="17" width="16" height="5" fill="#5a0d0d"/>
+    <circle cx="66" cy="50" r="2" fill="#2a2a2a"/>
+  </svg>`;
+}
+
+function berthIconHtml(label) {
+  return `<div class="berth-icon"><div class="berth-pin"></div><div class="berth-label">${label}</div></div>`;
+}
+
+function portIconHtml(label) {
+  return `<div class="port-icon"><div class="port-pin"></div><div class="port-label">${label}</div></div>`;
+}
+
+function rebuildLocationMarkers() {
+  state.locMarkers.forEach(m => state.map.removeLayer(m));
+  state.locMarkers = [];
+
+  const zoom = state.map.getZoom();
+  const merge = zoom < 13;
+
+  for (const loc of state.locs) {
+    if (merge && (loc.id === 'B20' || loc.id === 'B4')) continue;
+
+    let html, iconSize, iconAnchor;
+    if (loc.type === 'rig') {
+      const px = iconPx(60, 30);
+      html = `<div class="rig-marker" style="width:${px}px;height:${px}px"><div class="rig-body">${jackupRigSvg()}</div><div class="rig-label">${loc.short}</div></div>`;
+      iconSize = [px, px];
+      iconAnchor = [px / 2, px / 2];
+    } else if (loc.type === 'port') {
+      html = portIconHtml(loc.short);
+      iconSize = [80, 30];
+      iconAnchor = [40, 15];
+    } else {
+      html = berthIconHtml(loc.short);
+      iconSize = [70, 26];
+      iconAnchor = [35, 13];
+    }
+    const icon = L.divIcon({ className: '', html, iconSize, iconAnchor });
+    const m = L.marker([loc.lat, loc.lon], { icon, title: loc.name }).addTo(state.map);
+    m.bindPopup(`<b>${loc.name}</b><br/>${loc.type}${loc.berth_use ? '<br/>'+loc.berth_use : ''}<br/>${loc.lat.toFixed(5)}, ${loc.lon.toFixed(5)}`);
+    state.locMarkers.push(m);
+  }
+
+  if (merge) {
+    const b20 = state.locsById.B20, b4 = state.locsById.B4;
+    const center = [(b20.lat + b4.lat) / 2, (b20.lon + b4.lon) / 2];
+    const html = `<div class="berth-icon merged"><div class="berth-pin"></div><div class="berth-label">Shuaiba Port</div><div class="berth-sub">B20 · B4</div></div>`;
+    const icon = L.divIcon({ className: '', html, iconSize: [110, 34], iconAnchor: [55, 17] });
+    const m = L.marker(center, { icon, title: 'Shuaiba Port (Berths 20 & 4)' }).addTo(state.map);
+    m.bindPopup('<b>Shuaiba Port</b><br/>Berth 20 (PSVs) + Berth 4 (Crew SV)<br/>Zoom in to separate berths.');
+    state.locMarkers.push(m);
+  }
+}
+
+function rebuildVesselMarkers() {
+  for (const v of state.vessels) {
+    if (state.vesselMarkers[v.id]) {
+      state.map.removeLayer(state.vesselMarkers[v.id]);
+    }
+    const isJuno = v.id === 'JUNO';
+    const lengthPx = iconPx(v.length_m, isJuno ? 22 : 28);
+    const beamPx = iconPx(v.beam_m, isJuno ? 8 : 11);
+    const svg = isJuno ? fastCrewSvg(v.color, v.stroke) : psvSvg(v.color, v.stroke);
+    const html = `<div class="vessel-marker" style="--vc:${v.color};width:${beamPx}px;height:${lengthPx}px">
+        <div class="vessel-body">${svg}</div>
+        <div class="vessel-label">${v.id}</div>
+      </div>`;
+    const icon = L.divIcon({
+      className: '',
+      html,
+      iconSize: [beamPx, lengthPx],
+      iconAnchor: [beamPx / 2, lengthPx / 2],
+    });
+    const m = L.marker([0, 0], { icon, zIndexOffset: 1000 }).addTo(state.map);
+    m.bindPopup(`<b>${v.name}</b><br/>${v.type}<br/>${v.length_m} × ${v.beam_m} m · ${v.speed_kts} kts`);
+    state.vesselMarkers[v.id] = m;
   }
 }
 
@@ -358,35 +498,15 @@ function initMap() {
   state.map = L.map('map', { zoomControl: true, attributionControl: true }).setView([29.08, 48.28], 10);
   applyTheme(state.theme);
 
-  // Location markers
-  for (const loc of state.locs) {
-    const cls = `loc-marker ${loc.type}`;
-    const icon = L.divIcon({
-      className: '',
-      html: `<div class="${cls}">${loc.short}</div>`,
-      iconAnchor: [30, 8],
-      iconSize: [60, 16],
-    });
-    const m = L.marker([loc.lat, loc.lon], { icon, title: loc.name }).addTo(state.map);
-    m.bindPopup(`<b>${loc.name}</b><br/>${loc.type}${loc.berth_use ? '<br/>'+loc.berth_use : ''}<br/>${loc.lat.toFixed(5)}, ${loc.lon.toFixed(5)}`);
-    state.locMarkers.push(m);
-  }
-
-  // Vessel markers
-  for (const v of state.vessels) {
-    const size = v.id === 'JUNO' ? 'small' : '';
-    const html = `<div class="vessel-marker ${size}" style="--vc:${v.color};--vs:${v.stroke}">
-      <div class="hull"></div>
-      <div class="label">${v.id}</div>
-    </div>`;
-    const icon = L.divIcon({ className: '', html, iconAnchor: [14, 5], iconSize: [28, 10] });
-    const m = L.marker([0, 0], { icon, zIndexOffset: 1000 }).addTo(state.map);
-    m.bindPopup(`<b>${v.name}</b>`);
-    state.vesselMarkers[v.id] = m;
-  }
-
-  // Draw planned route polylines (all transits in timeline)
+  rebuildLocationMarkers();
+  rebuildVesselMarkers();
   drawRoutes();
+
+  state.map.on('zoomend', () => {
+    rebuildLocationMarkers();
+    rebuildVesselMarkers();
+    render();
+  });
 }
 
 function drawRoutes() {
@@ -464,8 +584,8 @@ function render() {
       marker.setLatLng([pos.lat, pos.lon]);
       const el = marker.getElement();
       if (el) {
-        const hull = el.querySelector('.hull');
-        if (hull) hull.style.transform = `rotate(${pos.heading - 90}deg)`;
+        const body = el.querySelector('.vessel-body');
+        if (body) body.style.transform = `rotate(${pos.heading || 0}deg)`;
       }
     }
     cards.push(vesselCardHtml(v, pos));
