@@ -1,0 +1,52 @@
+{
+  "vessels": [
+    {
+      "id": "JUNO",
+      "name": "Allianz Juno",
+      "type": "SV — Fast Crew Boat",
+      "length_m": 48,
+      "beam_m": 11,
+      "speed_kts": 14,
+      "home_berth": "B4",
+      "color": "#f5b400",
+      "stroke": "#7a5500"
+    },
+    {
+      "id": "CA1",
+      "name": "Crest Argus 1",
+      "type": "PSV",
+      "length_m": 80,
+      "beam_m": 20,
+      "speed_kts": 10,
+      "home_berth": "B20",
+      "color": "#e0413f",
+      "stroke": "#7a1614"
+    },
+    {
+      "id": "CA3",
+      "name": "Crest Argus 3",
+      "type": "PSV",
+      "length_m": 80,
+      "beam_m": 20,
+      "speed_kts": 10,
+      "home_berth": "B20",
+      "color": "#2870c4",
+      "stroke": "#143b6b"
+    },
+    {
+      "id": "CA5",
+      "name": "Crest Argus 5",
+      "type": "PSV",
+      "length_m": 80,
+      "beam_m": 20,
+      "speed_kts": 10,
+      "home_berth": "B20",
+      "color": "#2aa84a",
+      "stroke": "#125724"
+    }
+  ],
+  "defaults": {
+    "rig_turnaround_min": 60,
+    "port_turnaround_min": 60
+  }
+}

@@ -1,0 +1,269 @@
+{
+  "timezone": "Asia/Kuwait (UTC+3)",
+  "_notes": [
+    "Each plan was emailed the evening of the day before; snapshot_at is the email-send time and reflects the vessel position at that moment.",
+    "06-May plan has Crest Argus 5 truncated in the source PDF — ETD listed as TBC.",
+    "07-May plan: Juno 2nd run ETD reads '01.30hrs' in the source; almost certainly a typo for 13:30 — flagged etd_uncertain.",
+    "13-May plan: Crest Argus 1 row reads 'STBY at Shuaiba ... remain STBY at OD-1' (self-contradiction in source); interpretation based on the explicit 14-May ETD bullet that follows.",
+    "Sunday 10-May had no plan email; vessel positions on 11-May are inferred from the 11-May plan's snapshot."
+  ],
+  "plans": [
+    {
+      "plan_date": "2026-05-06",
+      "snapshot_at": "2026-05-05T18:00",
+      "snapshots": {
+        "JUNO": {"loc": "B4", "raw": "Vessel Currently STBY at Shuaiba Port"},
+        "CA1":  {"loc": "OD",  "raw": "Vessel currently STBY at Rig Oriental Dragon-1"},
+        "CA3":  {"loc": "OPH", "raw": "Vessel currently STBY at Rig Oriental Phoenix"},
+        "CA5":  {"loc": "B20", "raw": "Vessel Currently STBY at Shuaiba Port"}
+      },
+      "movements": [
+        {
+          "vessel": "JUNO",
+          "etd": "2026-05-06T07:00",
+          "from": "B4",
+          "via": ["NP", "OPH"],
+          "to": "OD",
+          "purpose": "Crew Change pax",
+          "return": {"via": ["NP"], "to": "B4"},
+          "raw": "Vessel will sail to Rig Oriental Dragon Via NSBP & Oriental Phoenix with Crew Change pax, ETD 07.00hrs. Return via NSBP."
+        },
+        {
+          "vessel": "CA3",
+          "etd": "2026-05-06T15:00",
+          "from": "OPH",
+          "to": "B20",
+          "purpose": "Return to port",
+          "raw": "Vessel will sail to Shuaiba Port, ETD from Rig OPH 15.00hrs."
+        },
+        {
+          "vessel": "CA5",
+          "etd_uncertain": true,
+          "etd": "2026-05-06T11:00",
+          "from": "B20",
+          "to": "OPH",
+          "purpose": "WPS tools, COSL Spares (full line truncated in source PDF)",
+          "raw": "Vessel will sail to Oriental Phoenix with WPS tools, COSL Spares, OPH [TRUNCATED IN SOURCE]"
+        }
+      ]
+    },
+    {
+      "plan_date": "2026-05-07",
+      "snapshot_at": "2026-05-06T18:12",
+      "snapshots": {
+        "JUNO": {"loc": "B4",  "raw": "Vessel Currently STBY at Shuaiba Port"},
+        "CA1":  {"loc": "OD",  "raw": "STBY at Rig Oriental Dragon-1"},
+        "CA3":  {"loc": "enroute_to_B20", "eta": "2026-05-06T19:45", "raw": "currently enroute to Shuaiba Port, ETA at berth-20 at 19.45hrs"},
+        "CA5":  {"loc": "OPH", "raw": "STBY at Rig Oriental Phoenix"}
+      },
+      "movements": [
+        {
+          "vessel": "JUNO",
+          "etd": "2026-05-07T09:30",
+          "from": "B4",
+          "to": "OPH",
+          "purpose": "MOI & Explosives",
+          "return": {"to": "B4"},
+          "raw": "Vessel will sail 1st run to Rig Oriental Phoenix with MOI & Explosives, ETD 09.30hrs."
+        },
+        {
+          "vessel": "JUNO",
+          "etd": "2026-05-07T13:30",
+          "etd_uncertain": true,
+          "etd_source": "01.30hrs in PDF, interpreted as 13:30 (afternoon) — flag for confirmation",
+          "from": "B4",
+          "to": "OD",
+          "purpose": "Crew pax",
+          "return": {"to": "B4"},
+          "raw": "Vessel will sail 2nd Run to Rig Oriental Dragon-1 with Crew pax, ETD 01.30hrs."
+        }
+      ]
+    },
+    {
+      "plan_date": "2026-05-08",
+      "snapshot_at": "2026-05-07T18:59",
+      "snapshots": {
+        "JUNO": {"loc": "enroute_to_B4", "eta": "2026-05-07T19:10", "raw": "enroute to Shuaiba Port from Rig OPH, ETA at 19.10 hrs"},
+        "CA1":  {"loc": "OD",  "raw": "STBY at Rig Oriental Dragon-1"},
+        "CA3":  {"loc": "B20", "raw": "STBY at Shuaiba Port"},
+        "CA5":  {"loc": "OPH", "raw": "STBY at Rig Oriental Phoenix"}
+      },
+      "movements": [
+        {
+          "vessel": "JUNO",
+          "etd": "2026-05-08T08:00",
+          "from": "B4",
+          "via": ["NP", "OD"],
+          "to": "OPH",
+          "purpose": "Cargo run",
+          "return": {"to": "B4"},
+          "raw": "Vessel will sail to Rig Oriental Phoenix via NSBP & Rig Oriental Dragon-1, ETD 08.00hrs. Return to Shuaiba from Rig OPH."
+        },
+        {
+          "vessel": "CA3",
+          "etd_uncertain": true,
+          "etd": "2026-05-08T15:00",
+          "from": "B20",
+          "to": "OPH",
+          "purpose": "ETD TBC in source",
+          "raw": "Vessel will sail to Oriental Phoenix, ETD TBC."
+        }
+      ]
+    },
+    {
+      "plan_date": "2026-05-09",
+      "snapshot_at": "2026-05-08T18:27",
+      "snapshots": {
+        "JUNO": {"loc": "B4",  "raw": "STBY at Shuaiba Port"},
+        "CA1":  {"loc": "OD",  "raw": "STBY at Rig Oriental Dragon-1"},
+        "CA3":  {"loc": "enroute_to_OPH", "eta": "2026-05-08T22:18", "raw": "enroute to Rig OPH, ETA at OPH 22.18hrs"},
+        "CA5":  {"loc": "OPH", "raw": "STBY at Rig Oriental Phoenix"}
+      },
+      "movements": [
+        {
+          "vessel": "JUNO",
+          "etd": "2026-05-09T07:30",
+          "from": "B4",
+          "via": ["NP", "OPH"],
+          "to": "OD",
+          "purpose": "Crew change pax",
+          "return": {"via": ["NP"], "to": "B4"},
+          "raw": "Vessel will sail to Rig Oriental Dragon via NSBP & Rig Oriental Phoenix with Crew change pax, ETD 07.30hrs. Return via NSBP, STBY Berth-4."
+        },
+        {
+          "vessel": "CA5",
+          "etd": "2026-05-09T16:00",
+          "from": "OPH",
+          "to": "B20",
+          "purpose": "Return to port",
+          "raw": "Vessel will sail to Shuaiba Port, ETD 16.00hrs."
+        }
+      ]
+    },
+    {
+      "plan_date": "2026-05-10",
+      "snapshot_at": "2026-05-09T18:02",
+      "snapshots": {
+        "JUNO": {"loc": "B4",  "raw": "STBY at Shuaiba Port"},
+        "CA1":  {"loc": "OD",  "raw": "STBY at Rig Oriental Dragon-1"},
+        "CA3":  {"loc": "OPH", "raw": "STBY at Rig Oriental Phoenix"},
+        "CA5":  {"loc": "enroute_to_B20", "eta": "2026-05-09T20:40", "raw": "enroute to Shuaiba Port, ETA at 20.40hrs"}
+      },
+      "movements": [
+        {
+          "vessel": "JUNO",
+          "etd": "2026-05-10T08:30",
+          "from": "B4",
+          "via": ["NP"],
+          "to": "OPH",
+          "purpose": "Crew change pax",
+          "return": {"to": "B4"},
+          "raw": "1st Run to Rig Oriental Phoenix via NSBP with Crew change pax, ETD 08.30hrs."
+        },
+        {
+          "vessel": "JUNO",
+          "etd": "2026-05-10T13:00",
+          "from": "B4",
+          "to": "OD",
+          "purpose": "Crest Argus-1 Food containers",
+          "return": {"to": "B4"},
+          "raw": "2nd Run to Rig Oriental Dragon with Crest Argus-1 Food containers, ETD 13.00hrs."
+        }
+      ]
+    },
+    {
+      "plan_date": "2026-05-12",
+      "snapshot_at": "2026-05-11T18:11",
+      "snapshots": {
+        "JUNO": {"loc": "B4",  "raw": "STBY at Shuaiba Port"},
+        "CA1":  {"loc": "OD",  "raw": "STBY at Rig Oriental Dragon-1"},
+        "CA3":  {"loc": "OPH", "raw": "STBY at Rig Oriental Phoenix"},
+        "CA5":  {"loc": "B20", "raw": "STBY at Shuaiba Port"}
+      },
+      "movements": [
+        {
+          "vessel": "JUNO",
+          "etd": "2026-05-12T07:30",
+          "from": "B4",
+          "via": ["NP"],
+          "to": "OD",
+          "purpose": "COSL Crew Change Pax",
+          "return": {"to": "B4"},
+          "raw": "1st Trip to Rig Oriental Dragon-1 via NSBP with COSL Crew Change Pax, ETD 07.30hrs."
+        },
+        {
+          "vessel": "JUNO",
+          "etd": "2026-05-12T13:00",
+          "from": "B4",
+          "to": "OPH",
+          "purpose": "Cargo",
+          "return": {"to": "B4"},
+          "raw": "2nd Run to Rig Oriental Phoenix with cargo, ETD 13.00hrs, return to Shuaiba."
+        },
+        {
+          "vessel": "CA1",
+          "etd": "2026-05-12T14:00",
+          "from": "OD",
+          "to": "B20",
+          "purpose": "Return to port",
+          "raw": "Vessel will sail to Shuaiba Port, ETD 14.00 Hrs."
+        },
+        {
+          "vessel": "CA5",
+          "etd": "2026-05-12T10:00",
+          "from": "B20",
+          "to": "OD",
+          "purpose": "Sail to rig",
+          "raw": "Vessel will sail to Rig Oriental Dragon-1, ETD 10.00hrs."
+        }
+      ]
+    },
+    {
+      "plan_date": "2026-05-13",
+      "snapshot_at": "2026-05-12T18:45",
+      "snapshots": {
+        "JUNO": {"loc": "NP",  "raw": "Vessel Currently STBY at North Port"},
+        "CA1":  {"loc": "B20", "raw": "STBY at Shuaiba Port (per first clause of contradictory bullet)"},
+        "CA3":  {"loc": "OPH", "raw": "STBY at Rig Oriental Phoenix"},
+        "CA5":  {"loc": "OD",  "raw": "STBY at Oriental Dragon-1"}
+      },
+      "movements": [
+        {
+          "vessel": "JUNO",
+          "etd": "2026-05-13T06:00",
+          "from": "NP",
+          "to": "OD",
+          "purpose": "KOC Crew Change Pax",
+          "return": {"via": ["NP"], "to": "B4"},
+          "raw": "1st Trip to Rig Oriental Dragon-1 with KOC Crew Change Pax, ETD from North Port at 06.00hrs. Return to Shuaiba via North Port."
+        },
+        {
+          "vessel": "JUNO",
+          "etd": "2026-05-13T11:00",
+          "from": "B4",
+          "via": ["NP"],
+          "to": "OPH",
+          "purpose": "Food containers & Crew Change Pax",
+          "return": {"via": ["NP"], "to": "B4"},
+          "raw": "2nd Run to Rig Oriental Phoenix with food containers & Crew Change Pax, ETD 11.00hrs, return via NSBP."
+        },
+        {
+          "vessel": "CA1",
+          "etd": "2026-05-14T16:00",
+          "from": "B20",
+          "to": "OD",
+          "purpose": "Sail to rig",
+          "raw": "Tomorrow 14th May, Vessel will sail to Oriental Dragon-1, ETD 16.00 Hrs."
+        },
+        {
+          "vessel": "CA5",
+          "etd": "2026-05-13T19:00",
+          "from": "OD",
+          "to": "B20",
+          "purpose": "Return to port",
+          "raw": "Vessel will sail to Shuaiba Port, ETD 19.00hrs."
+        }
+      ]
+    }
+  ]
+}

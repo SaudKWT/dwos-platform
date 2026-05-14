@@ -1,0 +1,98 @@
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0; height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #0f1720; color: #e6edf3;
+}
+#app { display: grid; grid-template-columns: 1fr 380px; grid-template-rows: 56px 1fr; height: 100vh; }
+header {
+  grid-column: 1 / 3;
+  display: flex; align-items: center; gap: 16px; padding: 0 16px;
+  background: #111c28; border-bottom: 1px solid #233140;
+}
+header h1 { font-size: 16px; margin: 0; font-weight: 600; }
+header .clock { font-family: "SF Mono", Menlo, monospace; font-size: 18px; color: #ffd166; }
+header .pill { padding: 2px 8px; border-radius: 99px; background: #233140; font-size: 11px; }
+
+#map { width: 100%; height: 100%; background: #0a0f17; }
+
+aside {
+  background: #0f1720;
+  border-left: 1px solid #233140;
+  overflow-y: auto;
+  padding: 12px 14px;
+}
+aside h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: #7a8a9b; margin: 8px 0 6px; }
+
+.controls .row { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+.controls input[type=range] { flex: 1; }
+.controls button {
+  background: #1a2734; color: #e6edf3; border: 1px solid #2c3e52;
+  padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 12px;
+}
+.controls button:hover { background: #233a52; }
+.controls button.primary { background: #2c8eff; border-color: #2c8eff; color: white; }
+.controls select { background: #1a2734; color: #e6edf3; border: 1px solid #2c3e52; padding: 4px 6px; border-radius: 4px; }
+.controls label.cb { font-size: 12px; color: #b6c2d0; display: flex; align-items: center; gap: 6px; }
+
+.vessel-card {
+  background: #15212e; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;
+  border-left: 4px solid var(--vc, #888);
+}
+.vessel-card .name { font-weight: 600; font-size: 13px; }
+.vessel-card .status { font-size: 11px; color: #b6c2d0; margin-top: 4px; }
+.vessel-card .meta { font-size: 10px; color: #7a8a9b; margin-top: 2px; }
+.vessel-card .raw { font-size: 10px; color: #8da3b8; margin-top: 6px; font-style: italic; line-height: 1.35; }
+.tag { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 10px; margin-right: 4px; }
+.tag.moored { background: #233a52; color: #b6d4ff; }
+.tag.transit { background: #4a3a14; color: #ffd166; }
+.tag.unknown { background: #2a1c2c; color: #ff9bc4; }
+
+/* Leaflet overrides */
+.leaflet-tile-pane { filter: brightness(0.8) contrast(1.05); }
+.loc-marker {
+  background: rgba(255,255,255,0.85);
+  border: 2px solid #2c8eff;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 10px; font-weight: 600;
+  color: #0f1720;
+  padding: 1px 4px;
+  white-space: nowrap;
+}
+.loc-marker.rig { border-color: #ff7849; background: rgba(255,148,80,0.95); color: #2a1006; }
+.loc-marker.port { border-color: #6e84ff; }
+.loc-marker.berth { border-color: #6e84ff; background: rgba(180,200,255,0.95); }
+
+.vessel-marker {
+  position: relative;
+  width: 28px; height: 10px;
+}
+.vessel-marker .hull {
+  position: absolute; left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: var(--vc, #888);
+  border: 1px solid var(--vs, #333);
+  border-radius: 3px 6px 6px 3px;
+  transform-origin: 50% 50%;
+}
+.vessel-marker .label {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translate(-50%, 4px);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--vc, #fff);
+  text-shadow: 0 0 3px #000, 0 0 3px #000;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.vessel-marker.small { width: 18px; height: 7px; }
+
+.legend { font-size: 11px; color: #8da3b8; line-height: 1.55; }
+.legend .sw { display: inline-block; width: 14px; height: 6px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
+
+footer.note {
+  font-size: 10px; color: #5e6c7d; margin-top: 10px; line-height: 1.4;
+}
