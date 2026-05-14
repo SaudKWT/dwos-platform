@@ -112,6 +112,8 @@ aside h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; c
 .vessel-card .status { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
 .vessel-card .meta { font-size: 10px; color: var(--text-faint); margin-top: 2px; }
 .vessel-card .raw { font-size: 10px; color: var(--text-dim); margin-top: 6px; font-style: italic; line-height: 1.35; }
+.vessel-card .next { font-size: 10px; color: var(--accent); margin-top: 4px; }
+.vessel-card .sub { color: var(--text-faint); font-weight: 400; font-size: 11px; }
 
 .tag { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 10px; margin-right: 4px; }
 .tag.moored { background: var(--tag-moored-bg); color: var(--tag-moored-fg); }

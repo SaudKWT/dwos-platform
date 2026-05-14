@@ -107,22 +107,27 @@ function buildTimelines() {
     }
   }
 
+  // Apply snapshot anchors (ETA overrides + repositioning when reality diverges from plan)
+  applySnapshotOverrides(tl, sortedPlans);
+
   // Finalize each vessel's timeline
   for (const vid in tl) {
     tl[vid] = finalize(tl[vid]);
   }
   state.timelines = tl;
 
-  // Compute global time bounds
+  // Compute global time bounds — base timelineEnd on the last *transit*, not on
+  // the synthetic trailing-moored segment that may extend well past it.
   let minT = Infinity, maxT = -Infinity;
   for (const vid in tl) {
     for (const s of tl[vid]) {
       if (s.t0 && s.t0.getTime() < minT) minT = s.t0.getTime();
-      if (s.t1 && s.t1.getTime() > maxT) maxT = s.t1.getTime();
+      if (s.t1 && s.type === 'transit' && s.t1.getTime() > maxT) maxT = s.t1.getTime();
     }
   }
+  // Pad 12 h beyond the last transit so users can scrub past it
   state.timelineStart = new Date(minT);
-  state.timelineEnd = new Date(maxT);
+  state.timelineEnd = new Date(maxT + 12 * 3600 * 1000);
 }
 
 function addMovementSegments(segs, m, vessel, rigStby) {
@@ -203,6 +208,64 @@ function addMovementSegments(segs, m, vessel, rigStby) {
   }
 }
 
+function applySnapshotOverrides(tl, sortedPlans) {
+  for (const plan of sortedPlans) {
+    const T = parseLocalTime(plan.snapshot_at);
+    for (const vid in plan.snapshots) {
+      const s = plan.snapshots[vid];
+      const segs = tl[vid];
+      if (!segs || !s) continue;
+
+      // Case A: snapshot says vessel enroute to X with ETA E — anchor matching transit's t1
+      if (s.eta && typeof s.loc === 'string' && s.loc.startsWith('enroute_to_')) {
+        const targetId = s.loc.replace('enroute_to_', '');
+        const eta = parseLocalTime(s.eta);
+        const candidate = [...segs]
+          .filter(x => x.type === 'transit' && x.to === targetId && x.t0 <= T)
+          .sort((a, b) => b.t0 - a.t0)[0];
+        if (candidate) {
+          candidate.t1 = eta;
+          candidate.eta_anchored = true;
+        }
+        continue;
+      }
+
+      // Case B: snapshot says vessel at concrete loc — insert repositioning if computed position differs
+      if (typeof s.loc === 'string' && !s.loc.startsWith('enroute_')) {
+        segs.sort((a, b) => a.t0 - b.t0);
+        const containing = segs.find(x => x.t0 <= T && (x.t1 === null || T <= x.t1));
+        const lastBefore = [...segs].filter(x => x.t1 !== null && x.t1 <= T).sort((a, b) => b.t1 - a.t1)[0];
+        let expectedLoc = null;
+        if (containing) {
+          expectedLoc = containing.type === 'moored' ? containing.loc : containing.to;
+        } else if (lastBefore) {
+          expectedLoc = lastBefore.type === 'moored' ? lastBefore.loc : lastBefore.to;
+        }
+        if (expectedLoc && expectedLoc !== s.loc) {
+          const v = state.vesselsById[vid];
+          const from = state.locsById[expectedLoc];
+          const to = state.locsById[s.loc];
+          if (from && to && v) {
+            const d = distNm(from, to);
+            const durMs = (d / v.speed_kts) * 3600 * 1000;
+            segs.push({
+              type: 'transit',
+              t0: new Date(T.getTime() - durMs),
+              t1: T,
+              from: expectedLoc,
+              to: s.loc,
+              purpose: 'Repositioning (inferred from next-day snapshot)',
+              raw: `Inferred: ${v.name} observed at ${to.short} at ${plan.snapshot_at} — auto repositioning leg added.`,
+              repositioning: true,
+              distance_nm: d,
+            });
+          }
+        }
+      }
+    }
+  }
+}
+
 function finalize(segs) {
   segs.sort((a, b) => a.t0 - b.t0);
   const out = [];
@@ -218,7 +281,8 @@ function finalize(segs) {
           t0: prev.t1, t1: s.t0,
           loc: endLoc,
           purpose: 'STBY',
-          raw: 'Continuation between events',
+          raw: null,
+          filler: true,
         });
       } else if (prev.t1 > s.t0) {
         prev.t1 = s.t0; // truncate overlap
@@ -226,8 +290,21 @@ function finalize(segs) {
     }
     out.push(s);
   }
-  if (out.length && out[out.length - 1].t1 === null) {
-    out[out.length - 1].t1 = new Date(out[out.length - 1].t0.getTime() + 24 * 3600 * 1000);
+  // Ensure the timeline ends with a moored segment so post-transit shows "Moored" not "Transit 100%"
+  if (out.length) {
+    const last = out[out.length - 1];
+    if (last.t1 === null) last.t1 = new Date(last.t0.getTime() + 24 * 3600 * 1000);
+    if (last.type === 'transit') {
+      out.push({
+        type: 'moored',
+        t0: last.t1,
+        t1: new Date(last.t1.getTime() + 7 * 24 * 3600 * 1000),
+        loc: last.to,
+        purpose: 'STBY',
+        raw: null,
+        filler: true,
+      });
+    }
   }
   return out;
 }
@@ -334,18 +411,54 @@ function drawRoutes() {
   }
 }
 
+function applyAntiOverlap(positions) {
+  // Group moored vessels by location id; spread them in a small ring so they don't stack.
+  const groups = {};
+  for (const [vid, p] of Object.entries(positions)) {
+    if (!p || !p.segment) continue;
+    if (p.segment.type === 'moored') {
+      const key = p.segment.loc;
+      groups[key] = groups[key] || [];
+      groups[key].push(vid);
+    }
+  }
+  const r = 0.0009; // ~100 m radius — enough to separate 80m hulls on a typical zoom
+  const cosLat = Math.cos(29 * Math.PI / 180);
+  for (const loc in groups) {
+    const vids = groups[loc].sort();
+    const n = vids.length;
+    if (n <= 1) continue;
+    for (let i = 0; i < n; i++) {
+      const angle = (i / n) * 2 * Math.PI - Math.PI / 2;
+      positions[vids[i]].lat += Math.cos(angle) * r;
+      positions[vids[i]].lon += Math.sin(angle) * r / cosLat;
+    }
+  }
+}
+
+function nextTransit(vid, t) {
+  const segs = state.timelines[vid];
+  if (!segs) return null;
+  return segs.find(s => s.type === 'transit' && s.t0 > t && !s.repositioning);
+}
+
 function render() {
   const t = state.currentTime;
   document.getElementById('clock').textContent = toKuwaitStr(t);
-  // slider position
   const range = state.timelineEnd - state.timelineStart;
   const frac = (t - state.timelineStart) / range;
   document.getElementById('slider').value = Math.round(frac * 1000);
 
-  // vessels
+  // Compute all positions
+  const positions = {};
+  for (const v of state.vessels) {
+    positions[v.id] = positionAt(v.id, t);
+  }
+  applyAntiOverlap(positions);
+
   const cards = [];
   for (const v of state.vessels) {
-    const pos = positionAt(v.id, t);
+    const pos = positions[v.id];
     const marker = state.vesselMarkers[v.id];
     if (pos) {
       marker.setLatLng([pos.lat, pos.lon]);
@@ -370,23 +483,30 @@ function vesselCardHtml(v, pos) {
   const s = pos.segment;
   let statusHtml, metaHtml;
   if (!s) {
-    statusHtml = `<span class="tag unknown">${pos.status}</span>`;
+    statusHtml = `<span class="tag unknown">${pos.status || 'unknown'}</span>`;
     metaHtml = '';
   } else if (s.type === 'moored') {
     const loc = state.locsById[s.loc];
     statusHtml = `<span class="tag moored">Moored</span> ${loc ? loc.short : s.loc}`;
-    metaHtml = `${s.purpose || ''}`;
+    metaHtml = `${s.purpose || 'STBY'}`;
   } else {
     const from = state.locsById[s.from];
     const to = state.locsById[s.to];
     const frac = Math.min(1, Math.max(0, (state.currentTime - s.t0) / (s.t1 - s.t0)));
-    statusHtml = `<span class="tag transit">Transit</span> ${from.short} → ${to.short} (${Math.round(frac*100)}%)`;
-    metaHtml = `${s.purpose || ''} · ${s.distance_nm ? s.distance_nm.toFixed(1) + ' nm' : ''} @ ${v.speed_kts} kts`;
+    const tag = s.repositioning ? '<span class="tag transit">Repositioning</span>' : '<span class="tag transit">Transit</span>';
+    statusHtml = `${tag} ${from.short} → ${to.short} (${Math.round(frac*100)}%)`;
+    const durHr = (s.t1 - s.t0) / 3600000;
+    metaHtml = `${s.purpose || ''} · ${s.distance_nm ? s.distance_nm.toFixed(1) + ' nm' : ''} · ${durHr.toFixed(1)} h @ ${v.speed_kts} kts${s.eta_anchored ? ' · ETA anchored' : ''}`;
   }
+  const next = nextTransit(v.id, state.currentTime);
+  const nextHtml = next
+    ? `<div class="next">Next: ${state.locsById[next.from].short} → ${state.locsById[next.to].short} @ ${toKuwaitStr(next.t0)}</div>`
+    : '<div class="next">No further planned movements.</div>';
   return `<div class="vessel-card" style="--vc:${v.color}">
-    <div class="name">${v.name} <span style="color:#7a8a9b;font-weight:400;font-size:11px">${v.length_m}×${v.beam_m} m · ${v.speed_kts} kts</span></div>
+    <div class="name">${v.name} <span class="sub">${v.length_m}×${v.beam_m} m · ${v.speed_kts} kts</span></div>
     <div class="status">${statusHtml}</div>
     <div class="meta">${metaHtml}</div>
+    ${nextHtml}
     ${s && s.raw ? `<div class="raw">${s.raw}</div>` : ''}
   </div>`;
 }
@@ -484,9 +604,10 @@ async function main() {
     setupControls();
     document.getElementById('dataRange').textContent =
       `${toKuwaitStr(state.timelineStart)} → ${toKuwaitStr(state.timelineEnd)}`;
-    // Fit map to all locations
+    // Fit map to all locations (cap zoom so it doesn't collapse on narrow viewports)
     const bounds = L.latLngBounds(state.locs.map(l => [l.lat, l.lon]));
-    state.map.fitBounds(bounds.pad(0.2));
+    state.map.fitBounds(bounds.pad(0.08), { maxZoom: 11 });
+    if (state.map.getZoom() < 9) state.map.setZoom(10);
     render();
     requestAnimationFrame(animationLoop);
   } catch (err) {
