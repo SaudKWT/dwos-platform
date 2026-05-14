@@ -699,12 +699,25 @@ function openLiveWs() {
     updateLiveUi('Subscribed — bbox-only, listening…');
   };
 
-  ws.onmessage = (evt) => {
+  ws.onmessage = async (evt) => {
     state.liveMsgCount = (state.liveMsgCount || 0) + 1;
     state.liveLastMessageAt = new Date();
+    // AISStream may deliver each AIS message as a Blob or ArrayBuffer rather
+    // than a string depending on the WebSocket runtime. Normalise to text
+    // before JSON.parse — otherwise we silently drop every single message.
+    let text;
+    try {
+      if (typeof evt.data === 'string') text = evt.data;
+      else if (evt.data instanceof Blob) text = await evt.data.text();
+      else if (evt.data instanceof ArrayBuffer) text = new TextDecoder().decode(evt.data);
+      else text = String(evt.data);
+    } catch (e) {
+      console.warn('[AIS] could not read message body:', e);
+      return;
+    }
     let msg;
-    try { msg = JSON.parse(evt.data); } catch (e) {
-      console.warn('[AIS] non-JSON message:', evt.data);
+    try { msg = JSON.parse(text); } catch (e) {
+      console.warn('[AIS] non-JSON message:', text);
       return;
     }
     // Surface server errors instead of swallowing them.
