@@ -668,41 +668,72 @@ function stopLiveTracking() {
 function openLiveWs() {
   const cfg = aisConfig();
   if (!cfg) return;
+  state.liveMsgCount = 0;
+  state.liveOtherMmsis = new Set();
+  state.liveLastMessageAt = null;
   const ws = new WebSocket('wss://stream.aisstream.io/v0/stream');
   state.liveWs = ws;
 
   ws.onopen = () => {
     state.liveReconnectAttempts = 0;
+    // DIAGNOSTIC subscription: bounding box ONLY, no server-side MMSI filter.
+    // This lets us see whether AISStream has any receiver coverage in the
+    // Gulf at all. We filter to our 4 MMSIs client-side in handleAisMessage.
     const sub = {
       APIKey: cfg.AISSTREAM_API_KEY,
       BoundingBoxes: [[
         [cfg.BBOX.latMin, cfg.BBOX.lonMin],
         [cfg.BBOX.latMax, cfg.BBOX.lonMax],
       ]],
-      FiltersShipMMSI: Object.values(cfg.MMSI_BY_VESSEL).map(String),
-      FilterMessageTypes: ['PositionReport', 'StandardClassBPositionReport', 'ExtendedClassBPositionReport'],
+      // Subscribe to all position-bearing message types so we don't miss
+      // anything (Class A, Class B, long-range satellite).
+      FilterMessageTypes: [
+        'PositionReport',
+        'StandardClassBPositionReport',
+        'ExtendedClassBPositionReport',
+        'LongRangeAisBroadcastMessage',
+      ],
     };
+    console.log('[AIS] Subscribing:', sub);
     ws.send(JSON.stringify(sub));
-    updateLiveUi('Subscribed — waiting for first message…');
+    updateLiveUi('Subscribed — bbox-only, listening…');
   };
 
   ws.onmessage = (evt) => {
+    state.liveMsgCount = (state.liveMsgCount || 0) + 1;
+    state.liveLastMessageAt = new Date();
     let msg;
-    try { msg = JSON.parse(evt.data); } catch (e) { return; }
+    try { msg = JSON.parse(evt.data); } catch (e) {
+      console.warn('[AIS] non-JSON message:', evt.data);
+      return;
+    }
+    // Surface server errors instead of swallowing them.
+    if (msg.error) {
+      console.error('[AIS] server error:', msg.error);
+      updateLiveUi(`Server error: ${msg.error}`);
+      return;
+    }
+    if (state.liveMsgCount <= 3) console.log('[AIS] msg:', msg);
     handleAisMessage(msg);
+    // Update status with a running tally so the user has feedback even when
+    // none of the messages are for our 4 MMSIs.
+    const ours = Object.keys(state.livePositions).length;
+    const others = state.liveOtherMmsis.size;
+    updateLiveUi(`${state.liveMsgCount} msgs received · ${ours}/4 of our vessels · ${others} other MMSIs in bbox`);
   };
 
   ws.onerror = (e) => {
-    console.error('AISStream WS error', e);
-    updateLiveUi('Error — see console');
+    console.error('[AIS] WS error', e);
+    updateLiveUi('WebSocket error — see console');
   };
 
   ws.onclose = (e) => {
+    console.warn('[AIS] WS closed:', e.code, e.reason);
     state.liveWs = null;
     if (!state.liveMode) return;
     state.liveReconnectAttempts += 1;
     const delay = Math.min(30000, 1000 * Math.pow(2, state.liveReconnectAttempts));
-    updateLiveUi(`Disconnected (${e.code}) — retrying in ${Math.round(delay/1000)}s`);
+    updateLiveUi(`Disconnected (code ${e.code}${e.reason ? ': '+e.reason : ''}) — retrying in ${Math.round(delay/1000)}s`);
     state.liveReconnectTimer = setTimeout(() => {
       if (state.liveMode) openLiveWs();
     }, delay);
@@ -715,7 +746,11 @@ function handleAisMessage(msg) {
   const mmsi = String(meta.MMSI || meta.MMSI_String || '');
   if (!mmsi) return;
   const vid = state.liveVidByMmsi[mmsi];
-  if (!vid) return; // not one of our 4 vessels
+  if (!vid) {
+    // Not one of our 4 — but record so we can tell user that coverage exists.
+    if (state.liveOtherMmsis) state.liveOtherMmsis.add(mmsi);
+    return;
+  }
 
   // Extract lat/lon/cog/sog from whichever message body exists
   const body = msg.Message || {};
