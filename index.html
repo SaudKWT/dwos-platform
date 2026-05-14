@@ -1,9 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Vessel Movement Simulator — Shuaiba / North Port / OPH / OD-1</title>
+<script>
+  try {
+    const t = localStorage.getItem('vesselSimTheme');
+    if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+  } catch (e) {}
+</script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="stylesheet" href="styles.css" />
 </head>
@@ -14,6 +20,7 @@
     <span class="pill" id="dataRange">loading…</span>
     <span class="pill">Kuwait (UTC+3)</span>
     <span style="flex:1"></span>
+    <button id="themeBtn" class="theme-btn" title="Toggle theme">☀ Light</button>
     <span class="clock" id="clock">—</span>
   </header>
 

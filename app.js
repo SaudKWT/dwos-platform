@@ -3,7 +3,14 @@
 const TZ_OFFSET_MIN = 3 * 60;
 const VIA_STBY_MIN = 30;
 
+const TILE_URLS = {
+  dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+  light: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+};
+
 const state = {
+  theme: 'dark',
+  tileLayer: null,
   locsById: {},
   locs: [],
   vesselsById: {},
@@ -255,13 +262,24 @@ function positionAt(vid, t) {
   };
 }
 
+function applyTheme(theme) {
+  state.theme = theme;
+  document.documentElement.dataset.theme = theme;
+  localStorage.setItem('vesselSimTheme', theme);
+  const btn = document.getElementById('themeBtn');
+  if (btn) btn.textContent = theme === 'dark' ? '☀ Light' : '☾ Dark';
+  if (state.map) {
+    if (state.tileLayer) state.map.removeLayer(state.tileLayer);
+    state.tileLayer = L.tileLayer(TILE_URLS[theme], {
+      attribution: '© OpenStreetMap, © CARTO',
+      maxZoom: 18,
+    }).addTo(state.map);
+  }
+}
+
 function initMap() {
   state.map = L.map('map', { zoomControl: true, attributionControl: true }).setView([29.08, 48.28], 10);
-
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '© OpenStreetMap, © CARTO',
-    maxZoom: 18,
-  }).addTo(state.map);
+  applyTheme(state.theme);
 
   // Location markers
   for (const loc of state.locs) {
@@ -419,6 +437,10 @@ function setupControls() {
     state.showRoutes = e.target.checked;
     drawRoutes();
   });
+
+  document.getElementById('themeBtn').addEventListener('click', () => {
+    applyTheme(state.theme === 'dark' ? 'light' : 'dark');
+  });
 }
 
 function stepTime(seconds) {
@@ -452,6 +474,8 @@ function animationLoop(nowMs) {
 
 async function main() {
   try {
+    state.theme = localStorage.getItem('vesselSimTheme') || 'dark';
+    document.documentElement.dataset.theme = state.theme;
     await loadData();
     buildTimelines();
     state.currentTime = state.timelineStart;
