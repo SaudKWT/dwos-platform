@@ -19,6 +19,7 @@
     <h1>Vessel Movement Simulator</h1>
     <span class="pill" id="dataRange">loading…</span>
     <span class="pill">Kuwait (UTC+3)</span>
+    <span id="liveIndicator" class="live-indicator" hidden><span class="live-dot"></span>LIVE</span>
     <span style="flex:1"></span>
     <button id="themeBtn" class="theme-btn" title="Toggle theme">☀ Light</button>
     <span class="clock" id="clock">—</span>
@@ -38,6 +39,10 @@
         <button id="btnPlay" class="primary">▶ Play</button>
         <button id="btnNextHour" title="+1 hour">+1h</button>
         <button id="btnNextDay" title="+1 day">Day ⏭</button>
+      </div>
+      <div class="row">
+        <button id="btnLive" class="live-btn" title="Toggle live AIS tracking">● Live</button>
+        <span id="liveStatus" class="live-status">Off</span>
       </div>
       <div class="row">
         <label class="cb">Speed
@@ -67,6 +72,7 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="config.local.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

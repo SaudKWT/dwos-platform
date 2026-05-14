@@ -98,6 +98,37 @@ aside h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; c
 }
 .controls button:hover { background: var(--bg-control-hover); }
 .controls button.primary { background: var(--primary); border-color: var(--primary); color: white; }
+.controls button.live-btn {
+  border-color: #2bb673; color: #2bb673;
+}
+.controls button.live-btn:hover { background: rgba(43,182,115,0.12); }
+.controls button.live-btn.active {
+  background: #2bb673; color: white; border-color: #2bb673;
+  box-shadow: 0 0 0 2px rgba(43,182,115,0.25);
+}
+.controls .live-status { font-size: 11px; color: var(--text-faint); }
+
+.live-indicator {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 2px 10px; border-radius: 99px;
+  background: rgba(43,182,115,0.15); color: #2bb673;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+}
+.live-indicator[hidden] { display: none !important; }
+.live-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #2bb673;
+  box-shadow: 0 0 0 0 rgba(43,182,115,0.6);
+  animation: livePulse 1.4s ease-in-out infinite;
+}
+@keyframes livePulse {
+  0%   { box-shadow: 0 0 0 0 rgba(43,182,115,0.6); }
+  70%  { box-shadow: 0 0 0 8px rgba(43,182,115,0); }
+  100% { box-shadow: 0 0 0 0 rgba(43,182,115,0); }
+}
+
+.vessel-card .live-line { font-size: 10px; color: #2bb673; margin-top: 4px; font-weight: 600; }
+.vessel-card .live-line.stale { color: var(--text-faint); font-weight: 400; }
 .controls select { background: var(--bg-control); color: var(--text); border: 1px solid var(--border-strong); padding: 4px 6px; border-radius: 4px; }
 .controls label.cb { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
 

@@ -28,6 +28,14 @@ const state = {
   vesselMarkers: {},
   routePolylines: [],
   lastTickMs: null,
+  // --- Live AIS state ---
+  liveMode: false,
+  liveWs: null,
+  liveReconnectTimer: null,
+  liveReconnectAttempts: 0,
+  livePositions: {}, // vid -> { lat, lon, heading, sog, cog, ts (Date), mmsi }
+  liveMmsiByVid: {},
+  liveVidByMmsi: {},
 };
 
 function parseLocalTime(iso) {
@@ -612,7 +620,162 @@ function nextTransit(vid, t) {
   return segs.find(s => s.type === 'transit' && s.t0 > t && !s.repositioning);
 }
 
+// =================== LIVE AIS (AISStream.io) ===================
+
+function aisConfig() {
+  return (typeof window !== 'undefined' && window.AIS_CONFIG) || null;
+}
+
+function buildMmsiMaps() {
+  const cfg = aisConfig();
+  if (!cfg) return;
+  state.liveMmsiByVid = { ...cfg.MMSI_BY_VESSEL };
+  state.liveVidByMmsi = Object.fromEntries(
+    Object.entries(cfg.MMSI_BY_VESSEL).map(([vid, mmsi]) => [String(mmsi), vid])
+  );
+}
+
+function startLiveTracking() {
+  const cfg = aisConfig();
+  if (!cfg || !cfg.AISSTREAM_API_KEY || cfg.AISSTREAM_API_KEY === 'your_aisstream_api_key_here') {
+    alert('Live tracking requires an AISStream.io API key.\nGet one free at https://aisstream.io and put it in config.local.js.');
+    return false;
+  }
+  buildMmsiMaps();
+  state.liveMode = true;
+  state.playing = false;
+  state.liveReconnectAttempts = 0;
+  updateLiveUi();
+  openLiveWs();
+  return true;
+}
+
+function stopLiveTracking() {
+  state.liveMode = false;
+  if (state.liveReconnectTimer) {
+    clearTimeout(state.liveReconnectTimer);
+    state.liveReconnectTimer = null;
+  }
+  if (state.liveWs) {
+    try { state.liveWs.close(1000, 'user stopped'); } catch (e) {}
+    state.liveWs = null;
+  }
+  state.livePositions = {};
+  updateLiveUi();
+  render();
+}
+
+function openLiveWs() {
+  const cfg = aisConfig();
+  if (!cfg) return;
+  const ws = new WebSocket('wss://stream.aisstream.io/v0/stream');
+  state.liveWs = ws;
+
+  ws.onopen = () => {
+    state.liveReconnectAttempts = 0;
+    const sub = {
+      APIKey: cfg.AISSTREAM_API_KEY,
+      BoundingBoxes: [[
+        [cfg.BBOX.latMin, cfg.BBOX.lonMin],
+        [cfg.BBOX.latMax, cfg.BBOX.lonMax],
+      ]],
+      FiltersShipMMSI: Object.values(cfg.MMSI_BY_VESSEL).map(String),
+      FilterMessageTypes: ['PositionReport', 'StandardClassBPositionReport', 'ExtendedClassBPositionReport'],
+    };
+    ws.send(JSON.stringify(sub));
+    updateLiveUi('Subscribed — waiting for first message…');
+  };
+
+  ws.onmessage = (evt) => {
+    let msg;
+    try { msg = JSON.parse(evt.data); } catch (e) { return; }
+    handleAisMessage(msg);
+  };
+
+  ws.onerror = (e) => {
+    console.error('AISStream WS error', e);
+    updateLiveUi('Error — see console');
+  };
+
+  ws.onclose = (e) => {
+    state.liveWs = null;
+    if (!state.liveMode) return;
+    state.liveReconnectAttempts += 1;
+    const delay = Math.min(30000, 1000 * Math.pow(2, state.liveReconnectAttempts));
+    updateLiveUi(`Disconnected (${e.code}) — retrying in ${Math.round(delay/1000)}s`);
+    state.liveReconnectTimer = setTimeout(() => {
+      if (state.liveMode) openLiveWs();
+    }, delay);
+  };
+}
+
+function handleAisMessage(msg) {
+  if (!msg || !msg.MessageType) return;
+  const meta = msg.MetaData || {};
+  const mmsi = String(meta.MMSI || meta.MMSI_String || '');
+  if (!mmsi) return;
+  const vid = state.liveVidByMmsi[mmsi];
+  if (!vid) return; // not one of our 4 vessels
+
+  // Extract lat/lon/cog/sog from whichever message body exists
+  const body = msg.Message || {};
+  const inner = body.PositionReport || body.StandardClassBPositionReport ||
+                body.ExtendedClassBPositionReport || body.LongRangeAisBroadcastMessage || null;
+  if (!inner) return;
+
+  const lat = inner.Latitude;
+  const lon = inner.Longitude;
+  if (typeof lat !== 'number' || typeof lon !== 'number') return;
+
+  const sog = inner.Sog;
+  const cog = inner.Cog;
+  const trueHeading = inner.TrueHeading;
+  // Heading: prefer TrueHeading if valid (0–359), else fall back to COG.
+  let heading = 0;
+  if (typeof trueHeading === 'number' && trueHeading >= 0 && trueHeading < 360) heading = trueHeading;
+  else if (typeof cog === 'number') heading = cog;
+
+  state.livePositions[vid] = {
+    lat, lon, heading,
+    sog: typeof sog === 'number' ? sog : null,
+    cog: typeof cog === 'number' ? cog : null,
+    ts: new Date(meta.time_utc || Date.now()),
+    mmsi,
+  };
+
+  if (state.liveMode) render();
+}
+
+function updateLiveUi(statusText) {
+  const btn = document.getElementById('btnLive');
+  const ind = document.getElementById('liveIndicator');
+  const st = document.getElementById('liveStatus');
+  if (btn) {
+    btn.classList.toggle('active', state.liveMode);
+    btn.textContent = state.liveMode ? '■ Live (on)' : '● Live';
+  }
+  if (ind) ind.hidden = !state.liveMode;
+  if (st) {
+    if (!state.liveMode) st.textContent = 'Off';
+    else if (statusText) st.textContent = statusText;
+    else st.textContent = 'Connecting…';
+  }
+}
+
+function relativeAgo(ts) {
+  if (!ts) return '—';
+  const ms = Date.now() - ts.getTime();
+  const sec = Math.floor(ms / 1000);
+  if (sec < 60) return `${sec}s ago`;
+  const min = Math.floor(sec / 60);
+  if (min < 60) return `${min}m ago`;
+  const hr = Math.floor(min / 60);
+  return `${hr}h ${min % 60}m ago`;
+}
+
 function render() {
+  if (state.liveMode) return renderLive();
+
   const t = state.currentTime;
   document.getElementById('clock').textContent = toKuwaitStr(t);
   const range = state.timelineEnd - state.timelineStart;
@@ -641,6 +804,50 @@ function render() {
     cards.push(vesselCardHtml(v, pos));
   }
   document.getElementById('vesselCards').innerHTML = cards.join('');
+}
+
+function renderLive() {
+  const clock = document.getElementById('clock');
+  if (clock) clock.textContent = toKuwaitStr(new Date());
+
+  const cards = [];
+  for (const v of state.vessels) {
+    const live = state.livePositions[v.id];
+    const marker = state.vesselMarkers[v.id];
+    if (live) {
+      marker.setLatLng([live.lat, live.lon]);
+      const el = marker.getElement();
+      if (el) {
+        const body = el.querySelector('.vessel-body');
+        if (body) body.style.transform = `rotate(${live.heading || 0}deg)`;
+      }
+    }
+    cards.push(vesselCardLiveHtml(v, live));
+  }
+  document.getElementById('vesselCards').innerHTML = cards.join('');
+}
+
+function vesselCardLiveHtml(v, live) {
+  const mmsi = state.liveMmsiByVid[v.id] || '—';
+  if (!live) {
+    return `<div class="vessel-card" style="--vc:${v.color}">
+      <div class="name">${v.name} <span class="sub">MMSI ${mmsi}</span></div>
+      <div class="status"><span class="tag unknown">Waiting for AIS…</span></div>
+      <div class="meta">Subscribed via AISStream.io — vessel hasn't broadcast since connect.</div>
+    </div>`;
+  }
+  const ageMin = (Date.now() - live.ts.getTime()) / 60000;
+  const stale = ageMin > 15;
+  const moving = (live.sog || 0) > 0.5;
+  const statusTag = moving
+    ? `<span class="tag transit">Underway</span> ${live.sog.toFixed(1)} kts · COG ${Math.round(live.cog || 0)}°`
+    : `<span class="tag moored">Stopped/Moored</span> ${live.sog != null ? live.sog.toFixed(1)+' kts' : ''}`;
+  return `<div class="vessel-card" style="--vc:${v.color}">
+    <div class="name">${v.name} <span class="sub">MMSI ${mmsi}</span></div>
+    <div class="status">${statusTag}</div>
+    <div class="meta">${live.lat.toFixed(5)}, ${live.lon.toFixed(5)} · HDG ${Math.round(live.heading || 0)}°</div>
+    <div class="live-line${stale ? ' stale' : ''}">${stale ? '⚠ ' : '● '}Last AIS: ${relativeAgo(live.ts)} (${toKuwaitStr(live.ts)})</div>
+  </div>`;
 }
 
 function vesselCardHtml(v, pos) {
@@ -708,10 +915,33 @@ function setupControls() {
   });
 
   document.getElementById('btnPlay').addEventListener('click', e => {
+    if (state.liveMode) {
+      // Turning play on while in live mode doesn't make sense — leave live mode first.
+      stopLiveTracking();
+    }
     state.playing = !state.playing;
     e.target.textContent = state.playing ? '⏸ Pause' : '▶ Play';
     state.lastTickMs = performance.now();
   });
+
+  const btnLive = document.getElementById('btnLive');
+  if (btnLive) {
+    btnLive.addEventListener('click', () => {
+      if (state.liveMode) {
+        stopLiveTracking();
+      } else {
+        if (state.playing) {
+          state.playing = false;
+          document.getElementById('btnPlay').textContent = '▶ Play';
+        }
+        startLiveTracking();
+      }
+    });
+  }
+
+  // Refresh "Last AIS: X ago" once a second while in live mode, even if no new
+  // messages have arrived.
+  setInterval(() => { if (state.liveMode) renderLive(); }, 1000);
 
   document.getElementById('btnPrevHour').addEventListener('click', () => stepTime(-3600));
   document.getElementById('btnNextHour').addEventListener('click', () => stepTime(3600));
@@ -746,7 +976,7 @@ function clampTime(t) {
 }
 
 function animationLoop(nowMs) {
-  if (state.playing && state.lastTickMs != null) {
+  if (state.playing && !state.liveMode && state.lastTickMs != null) {
     const dt = (nowMs - state.lastTickMs) / 1000;
     const dSim = dt * state.speed * 1000;
     let next = new Date(state.currentTime.getTime() + dSim);
