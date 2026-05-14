@@ -532,12 +532,17 @@ function drawRoutes() {
 }
 
 function applyAntiOverlap(positions) {
-  // Group moored vessels by location id; spread them in a small ring so they don't stack.
-  // When the Shuaiba berths are visually merged (zoom < 13), treat both as one group so
-  // CA5 (B20) and Juno (B4) don't stack on top of each other on the merged pin either.
+  // Reposition moored vessels so they don't stack on top of their berth/rig icon.
+  //   - At a RIG: vessels park alongside (east face), spaced lengthwise, bow oriented
+  //     parallel to the rig — that's how supply boats actually moor offshore.
+  //   - At a Shuaiba berth when zoom < 13 the B20/B4 pins are visually merged, so we
+  //     group B20+B4 together and spread the vessels in a small ring around the merged
+  //     pin so Juno (B4) and CA5 (B20) don't stack on each other.
+  //   - At other ports/berths with multiple vessels, fall back to a ring spread.
   const zoom = state.map ? state.map.getZoom() : 99;
   const berthsMerged = zoom < 13;
   const groupKey = (locId) => (berthsMerged && (locId === 'B20' || locId === 'B4')) ? 'SHUAIBA' : locId;
+
   const groups = {};
   for (const [vid, p] of Object.entries(positions)) {
     if (!p || !p.segment) continue;
@@ -547,16 +552,40 @@ function applyAntiOverlap(positions) {
       groups[key].push(vid);
     }
   }
-  const r = 0.0009; // ~100 m radius — enough to separate 80m hulls on a typical zoom
+
   const cosLat = Math.cos(29 * Math.PI / 180);
-  for (const loc in groups) {
-    const vids = groups[loc].sort();
+  const mToDegLat = 1 / 111000;
+  const mToDegLon = 1 / (111000 * cosLat);
+
+  for (const key in groups) {
+    const vids = groups[key].sort();
     const n = vids.length;
-    if (n <= 1) continue;
-    for (let i = 0; i < n; i++) {
-      const angle = (i / n) * 2 * Math.PI - Math.PI / 2;
-      positions[vids[i]].lat += Math.cos(angle) * r;
-      positions[vids[i]].lon += Math.sin(angle) * r / cosLat;
+    if (n === 0) continue;
+
+    const loc = state.locsById[key] || (key === 'SHUAIBA' ? state.locsById.B20 : null);
+    const isRig = loc && loc.type === 'rig';
+
+    if (isRig) {
+      // Park alongside the rig on its east face. Even a lone vessel gets offset so it
+      // never sits on top of the platform.
+      const sideOffsetM = 90;  // rig is ~60 m square + vessel half-beam ~10 m + gap
+      const spacingM = 35;     // lengthwise spacing between adjacent vessels
+      for (let i = 0; i < n; i++) {
+        const along = (i - (n - 1) / 2) * spacingM;
+        positions[vids[i]].lon += sideOffsetM * mToDegLon;
+        positions[vids[i]].lat += along * mToDegLat;
+        positions[vids[i]].heading = 0; // bow north, parallel to the rig east face
+      }
+      continue;
+    }
+
+    if (n > 1) {
+      const r = 0.0009; // ~100 m ring for ports with multiple vessels
+      for (let i = 0; i < n; i++) {
+        const angle = (i / n) * 2 * Math.PI - Math.PI / 2;
+        positions[vids[i]].lat += Math.cos(angle) * r;
+        positions[vids[i]].lon += Math.sin(angle) * r / cosLat;
+      }
     }
   }
 }
