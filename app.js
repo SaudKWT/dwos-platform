@@ -564,23 +564,39 @@ function applyAntiOverlap(positions) {
 
     const loc = state.locsById[key] || (key === 'SHUAIBA' ? state.locsById.B20 : null);
     const isRig = loc && loc.type === 'rig';
+    const isBerth = loc && (loc.type === 'berth' || loc.type === 'port' || key === 'SHUAIBA');
 
     if (isRig) {
-      // Park alongside the rig on its east face. Even a lone vessel gets offset so it
-      // never sits on top of the platform.
-      const sideOffsetM = 90;  // rig is ~60 m square + vessel half-beam ~10 m + gap
-      const spacingM = 35;     // lengthwise spacing between adjacent vessels
+      // Alongside the east face of the rig, bow-north so the hull is vertical and
+      // parallel to the rig's east side.
+      const sideOffsetM = 90;
+      const spacingM = 35;
       for (let i = 0; i < n; i++) {
         const along = (i - (n - 1) / 2) * spacingM;
         positions[vids[i]].lon += sideOffsetM * mToDegLon;
         positions[vids[i]].lat += along * mToDegLat;
-        positions[vids[i]].heading = 0; // bow north, parallel to the rig east face
+        positions[vids[i]].heading = 0;
+      }
+      continue;
+    }
+
+    if (isBerth) {
+      // Shuaiba berths sit along the quay; vessels lie horizontally (east-west) just
+      // off the berth pin so the label is readable. Multiple vessels at the merged
+      // Shuaiba pin stack north-south, each parallel to its own berth.
+      const sideOffsetM = 55;  // east of the berth pin, into the water
+      const spacingM = 45;     // lateral spacing between vessels (B20 north of B4)
+      for (let i = 0; i < n; i++) {
+        const along = (i - (n - 1) / 2) * spacingM;
+        positions[vids[i]].lon += sideOffsetM * mToDegLon;
+        positions[vids[i]].lat += along * mToDegLat;
+        positions[vids[i]].heading = 90; // bow east → horizontal silhouette
       }
       continue;
     }
 
     if (n > 1) {
-      const r = 0.0009; // ~100 m ring for ports with multiple vessels
+      const r = 0.0009; // fallback ring spread for any other co-located group
       for (let i = 0; i < n; i++) {
         const angle = (i / n) * 2 * Math.PI - Math.PI / 2;
         positions[vids[i]].lat += Math.cos(angle) * r;
