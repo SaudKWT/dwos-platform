@@ -533,11 +533,16 @@ function drawRoutes() {
 
 function applyAntiOverlap(positions) {
   // Group moored vessels by location id; spread them in a small ring so they don't stack.
+  // When the Shuaiba berths are visually merged (zoom < 13), treat both as one group so
+  // CA5 (B20) and Juno (B4) don't stack on top of each other on the merged pin either.
+  const zoom = state.map ? state.map.getZoom() : 99;
+  const berthsMerged = zoom < 13;
+  const groupKey = (locId) => (berthsMerged && (locId === 'B20' || locId === 'B4')) ? 'SHUAIBA' : locId;
   const groups = {};
   for (const [vid, p] of Object.entries(positions)) {
     if (!p || !p.segment) continue;
     if (p.segment.type === 'moored') {
-      const key = p.segment.loc;
+      const key = groupKey(p.segment.loc);
       groups[key] = groups[key] || [];
       groups[key].push(vid);
     }
