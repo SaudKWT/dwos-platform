@@ -1,0 +1,51 @@
+{
+  "vessel_id": "JUNO",
+  "mmsi": "636025030",
+  "date_utc": "2026-05-15",
+  "positions": [
+    {
+      "ts": "2026-05-15T05:31:00Z",
+      "lat": 29.073441,
+      "lon": 48.176781,
+      "sog": 11.6,
+      "cog": 354.0,
+      "heading": 349.0,
+      "nav_status": null
+    },
+    {
+      "ts": "2026-05-15T05:49:00Z",
+      "lat": 29.129793,
+      "lon": 48.155048,
+      "sog": 11.6,
+      "cog": 313.0,
+      "heading": 308.0,
+      "nav_status": null
+    },
+    {
+      "ts": "2026-05-15T07:32:00Z",
+      "lat": 29.238159,
+      "lon": 48.342285,
+      "sog": 0.2,
+      "cog": 71.0,
+      "heading": 158.0,
+      "nav_status": null
+    }
+  ],
+  "stats": {
+    "count": 3,
+    "first_ts": "2026-05-15T05:31:00Z",
+    "last_ts": "2026-05-15T07:32:00Z",
+    "bbox": [
+      29.073441,
+      48.155048,
+      29.238159,
+      48.342285
+    ],
+    "max_sog": 11.6
+  },
+  "source": {
+    "provider": "datalastic",
+    "imported_at": "2026-05-15T07:51:26.394890Z",
+    "raw_query": "datalastic: mmsi=636025030 days=7"
+  }
+}

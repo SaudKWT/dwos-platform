@@ -266,13 +266,14 @@ def split_by_utc_day(positions: list[dict]) -> dict[str, list[dict]]:
 def stats_for(positions: list[dict]) -> dict:
     if not positions:
         return {"count": 0}
+    sorted_ts = sorted(p["ts"] for p in positions)
     lats = [p["lat"] for p in positions]
     lons = [p["lon"] for p in positions]
     sogs = [p.get("sog") for p in positions if isinstance(p.get("sog"), (int, float))]
     return {
         "count": len(positions),
-        "first_ts": positions[0]["ts"],
-        "last_ts":  positions[-1]["ts"],
+        "first_ts": sorted_ts[0],
+        "last_ts":  sorted_ts[-1],
         "bbox":    [min(lats), min(lons), max(lats), max(lons)],
         "max_sog": max(sogs) if sogs else None,
     }

@@ -71,10 +71,13 @@ def analyse(positions: list[dict]) -> dict:
 def verdict(stats: dict) -> str:
     if stats["count"] == 0:
         return "❌ NO DATA — provider does not cover this vessel/region"
+    if stats["count"] == 1:
+        return "⚠️  ONLY 1 POSITION — can't judge frequency. May indicate sparse coverage."
     if stats.get("gulf_pct", 0) < 50:
         return f"⚠️  ONLY {stats['gulf_pct']}% OF POSITIONS IN THE GULF — coverage likely indirect"
-    if stats.get("median_gap_min", 999) > 60:
-        return f"⚠️  SPARSE (median {stats['median_gap_min']} min between fixes) — possibly satellite-only"
+    median_gap = stats.get("median_gap_min")
+    if median_gap is not None and median_gap > 60:
+        return f"⚠️  SPARSE (median {median_gap} min between fixes) — possibly satellite-only"
     if stats.get("positions_per_hour", 0) < 1:
         return "⚠️  LOW FREQUENCY — confirm before committing"
     return "✅ GOOD coverage"
