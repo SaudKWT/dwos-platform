@@ -28,6 +28,7 @@ import { EventEmitter } from 'node:events';
 const __dirname   = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = __dirname;
 const REPORTS_DIR  = path.join(PROJECT_ROOT, 'data', 'daily-reports');
+const AIS_DIR      = path.join(PROJECT_ROOT, 'data', 'ais-history');
 const PORT         = Number(process.env.PORT || 5173);
 const HOST         = process.env.HOST || '127.0.0.1';
 
@@ -211,6 +212,30 @@ async function handleApi(req, res, url) {
     await rebuildIndex();
     bus.emit('report_saved', { vessel_id: body.vessel_id, report_date: body.report_date });
     return send(res, 200, { ok: true, vessel_id: body.vessel_id, report_date: body.report_date });
+  }
+
+  // GET /api/ais-history                 -> index of all imported AIS tracks
+  if (req.method === 'GET' && url.pathname === '/api/ais-history') {
+    try {
+      const buf = await fs.readFile(path.join(AIS_DIR, 'index.json'));
+      return send(res, 200, buf.toString('utf8'));
+    } catch {
+      return send(res, 200, { tracks: [] });
+    }
+  }
+
+  // GET /api/ais-history/:vessel/:date    -> one day's positions
+  const mAis = url.pathname.match(/^\/api\/ais-history\/([A-Z0-9]+)\/(\d{4}-\d{2}-\d{2})$/);
+  if (req.method === 'GET' && mAis) {
+    const [_, vid, date] = mAis;
+    if (!VESSEL_IDS.has(vid)) return send(res, 400, { error: 'unknown vessel_id' });
+    const p = path.join(AIS_DIR, `${vid}-${date}.json`);
+    try {
+      const buf = await fs.readFile(p);
+      return send(res, 200, buf.toString('utf8'));
+    } catch {
+      return send(res, 404, { error: 'no AIS track for that vessel/date' });
+    }
   }
 
   // GET /api/stream (SSE)

@@ -36,6 +36,9 @@ const state = {
   livePositions: {}, // vid -> { lat, lon, heading, sog, cog, ts (Date), mmsi }
   liveMmsiByVid: {},
   liveVidByMmsi: {},
+  // --- Imported AIS history overlay ---
+  aisTracksByVid: {},     // vid -> sorted array of { ts (Date), lat, lon, sog, cog }
+  aisOverlayEnabled: false,
 };
 
 function parseLocalTime(iso) {
@@ -111,6 +114,32 @@ async function loadData() {
     } catch (e) {
       state.plans = [];
     }
+  }
+
+  // Best-effort load of any imported AIS history tracks.  Silent if none
+  // are present yet — the simulator falls back to daily-report interpolation.
+  try {
+    const idx = await fetch('/api/ais-history').then(r => r.ok ? r.json() : null);
+    const tracks = idx?.tracks || [];
+    if (tracks.length) {
+      const records = await Promise.all(
+        tracks.map(t => fetch(`/api/ais-history/${t.vessel_id}/${t.date_utc}`)
+          .then(r => r.ok ? r.json() : null))
+      );
+      for (const rec of records) {
+        if (!rec || !rec.positions) continue;
+        const bucket = (state.aisTracksByVid[rec.vessel_id] ||= []);
+        for (const p of rec.positions) {
+          const ts = new Date(p.ts);
+          if (!isNaN(ts)) bucket.push({ ts, lat: p.lat, lon: p.lon, sog: p.sog, cog: p.cog });
+        }
+      }
+      for (const vid in state.aisTracksByVid) {
+        state.aisTracksByVid[vid].sort((a, b) => a.ts - b.ts);
+      }
+    }
+  } catch (e) {
+    console.warn('[ais-history] could not load:', e);
   }
 }
 
@@ -523,7 +552,50 @@ function finalize(segs) {
   return out;
 }
 
+// Binary-search nearest AIS sample for vessel vid at time t.  Returns null
+// if no AIS data is loaded for this vessel, or the closest sample exceeds
+// AIS_MAX_GAP_MS so we don't accept a half-day-old point as "current."
+const AIS_MAX_GAP_MS = 30 * 60 * 1000;  // 30 minutes
+function nearestAisPoint(vid, t) {
+  const track = state.aisTracksByVid[vid];
+  if (!track || track.length === 0) return null;
+  // Binary search for the insertion point of t.
+  let lo = 0, hi = track.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (track[mid].ts < t) lo = mid + 1; else hi = mid;
+  }
+  const before = lo > 0 ? track[lo - 1] : null;
+  const after  = lo < track.length ? track[lo] : null;
+  let candidate = null;
+  if (before && after) {
+    candidate = (t - before.ts) <= (after.ts - t) ? before : after;
+  } else {
+    candidate = before || after;
+  }
+  if (!candidate) return null;
+  return Math.abs(candidate.ts - t) <= AIS_MAX_GAP_MS ? candidate : null;
+}
+
 function positionAt(vid, t) {
+  // When the AIS overlay is on and we have a real sample close to t, use it
+  // verbatim and skip the segment interpolation. The "segment" return is the
+  // operational state from the daily report — we still show it in the popup,
+  // so the user sees both layers (position from AIS, context from captain).
+  if (state.aisOverlayEnabled) {
+    const ais = nearestAisPoint(vid, t);
+    if (ais) {
+      const segs = state.timelines[vid] || [];
+      const seg = segs.find(s => s.t0 <= t && t <= s.t1) || null;
+      return {
+        lat: ais.lat,
+        lon: ais.lon,
+        segment: seg,
+        heading: Number.isFinite(ais.cog) ? ais.cog : 0,
+        ais: true,
+      };
+    }
+  }
   const segs = state.timelines[vid];
   if (!segs || segs.length === 0) return null;
   if (t < segs[0].t0) {
@@ -1211,6 +1283,25 @@ function setupControls() {
     state.showRoutes = e.target.checked;
     drawRoutes();
   });
+
+  const aisCb = document.getElementById('cbAisTrack');
+  const aisStatus = document.getElementById('aisStatus');
+  if (aisCb) {
+    const trackCount = Object.values(state.aisTracksByVid).reduce((n, t) => n + t.length, 0);
+    const trackVids  = Object.keys(state.aisTracksByVid).length;
+    if (trackCount === 0) {
+      aisCb.disabled = true;
+      aisStatus.hidden = false;
+      aisStatus.textContent = 'no AIS imported yet — run tools/import_ais_history.py';
+    } else {
+      aisStatus.hidden = false;
+      aisStatus.textContent = `${trackCount} positions across ${trackVids} vessel(s) loaded`;
+    }
+    aisCb.addEventListener('change', e => {
+      state.aisOverlayEnabled = e.target.checked;
+      render();
+    });
+  }
 
   document.getElementById('themeBtn').addEventListener('click', () => {
     applyTheme(state.theme === 'dark' ? 'light' : 'dark');

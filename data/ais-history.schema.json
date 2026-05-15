@@ -1,0 +1,51 @@
+{
+  "$comment": "Canonical schema for one vessel's AIS history on one UTC day. Every provider's importer (tools/import_ais_history.py) normalises into this shape so the simulator never has to care which vendor a track came from. File path: data/ais-history/{VESSEL_ID}-{YYYY-MM-DD}.json",
+  "$id": "https://koc.local/schemas/ais-history.json",
+  "type": "object",
+  "required": ["vessel_id", "mmsi", "date_utc", "positions", "source"],
+  "properties": {
+    "vessel_id": { "type": "string", "enum": ["JUNO", "CA1", "CA3", "CA5"] },
+    "mmsi":      { "type": "string", "pattern": "^[0-9]{9}$" },
+    "date_utc":  { "type": "string", "format": "date", "$comment": "YYYY-MM-DD; the UTC day this file covers. A vessel that crosses the UTC midnight boundary will have its track split across two files." },
+
+    "positions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ts", "lat", "lon"],
+        "properties": {
+          "ts":        { "type": "string", "format": "date-time", "$comment": "ISO-8601 UTC, e.g. 2026-05-06T07:30:15Z" },
+          "lat":       { "type": "number", "minimum": -90, "maximum": 90 },
+          "lon":       { "type": "number", "minimum": -180, "maximum": 180 },
+          "sog":       { "type": ["number", "null"], "$comment": "Speed over ground in knots" },
+          "cog":       { "type": ["number", "null"], "minimum": 0, "maximum": 360, "$comment": "Course over ground in degrees" },
+          "heading":   { "type": ["number", "null"], "minimum": 0, "maximum": 360, "$comment": "True heading in degrees (0 or 511 in AIS spec means N/A)" },
+          "nav_status":{ "type": ["string", "null"], "$comment": "AIS navigational status word — 'underway using engine', 'moored', 'at anchor', etc." }
+        }
+      }
+    },
+
+    "stats": {
+      "type": "object",
+      "$comment": "Optional summary computed at import time for quick UI hints.",
+      "properties": {
+        "count":        { "type": "integer", "minimum": 0 },
+        "first_ts":     { "type": "string", "format": "date-time" },
+        "last_ts":      { "type": "string", "format": "date-time" },
+        "bbox":         { "type": "array", "items": { "type": "number" }, "minItems": 4, "maxItems": 4, "$comment": "[lat_min, lon_min, lat_max, lon_max]" },
+        "max_sog":      { "type": ["number", "null"] }
+      }
+    },
+
+    "source": {
+      "type": "object",
+      "required": ["provider", "imported_at"],
+      "properties": {
+        "provider":   { "type": "string", "enum": ["datalastic", "vtexplorer", "manual", "vesselfinder", "aishub", "other"] },
+        "imported_at":{ "type": "string", "format": "date-time" },
+        "raw_query":  { "type": "string", "$comment": "URL/payload used to fetch this; useful when you need to re-pull or audit." },
+        "credits_used": { "type": ["integer", "null"] }
+      }
+    }
+  }
+}
