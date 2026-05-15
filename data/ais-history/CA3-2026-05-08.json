@@ -65,12 +65,21 @@
       "cog": 170.0,
       "heading": 34.0,
       "nav_status": null
+    },
+    {
+      "ts": "2026-05-08T19:26:00Z",
+      "lat": 29.232599,
+      "lon": 48.324028,
+      "sog": 0.3,
+      "cog": 170.0,
+      "heading": 34.0,
+      "nav_status": null
     }
   ],
   "stats": {
-    "count": 7,
+    "count": 8,
     "first_ts": "2026-05-08T16:40:36Z",
-    "last_ts": "2026-05-08T19:23:00Z",
+    "last_ts": "2026-05-08T19:26:00Z",
     "bbox": [
       29.120081666666668,
       48.22233666666666,
@@ -81,7 +90,7 @@
   },
   "source": {
     "provider": "datalastic",
-    "imported_at": "2026-05-15T07:51:27.108084Z",
+    "imported_at": "2026-05-15T08:17:04.756392Z",
     "raw_query": "datalastic: mmsi=538010098 days=7"
   }
 }

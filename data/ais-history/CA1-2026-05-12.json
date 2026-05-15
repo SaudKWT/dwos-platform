@@ -1,0 +1,33 @@
+{
+  "vessel_id": "CA1",
+  "mmsi": "538010097",
+  "date_utc": "2026-05-12",
+  "positions": [
+    {
+      "ts": "2026-05-12T13:21:00Z",
+      "lat": 29.024597,
+      "lon": 48.231205,
+      "sog": 6.5,
+      "cog": 305.0,
+      "heading": 307.0,
+      "nav_status": "Under way using engine"
+    }
+  ],
+  "source": {
+    "provider": "datalastic",
+    "imported_at": "2026-05-15T08:17:04.433243Z",
+    "raw_query": "datalastic /vessel_pro polled"
+  },
+  "stats": {
+    "count": 1,
+    "first_ts": "2026-05-12T13:21:00Z",
+    "last_ts": "2026-05-12T13:21:00Z",
+    "bbox": [
+      29.024597,
+      48.231205,
+      29.024597,
+      48.231205
+    ],
+    "max_sog": 6.5
+  }
+}

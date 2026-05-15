@@ -29,23 +29,32 @@
       "cog": 71.0,
       "heading": 158.0,
       "nav_status": null
+    },
+    {
+      "ts": "2026-05-15T08:02:00Z",
+      "lat": 29.23797,
+      "lon": 48.342495,
+      "sog": 0.8,
+      "cog": 137.0,
+      "heading": 159.0,
+      "nav_status": null
     }
   ],
   "stats": {
-    "count": 3,
+    "count": 4,
     "first_ts": "2026-05-15T05:31:00Z",
-    "last_ts": "2026-05-15T07:32:00Z",
+    "last_ts": "2026-05-15T08:02:00Z",
     "bbox": [
       29.073441,
       48.155048,
       29.238159,
-      48.342285
+      48.342495
     ],
     "max_sog": 11.6
   },
   "source": {
     "provider": "datalastic",
-    "imported_at": "2026-05-15T07:51:26.394890Z",
+    "imported_at": "2026-05-15T08:17:04.106266Z",
     "raw_query": "datalastic: mmsi=636025030 days=7"
   }
 }
