@@ -1173,8 +1173,11 @@ function render() {
       marker.setLatLng([pos.lat, pos.lon]);
       const el = marker.getElement();
       if (el) {
-        // Tag the marker so CSS can give an AIS-sourced vessel a distinctive halo.
-        el.classList.toggle('is-ais-source', !!pos.ais);
+        // Tag the inner .vessel-marker (NOT the leaflet wrapper) so the
+        // ::before halo CSS can find it.  Class went on the wrong element
+        // in the first cut — that's why nothing was pulsing.
+        const vm = el.querySelector('.vessel-marker') || el;
+        vm.classList.toggle('is-ais-source', !!pos.ais);
         const body = el.querySelector('.vessel-body');
         if (body) body.style.transform = `rotate(${pos.heading || 0}deg)`;
       }

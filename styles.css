@@ -261,21 +261,48 @@ aside h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; c
 }
 
 /* When the vessel's position is snapped to a real AIS keyframe, draw a
-   pulsing radar-style halo so it's visually distinct from interpolated. */
-.vessel-marker.is-ais-source::before {
+   permanent cyan ring around the marker PLUS a pulsing outer halo, so
+   the eye catches both the static state and the animation.  Two layers
+   are used: ::before for the always-on ring (unmissable on either theme),
+   ::after for the radar-pulse ripple.
+
+   Leaflet would otherwise clip the rings — overflow:visible on the
+   marker container is essential. */
+.vessel-marker.is-ais-source { overflow: visible !important; }
+.vessel-marker.is-ais-source::before,
+.vessel-marker.is-ais-source::after {
   content: "";
   position: absolute;
-  inset: -10px;
   border-radius: 50%;
-  border: 2px solid #00e5ff;
-  box-shadow: 0 0 10px rgba(0, 229, 255, 0.65), inset 0 0 6px rgba(0, 229, 255, 0.5);
-  animation: ais-pulse 1.6s ease-out infinite;
   pointer-events: none;
+  left: 50%; top: 50%;
+}
+.vessel-marker.is-ais-source::before {
+  /* always-on ring */
+  width: 64px; height: 64px;
+  margin: -32px 0 0 -32px;
+  border: 3px solid #00d0ff;
+  box-shadow: 0 0 14px rgba(0, 208, 255, 0.9),
+              inset 0 0 10px rgba(0, 208, 255, 0.45);
+  background: radial-gradient(circle, rgba(0,208,255,0.10) 0%, transparent 70%);
+}
+.vessel-marker.is-ais-source::after {
+  /* outer pulse */
+  width: 64px; height: 64px;
+  margin: -32px 0 0 -32px;
+  border: 2px solid #00e5ff;
+  animation: ais-pulse 1.8s ease-out infinite;
 }
 @keyframes ais-pulse {
-  0%   { transform: scale(0.85); opacity: 0.9; }
-  70%  { transform: scale(1.2);  opacity: 0.0; }
-  100% { transform: scale(1.2);  opacity: 0.0; }
+  0%   { transform: scale(0.75); opacity: 0.95; }
+  70%  { transform: scale(1.7);  opacity: 0.0; }
+  100% { transform: scale(1.7);  opacity: 0.0; }
+}
+
+/* Also make the leaflet outer wrapper not clip the halo (Leaflet wraps
+   our .vessel-marker in a .leaflet-marker-icon with its own size). */
+.leaflet-marker-icon:has(> .vessel-marker.is-ais-source) {
+  overflow: visible !important;
 }
 
 /* Source badge on the vessel card */
