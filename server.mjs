@@ -20,6 +20,7 @@
 
 import http from 'node:http';
 import fs from 'node:fs/promises';
+import fsSync from 'node:fs';
 import { createReadStream } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -37,6 +38,184 @@ const DATE_RE     = /^\d{4}-\d{2}-\d{2}$/;
 
 const bus = new EventEmitter();
 bus.setMaxListeners(0);
+
+// ---------------------------------------------------------------------------
+// Live polling against Datalastic /vessel_pro
+// ---------------------------------------------------------------------------
+
+const LIVE_DEFAULT_INTERVAL_MS = 120_000;  // 2 minutes
+const live = {
+  running: false,
+  intervalMs: LIVE_DEFAULT_INTERVAL_MS,
+  timer: null,
+  lastPollAt: null,        // ISO string
+  lastError: null,
+  pollsThisSession: 0,
+  newPositionsThisSession: 0,
+  lastPositions: {},       // vid -> { ts, lat, lon, sog, cog, heading, nav_status }
+};
+
+function loadEnvSync() {
+  try {
+    const buf = fsSync.readFileSync(path.join(PROJECT_ROOT, '.env'), 'utf8');
+    const env = {};
+    for (const raw of buf.split('\n')) {
+      const line = raw.trim();
+      if (!line || line.startsWith('#')) continue;
+      const eq = line.indexOf('=');
+      if (eq < 0) continue;
+      env[line.slice(0, eq).trim()] = line.slice(eq + 1).trim().replace(/^["']|["']$/g, '');
+    }
+    return env;
+  } catch { return {}; }
+}
+
+async function fetchVesselPro(apiKey, mmsi) {
+  const url = `https://api.datalastic.com/api/v0/vessel_pro?api-key=${encodeURIComponent(apiKey)}&mmsi=${encodeURIComponent(mmsi)}`;
+  const ctrl = new AbortController();
+  const to = setTimeout(() => ctrl.abort(), 20_000);
+  try {
+    const r = await fetch(url, { signal: ctrl.signal });
+    if (!r.ok) {
+      const body = await r.text().catch(() => '');
+      throw new Error(`HTTP ${r.status}: ${body.slice(0, 160)}`);
+    }
+    const j = await r.json();
+    const d = (j && j.data) || {};
+    if (typeof d.lat !== 'number' || typeof d.lon !== 'number') return null;
+    return {
+      ts: d.last_position_UTC || d.timestamp,
+      lat: d.lat,
+      lon: d.lon,
+      sog: typeof d.speed === 'number' ? d.speed : null,
+      cog: typeof d.course === 'number' ? d.course : null,
+      heading: typeof d.heading === 'number' ? d.heading : null,
+      nav_status: d.navigation_status || null,
+    };
+  } finally {
+    clearTimeout(to);
+  }
+}
+
+async function appendAisPosition(vid, mmsi, pos) {
+  if (!pos || !pos.ts) return false;
+  const date = pos.ts.slice(0, 10);
+  const file = path.join(AIS_DIR, `${vid}-${date}.json`);
+  let rec;
+  try {
+    rec = JSON.parse(await fs.readFile(file, 'utf8'));
+  } catch {
+    rec = {
+      vessel_id: vid, mmsi, date_utc: date, positions: [],
+      source: { provider: 'datalastic', imported_at: new Date().toISOString(),
+                raw_query: 'datalastic /vessel_pro live' },
+    };
+  }
+  if (rec.positions.some(p => p.ts === pos.ts)) return false;
+  rec.positions.push(pos);
+  rec.positions.sort((a, b) => a.ts.localeCompare(b.ts));
+  const lats = rec.positions.map(p => p.lat);
+  const lons = rec.positions.map(p => p.lon);
+  rec.stats = {
+    count: rec.positions.length,
+    first_ts: rec.positions[0].ts,
+    last_ts:  rec.positions[rec.positions.length - 1].ts,
+    bbox: [Math.min(...lats), Math.min(...lons), Math.max(...lats), Math.max(...lons)],
+  };
+  rec.source.imported_at = new Date().toISOString();
+  await fs.mkdir(AIS_DIR, { recursive: true });
+  await fs.writeFile(file, JSON.stringify(rec, null, 2), 'utf8');
+  return true;
+}
+
+async function pollOnce() {
+  live.pollsThisSession += 1;
+  live.lastPollAt = new Date().toISOString();
+  live.lastError = null;
+  const env = loadEnvSync();
+  const apiKey = env.DATALASTIC_API_KEY;
+  if (!apiKey) {
+    live.lastError = 'DATALASTIC_API_KEY missing in .env';
+    bus.emit('live_status', liveSnapshot());
+    return;
+  }
+  let anyNew = false;
+  for (const vid of VESSEL_IDS) {
+    const mmsi = env[`AIS_MMSI_${vid}`];
+    if (!mmsi) continue;
+    let pos;
+    try { pos = await fetchVesselPro(apiKey, mmsi); }
+    catch (e) {
+      live.lastError = `${vid}: ${String(e.message).slice(0, 160)}`;
+      continue;
+    }
+    if (!pos) continue;
+    const prev = live.lastPositions[vid];
+    const isNewTs = !prev || prev.ts !== pos.ts;
+    live.lastPositions[vid] = pos;
+    if (isNewTs) {
+      await appendAisPosition(vid, mmsi, pos);
+      live.newPositionsThisSession += 1;
+      bus.emit('live_position', { vessel_id: vid, mmsi, position: pos });
+      anyNew = true;
+    }
+  }
+  if (anyNew) {
+    try { await rebuildAisIndex(); } catch {}
+  }
+  bus.emit('live_status', liveSnapshot());
+}
+
+async function rebuildAisIndex() {
+  const files = (await fs.readdir(AIS_DIR).catch(() => []))
+    .filter(f => f.endsWith('.json') && f !== 'index.json');
+  const rows = [];
+  for (const f of files) {
+    try {
+      const rec = JSON.parse(await fs.readFile(path.join(AIS_DIR, f), 'utf8'));
+      rows.push({
+        vessel_id: rec.vessel_id, date_utc: rec.date_utc,
+        file: `ais-history/${f}`,
+        positions: (rec.positions || []).length,
+        provider: (rec.source || {}).provider || null,
+      });
+    } catch {}
+  }
+  rows.sort((a, b) => a.date_utc.localeCompare(b.date_utc) || a.vessel_id.localeCompare(b.vessel_id));
+  await fs.writeFile(path.join(AIS_DIR, 'index.json'), JSON.stringify({ tracks: rows }, null, 2), 'utf8');
+}
+
+function startLive(intervalMs) {
+  if (live.running) return;
+  live.running = true;
+  live.intervalMs = Math.max(60_000, intervalMs || LIVE_DEFAULT_INTERVAL_MS);
+  live.pollsThisSession = 0;
+  live.newPositionsThisSession = 0;
+  live.timer = setInterval(() => { pollOnce().catch(e => console.error('[live] poll failed:', e)); },
+                           live.intervalMs);
+  // Fire one immediately so the user sees a response right after clicking.
+  pollOnce().catch(e => console.error('[live] poll failed:', e));
+  bus.emit('live_status', liveSnapshot());
+}
+
+function stopLive() {
+  if (live.timer) clearInterval(live.timer);
+  live.timer = null;
+  live.running = false;
+  bus.emit('live_status', liveSnapshot());
+}
+
+function liveSnapshot() {
+  return {
+    running: live.running,
+    interval_ms: live.intervalMs,
+    last_poll_at: live.lastPollAt,
+    last_error: live.lastError,
+    polls_this_session: live.pollsThisSession,
+    new_positions_this_session: live.newPositionsThisSession,
+    vessels: Object.keys(live.lastPositions),
+  };
+}
 
 // ---------------------------------------------------------------------------
 // Static file serving
@@ -238,7 +417,7 @@ async function handleApi(req, res, url) {
     }
   }
 
-  // GET /api/stream (SSE)
+  // GET /api/stream (SSE) — emits report_saved + live_position + live_status
   if (req.method === 'GET' && url.pathname === '/api/stream') {
     res.writeHead(200, {
       'Content-Type': 'text/event-stream',
@@ -246,16 +425,39 @@ async function handleApi(req, res, url) {
       'Connection': 'keep-alive',
     });
     res.write('retry: 2000\n\n');
-    const onSaved = (payload) => {
-      res.write(`event: report_saved\ndata: ${JSON.stringify(payload)}\n\n`);
-    };
+    const onSaved    = (p) => res.write(`event: report_saved\ndata: ${JSON.stringify(p)}\n\n`);
+    const onPosition = (p) => res.write(`event: live_position\ndata: ${JSON.stringify(p)}\n\n`);
+    const onStatus   = (p) => res.write(`event: live_status\ndata: ${JSON.stringify(p)}\n\n`);
     bus.on('report_saved', onSaved);
+    bus.on('live_position', onPosition);
+    bus.on('live_status',   onStatus);
+    // Send current live snapshot on connect so the UI can sync.
+    onStatus(liveSnapshot());
     const keepalive = setInterval(() => res.write(': keep-alive\n\n'), 25000);
     req.on('close', () => {
       clearInterval(keepalive);
       bus.off('report_saved', onSaved);
+      bus.off('live_position', onPosition);
+      bus.off('live_status',   onStatus);
     });
     return;
+  }
+
+  // GET /api/live              -> current live polling status
+  if (req.method === 'GET' && url.pathname === '/api/live') {
+    return send(res, 200, liveSnapshot());
+  }
+  // POST /api/live/start       -> start polling.  body: { interval_ms? }
+  if (req.method === 'POST' && url.pathname === '/api/live/start') {
+    let body = {};
+    try { body = await readJsonBody(req); } catch {}
+    startLive(Number(body.interval_ms) || LIVE_DEFAULT_INTERVAL_MS);
+    return send(res, 200, liveSnapshot());
+  }
+  // POST /api/live/stop        -> stop polling
+  if (req.method === 'POST' && url.pathname === '/api/live/stop') {
+    stopLive();
+    return send(res, 200, liveSnapshot());
   }
 
   send(res, 404, { error: 'api route not found' });

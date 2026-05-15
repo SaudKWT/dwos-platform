@@ -1171,7 +1171,10 @@ function relativeAgo(ts) {
 }
 
 function render() {
-  if (state.liveMode) return renderLive();
+  // Datalastic live: positions land in state.aisTracksByVid and the normal
+  // render() path (via positionAt + AIS overlay) handles them — no fork
+  // needed.  (The legacy AISStream renderLive() is parked; AISStream has no
+  // Persian Gulf coverage.)
 
   const t = state.currentTime;
   document.getElementById('clock').textContent = toKuwaitStr(t);
@@ -1344,22 +1347,33 @@ function setupControls() {
 
   const btnLive = document.getElementById('btnLive');
   if (btnLive) {
-    btnLive.addEventListener('click', () => {
+    btnLive.addEventListener('click', async () => {
+      // Datalastic-driven live (replaces the old AISStream WebSocket path —
+      // that's parked because AISStream has no Persian Gulf coverage).
       if (state.liveMode) {
-        stopLiveTracking();
+        await stopLiveDatalastic();
       } else {
         if (state.playing) {
           state.playing = false;
           document.getElementById('btnPlay').textContent = '▶ Play';
         }
-        startLiveTracking();
+        await startLiveDatalastic();
       }
     });
   }
+  // Refresh the "last poll N seconds ago" line once per second while live.
+  setInterval(() => {
+    if (state.liveMode && state.liveStatus) updateLiveUi(formatLiveStatus(state.liveStatus));
+  }, 1000);
 
   // Refresh "Last AIS: X ago" once a second while in live mode, even if no new
   // messages have arrived.
-  setInterval(() => { if (state.liveMode) renderLive(); }, 1000);
+  setInterval(() => {
+    if (state.liveMode) {
+      state.currentTime = new Date();   // keep clock pinned to "now"
+      render();
+    }
+  }, 1000);
 
   document.getElementById('btnPrevHour').addEventListener('click', () => stepTime(-3600));
   document.getElementById('btnNextHour').addEventListener('click', () => stepTime(3600));
@@ -1442,19 +1456,20 @@ function rebuildAndRefresh() {
   render();
 }
 
-// Subscribe to dashboard submissions via Server-Sent Events.  Whenever a
-// captain saves a new report, re-fetch it, re-build that vessel's segments,
-// and immediately re-render — no page reload required.
+// Subscribe to server events: dashboard submissions, live polling updates,
+// and live status.  Single EventSource for all of them — multiplexed by event
+// name on the server side (see server.mjs).
 function subscribeToReportStream() {
   let es;
   try { es = new EventSource('/api/stream'); }
   catch (e) { console.warn('[reports] EventSource unavailable:', e); return; }
+
+  // --- Dashboard report saved ---
   es.addEventListener('report_saved', async (evt) => {
     try {
       const { vessel_id, report_date } = JSON.parse(evt.data);
       const rec = await fetch(`/api/reports/${vessel_id}/${report_date}`).then(r => r.ok ? r.json() : null);
       if (!rec) return;
-      // Replace any existing record for this (vid, date)
       const existing = (state.reportsByVid[vessel_id] ||= []);
       const ix = existing.findIndex(r => r.report_date === rec.report_date);
       if (ix >= 0) existing[ix] = rec; else existing.push(rec);
@@ -1467,8 +1482,98 @@ function subscribeToReportStream() {
       console.warn('[reports] could not apply update:', e);
     }
   });
-  es.onerror = () => { /* EventSource auto-reconnects; nothing to do */ };
+
+  // --- Datalastic live poll: a fresh position arrived ---
+  es.addEventListener('live_position', (evt) => {
+    try {
+      const { vessel_id, position } = JSON.parse(evt.data);
+      if (!position || !position.ts) return;
+      const ts = new Date(position.ts);
+      if (isNaN(ts)) return;
+      const bucket = (state.aisTracksByVid[vessel_id] ||= []);
+      // Dedup by exact timestamp.
+      if (bucket.some(p => p.ts.getTime() === ts.getTime())) return;
+      bucket.push({ ts, lat: position.lat, lon: position.lon, sog: position.sog, cog: position.cog });
+      bucket.sort((a, b) => a.ts - b.ts);
+      // Auto-jump the clock to "now" when live mode is on, so the user sees
+      // the vessel snap to its fresh position instead of staring at an old time.
+      if (state.liveMode) state.currentTime = new Date();
+      rebuildAndRefresh();
+    } catch (e) {
+      console.warn('[live] could not apply position:', e);
+    }
+  });
+
+  // --- Datalastic live status updates ---
+  es.addEventListener('live_status', (evt) => {
+    try {
+      const s = JSON.parse(evt.data);
+      state.liveStatus = s;
+      // Reconcile state.liveMode with the server's running flag — if the
+      // server is polling but the UI thinks live is off (or vice versa), the
+      // server is authoritative because it's the one burning credits.
+      state.liveMode = !!s.running;
+      updateLiveUi(formatLiveStatus(s));
+    } catch (e) { /* ignore */ }
+  });
+
+  es.onerror = () => { /* EventSource auto-reconnects */ };
   state.reportEventSource = es;
+}
+
+function formatLiveStatus(s) {
+  if (!s) return 'Off';
+  if (s.last_error) return `Error: ${s.last_error}`;
+  if (!s.running) {
+    if (s.polls_this_session) {
+      return `Stopped · last session ${s.polls_this_session} polls, ${s.new_positions_this_session} new`;
+    }
+    return 'Off';
+  }
+  const ageS = s.last_poll_at
+    ? Math.max(0, Math.round((Date.now() - new Date(s.last_poll_at).getTime()) / 1000))
+    : null;
+  const ageTxt = ageS === null ? 'polling…'
+    : ageS < 60 ? `last poll ${ageS}s ago`
+    : `last poll ${Math.floor(ageS / 60)}m ${ageS % 60}s ago`;
+  const intMin = Math.round(s.interval_ms / 60_000);
+  return `Live (Datalastic, ${intMin} min) · ${ageTxt} · ${s.new_positions_this_session} new this session`;
+}
+
+// --- New live-mode entry points: drive Datalastic via the server ---
+async function startLiveDatalastic() {
+  try {
+    state.playing = false;
+    // Force AIS overlay on so the live position snaps the dot; also tick the
+    // checkbox so the user sees the state matches the data they're now seeing.
+    state.aisOverlayEnabled = true;
+    const cb = document.getElementById('cbAisTrack');
+    if (cb) { cb.checked = true; cb.disabled = false; }
+    // Pin the clock to "now" — every fresh position should re-pin (handled in
+    // the live_position SSE listener).
+    state.currentTime = new Date();
+    drawRoutes();
+    render();
+
+    const r = await fetch('/api/live/start', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ interval_ms: 120_000 }),
+    });
+    if (!r.ok) {
+      const j = await r.json().catch(() => ({}));
+      alert('Could not start live: ' + (j.error || r.statusText));
+      return false;
+    }
+    return true;
+  } catch (e) {
+    alert('Could not start live: ' + e.message);
+    return false;
+  }
+}
+
+async function stopLiveDatalastic() {
+  try { await fetch('/api/live/stop', { method: 'POST' }); } catch {}
 }
 
 async function main() {
