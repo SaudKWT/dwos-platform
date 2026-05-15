@@ -807,10 +807,20 @@ function initMap() {
 }
 
 function drawRoutes() {
-  // Clear existing
+  // Clear BOTH layers first — the "Show routes" toggle hides both the
+  // planned/interpolated dashed lines AND the real-AIS trail.  The early
+  // return below previously skipped the AIS clear, which left cyan lines
+  // stranded on the map when the user unticked Show routes.
   state.routePolylines.forEach(p => state.map.removeLayer(p));
   state.routePolylines = [];
-  if (!state.showRoutes) return;
+  if (state.aisLayers) {
+    state.aisLayers.forEach(l => state.map.removeLayer(l));
+  }
+  state.aisLayers = [];
+
+  if (!state.showRoutes) return;  // both layers hidden
+
+  // Layer 1: planned/interpolated routes from daily reports (thin dashed)
   for (const vid in state.timelines) {
     const v = state.vesselsById[vid];
     const segs = state.timelines[vid].filter(s => s.type === 'transit');
@@ -826,6 +836,7 @@ function drawRoutes() {
       state.routePolylines.push(p);
     }
   }
+  // Layer 2: real AIS trail (only if its toggle is also on)
   drawAisTracks();
 }
 
@@ -833,14 +844,13 @@ function drawRoutes() {
 // the overlay on, draw the keyframe trail.  Different visual language from the
 // planned routes (solid + thicker + dot at every fix) so the eye can tell at a
 // glance which path is from the captain's log and which is real AIS truth.
+//
+// Note: clearing the previous AIS polylines is done by drawRoutes() — call
+// that, not this function directly, when toggling state.  This function only
+// DRAWS; it expects state.aisLayers to be empty when entered.
 function drawAisTracks() {
-  // Clear previous AIS polylines/markers (they live in routePolylines too so
-  // toggling Show routes also clears them — that's intentional).
-  if (state.aisLayers) {
-    state.aisLayers.forEach(l => state.map.removeLayer(l));
-  }
-  state.aisLayers = [];
-  if (!state.aisOverlayEnabled) return;
+  if (!state.aisOverlayEnabled || !state.showRoutes) return;
+  state.aisLayers = state.aisLayers || [];
   for (const vid in state.aisTracksByVid) {
     const v = state.vesselsById[vid];
     if (!v) continue;
