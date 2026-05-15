@@ -815,6 +815,56 @@ function drawRoutes() {
       state.routePolylines.push(p);
     }
   }
+  drawAisTracks();
+}
+
+// AIS-history overlay: when the user has imported real positions and toggled
+// the overlay on, draw the keyframe trail.  Different visual language from the
+// planned routes (solid + thicker + dot at every fix) so the eye can tell at a
+// glance which path is from the captain's log and which is real AIS truth.
+function drawAisTracks() {
+  // Clear previous AIS polylines/markers (they live in routePolylines too so
+  // toggling Show routes also clears them — that's intentional).
+  if (state.aisLayers) {
+    state.aisLayers.forEach(l => state.map.removeLayer(l));
+  }
+  state.aisLayers = [];
+  if (!state.aisOverlayEnabled) return;
+  for (const vid in state.aisTracksByVid) {
+    const v = state.vesselsById[vid];
+    if (!v) continue;
+    const track = state.aisTracksByVid[vid];
+    if (!track || track.length < 1) continue;
+    // Polyline through the keyframes
+    if (track.length >= 2) {
+      const line = L.polyline(track.map(p => [p.lat, p.lon]), {
+        color: v.color,
+        weight: 3,
+        opacity: 0.85,
+        lineCap: 'round',
+        className: 'ais-track-line',
+      }).addTo(state.map);
+      line.bindTooltip(`${v.name} — real AIS keyframes (${track.length})`, { sticky: true });
+      state.aisLayers.push(line);
+    }
+    // Small dot at every keyframe so the granularity is visible
+    for (const p of track) {
+      const dot = L.circleMarker([p.lat, p.lon], {
+        radius: 3,
+        color: v.stroke || '#222',
+        weight: 1,
+        fillColor: v.color,
+        fillOpacity: 1,
+        className: 'ais-keyframe-dot',
+      }).addTo(state.map);
+      dot.bindTooltip(
+        `${v.name} · ${new Date(p.ts).toISOString().replace('T', ' ').slice(0, 16)} UTC` +
+        (typeof p.sog === 'number' ? ` · ${p.sog.toFixed(1)} kts` : ''),
+        { sticky: true }
+      );
+      state.aisLayers.push(dot);
+    }
+  }
 }
 
 function applyAntiOverlap(positions) {
@@ -1123,6 +1173,8 @@ function render() {
       marker.setLatLng([pos.lat, pos.lon]);
       const el = marker.getElement();
       if (el) {
+        // Tag the marker so CSS can give an AIS-sourced vessel a distinctive halo.
+        el.classList.toggle('is-ais-source', !!pos.ais);
         const body = el.querySelector('.vessel-body');
         if (body) body.style.transform = `rotate(${pos.heading || 0}deg)`;
       }
@@ -1205,9 +1257,25 @@ function vesselCardHtml(v, pos) {
   const nextHtml = next
     ? `<div class="next">Next: ${state.locsById[next.from].short} → ${state.locsById[next.to].short} @ ${toKuwaitStr(next.t0)}</div>`
     : '<div class="next">No further planned movements.</div>';
+
+  // Position source badge — tells the user whether the dot on the map is from
+  // real AIS or interpolated from the captain's daily-report timeline.
+  let sourceHtml = '';
+  if (state.aisOverlayEnabled) {
+    if (pos.ais) {
+      const nearest = nearestAisPoint(v.id, state.currentTime);
+      const ago = nearest ? Math.round(Math.abs(state.currentTime - nearest.ts) / 60000) : null;
+      sourceHtml = `<div class="source ais">📡 Position: <b>real AIS</b>` +
+        (ago !== null ? ` · nearest fix ${ago} min ${nearest.ts < state.currentTime ? 'before' : 'after'} now` : '') +
+        `</div>`;
+    } else {
+      sourceHtml = `<div class="source report">📝 Position: <b>interpolated from daily report</b> · no AIS within ±30 min</div>`;
+    }
+  }
   return `<div class="vessel-card" style="--vc:${v.color}">
     <div class="name">${v.name} <span class="sub">${v.length_m}×${v.beam_m} m · ${v.speed_kts} kts</span></div>
     <div class="status">${statusHtml}</div>
+    ${sourceHtml}
     <div class="meta">${metaHtml}</div>
     ${nextHtml}
     ${s && s.raw ? `<div class="raw">${s.raw}</div>` : ''}
@@ -1299,6 +1367,7 @@ function setupControls() {
     }
     aisCb.addEventListener('change', e => {
       state.aisOverlayEnabled = e.target.checked;
+      drawRoutes();   // redraws the AIS trail polylines/keyframe dots
       render();
     });
   }
