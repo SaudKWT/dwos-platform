@@ -1,0 +1,238 @@
+{
+  "consumables": {
+    "fuel_oil": {
+      "max_capacity": "4.559 M3",
+      "consumed": "-         497.075",
+      "discharged": "M3",
+      "rob": "452.925 M3",
+      "remaining_to_load": "-\n                                   (85%)",
+      "loaded": "Rx",
+      "remarks": ""
+    }
+  },
+  "task_log": [
+    {
+      "from_time": "00:01",
+      "to_time": "05:12",
+      "duration_min": 312,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "Vsl anchorage safe area, Rig OPH , waiting instruction",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "05:12",
+      "to_time": "05:20",
+      "duration_min": 8,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "SBE",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "05:20",
+      "to_time": "05:30",
+      "duration_min": 10,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Anchor aweigh",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "05:30",
+      "to_time": "05:40",
+      "duration_min": 10,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Arrived OPH,DP on",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "05:40",
+      "to_time": "06:00",
+      "duration_min": 20,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Enter 500 mz, granted",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "06:00",
+      "to_time": "06:15",
+      "duration_min": 15,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Vsl in position port side OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "06:15",
+      "to_time": "08:45",
+      "duration_min": 150,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Deck cargo ops",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:45",
+      "to_time": "09:00",
+      "duration_min": 15,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Pull out shifting to starboard side",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:00",
+      "to_time": "09:20",
+      "duration_min": 20,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Vsl in position starboard side M,O,B Watch",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:20",
+      "to_time": "12:30",
+      "duration_min": 190,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Proceed to starboard side",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:30",
+      "to_time": "12:55",
+      "duration_min": 25,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Vsl in position starboard side OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:55",
+      "to_time": "13:50",
+      "duration_min": 55,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Deck cargo ops",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:50",
+      "to_time": "17:30",
+      "duration_min": 220,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Pull out.",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "17:30",
+      "to_time": "17:40",
+      "duration_min": 10,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Clear 500 mz, DP off departure to Shuaiba",
+      "location_id": "B20",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "17:40",
+      "to_time": "20:40",
+      "duration_min": 180,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "Vsl underway to Shuaiba",
+      "location_id": "B20",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "20:40",
+      "to_time": "21:00",
+      "duration_min": 20,
+      "task_code": "S04",
+      "task_label": "Standby Shuaiba port",
+      "description": "Vsl secured berth 20 Shuaiba port, F.W.E",
+      "location_id": "B20",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "21:00",
+      "to_time": "24:00",
+      "duration_min": 180,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Off sign AB Putra disembarked, vsl secured berth 20 waiting",
+      "location_id": "B20",
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {
+    "accidents": "Nil",
+    "incidents": "Nil",
+    "near_miss": "Nil"
+  },
+  "provisions": {
+    "dry_store_days": 14,
+    "fresh_frozen_days": 14,
+    "drinking_water_days": 14,
+    "fuel_oil_unpumpable": "20 M3"
+  },
+  "delays": {
+    "arrival_time": "NA",
+    "departure_time": "NA"
+  },
+  "lifts": {},
+  "report_date": "2026-05-09",
+  "voyage_no": "61",
+  "issues_comments": "Remaining Provisions Store On-board\n      Dry Store             : 14 Days\n      Fresh & Frozen Store: 14 Days\n      Drinking Water        : 14 Days\n      FO Unpumpable : 20 M3\n      Durability for safe operation :\n      Delay Arrival Time  : NA\n      Delay Departure Time : NA",
+  "accident_summary": "Nil",
+  "compiled_by": {
+    "name": "Aprio Karya",
+    "role": "Master"
+  },
+  "vessel_id": "CA5",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CREST ARGUS 5 - Daily Midnight Report - 08.05.2026",
+    "email_from": "Crest Argus5 | OFCO <crestargus5@ofco-int.com>",
+    "email_date": "2026-05-09T21:58:32+00:00",
+    "attachment_name": "Crest Argus 5_Daily vessel report _09.05.2026.pdf",
+    "submitted_via": "historical_import"
+  }
+}

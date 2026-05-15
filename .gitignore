@@ -9,3 +9,9 @@ node_modules/
 config.local.js
 secrets/
 
+# Captain mailbox archive — contains real PII (names, phone numbers, emails)
+Vessels daily report/
+
+# Python tooling cache
+__pycache__/
+*.pyc

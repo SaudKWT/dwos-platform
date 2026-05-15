@@ -68,17 +68,223 @@ function bearingDeg(a, b) {
 }
 
 async function loadData() {
-  const [loc, ves, plans] = await Promise.all([
+  const [loc, ves] = await Promise.all([
     fetch('data/locations.json').then(r => r.json()),
     fetch('data/vessels.json').then(r => r.json()),
-    fetch('data/plans.json').then(r => r.json()),
   ]);
   state.locs = loc.locations;
   state.locsById = Object.fromEntries(state.locs.map(l => [l.id, l]));
   state.vessels = ves.vessels;
   state.vesselsById = Object.fromEntries(state.vessels.map(v => [v.id, v]));
   state.defaults = ves.defaults;
-  state.plans = plans.plans;
+
+  // New source of truth: parsed captains' daily reports.  The API serves an
+  // index + one JSON per (vessel, date).  Fallback to the old plans.json
+  // only if the daily-reports tree is empty.
+  state.reports = [];
+  state.reportsByVid = {};
+  try {
+    const idx = await fetch('/api/reports').then(r => r.ok ? r.json() : null);
+    if (idx && Array.isArray(idx.reports) && idx.reports.length) {
+      const records = await Promise.all(
+        idx.reports.map(r => fetch(`/api/reports/${r.vessel_id}/${r.report_date}`)
+          .then(rr => rr.ok ? rr.json() : null))
+      );
+      state.reports = records.filter(Boolean);
+      for (const r of state.reports) {
+        (state.reportsByVid[r.vessel_id] ||= []).push(r);
+      }
+      for (const vid in state.reportsByVid) {
+        state.reportsByVid[vid].sort((a, b) => a.report_date.localeCompare(b.report_date));
+      }
+    }
+  } catch (e) {
+    console.warn('[reports] could not load from /api/reports — falling back to plans.json:', e);
+  }
+
+  if (!state.reports.length) {
+    // Legacy fallback: original PDF-derived movement plans.
+    try {
+      const plans = await fetch('data/plans.json').then(r => r.json());
+      state.plans = plans.plans;
+      state.legacy = true;
+    } catch (e) {
+      state.plans = [];
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Timeline builder: captains' daily reports → per-vessel transit/moored segments.
+// Each report's `task_log` row becomes a segment; consecutive moored segments
+// at the same location are merged so the timeline stays readable.
+// ----------------------------------------------------------------------------
+
+const TRANSIT_CODES = new Set(['I01', 'I02']);
+
+function parseTaskTime(reportDate, hhmm) {
+  if (!hhmm) return null;
+  if (hhmm === '24:00') {
+    const d = new Date(reportDate + 'T00:00:00+03:00');
+    d.setUTCDate(d.getUTCDate() + 1);
+    return d;
+  }
+  return parseLocalTime(`${reportDate}T${hhmm}`);
+}
+
+function codeIsTransit(code) {
+  if (!code) return false;
+  return code.split(/[/+]/).some(c => TRANSIT_CODES.has(c.trim()));
+}
+
+function rowsToSegments(reportDate, rows) {
+  // Sort by from_time (string compare is fine for HH:MM).
+  const sorted = [...rows].filter(r => r && r.from_time)
+    .sort((a, b) => a.from_time.localeCompare(b.from_time));
+  const out = [];
+  let prevKnownLoc = null;
+  for (let i = 0; i < sorted.length; i++) {
+    const r = sorted[i];
+    const t0 = parseTaskTime(reportDate, r.from_time);
+    let t1 = parseTaskTime(reportDate, r.to_time);
+    if (!t1) {
+      // Use the next row's from_time, or end-of-day, as the implicit end.
+      const next = sorted[i + 1];
+      t1 = next ? parseTaskTime(reportDate, next.from_time)
+                : parseTaskTime(reportDate, '24:00');
+    }
+    if (!t0 || !t1 || t1 <= t0) continue;
+
+    const transit = codeIsTransit(r.task_code);
+    const ll = r.location_id || null;
+    const from = r.from_location_id || prevKnownLoc || null;
+    const to   = r.to_location_id   || ll || null;
+
+    if (transit && from && to && from !== to) {
+      const fromLoc = state.locsById[from];
+      const toLoc   = state.locsById[to];
+      out.push({
+        type: 'transit',
+        t0, t1, from, to,
+        purpose: r.description || r.task_label || '',
+        raw: r.description || '',
+        task_code: r.task_code,
+        distance_nm: (fromLoc && toLoc) ? distNm(fromLoc, toLoc) : null,
+      });
+      prevKnownLoc = to;
+    } else if (transit && (from === to || !to)) {
+      // Transit row but we don't know where it's going. Hold position.
+      const loc = to || from || prevKnownLoc;
+      if (loc) {
+        out.push({
+          type: 'moored', t0, t1, loc,
+          purpose: r.description || r.task_label || '',
+          raw: r.description || '',
+          task_code: r.task_code,
+        });
+        prevKnownLoc = loc;
+      }
+    } else {
+      const loc = ll || prevKnownLoc;
+      if (loc) {
+        out.push({
+          type: 'moored', t0, t1, loc,
+          purpose: r.description || r.task_label || '',
+          raw: r.description || '',
+          task_code: r.task_code,
+        });
+        prevKnownLoc = loc;
+      }
+    }
+  }
+  return out;
+}
+
+function fillGapsWithMoored(segs) {
+  // Whenever there's a gap between consecutive segments (e.g. the captain
+  // explicitly logged a row ending at 06:42 but the next row starts at 07:10),
+  // bridge it with a "moored at the last-known location" segment so the map
+  // doesn't lose the vessel in between.
+  const out = [];
+  for (let i = 0; i < segs.length; i++) {
+    const s = segs[i];
+    const prev = out[out.length - 1];
+    if (prev && prev.t1.getTime() < s.t0.getTime()) {
+      const endLoc = prev.type === 'transit' ? prev.to : prev.loc;
+      if (endLoc) {
+        out.push({
+          type: 'moored',
+          t0: prev.t1,
+          t1: s.t0,
+          loc: endLoc,
+          purpose: 'STBY (gap fill)',
+          raw: null,
+          filler: true,
+        });
+      }
+    }
+    out.push(s);
+  }
+  return out;
+}
+
+function mergeRunsOfSameLoc(segs) {
+  // Merge consecutive moored segments that are at the same location.
+  // Keeps the human-readable "purpose" of the first segment in the run, but
+  // tags the merged block with how many sub-events it covered so the popup
+  // can hint at it.
+  const out = [];
+  for (const s of segs) {
+    const prev = out[out.length - 1];
+    if (prev && prev.type === 'moored' && s.type === 'moored' && prev.loc === s.loc
+        && prev.t1.getTime() === s.t0.getTime()) {
+      prev.t1 = s.t1;
+      prev.merged_count = (prev.merged_count || 1) + 1;
+      // Keep a comma-separated trail of sub-purposes (truncate to keep ui sane)
+      if (s.purpose && prev.purpose && !prev.purpose.includes(s.purpose)) {
+        if ((prev.purpose + '; ' + s.purpose).length < 240) {
+          prev.purpose = `${prev.purpose}; ${s.purpose}`;
+        }
+      }
+      continue;
+    }
+    out.push({ ...s });
+  }
+  return out;
+}
+
+function buildTimelinesFromReports() {
+  const tl = {};
+  state.vessels.forEach(v => { tl[v.id] = []; });
+
+  for (const vid in state.reportsByVid) {
+    const reports = state.reportsByVid[vid];
+    const segs = [];
+    for (const rep of reports) {
+      const rowsSegs = rowsToSegments(rep.report_date, rep.task_log || []);
+      segs.push(...rowsSegs);
+    }
+    segs.sort((a, b) => a.t0 - b.t0);
+    tl[vid] = mergeRunsOfSameLoc(fillGapsWithMoored(segs));
+  }
+  state.timelines = tl;
+
+  let minT = Infinity, maxT = -Infinity;
+  for (const vid in tl) {
+    for (const s of tl[vid]) {
+      if (s.t0 && s.t0.getTime() < minT) minT = s.t0.getTime();
+      if (s.t1 && s.t1.getTime() > maxT) maxT = s.t1.getTime();
+    }
+  }
+  if (!isFinite(minT) || !isFinite(maxT)) {
+    // No reports loaded. Pick today as a placeholder so the controls render.
+    const now = Date.now();
+    state.timelineStart = new Date(now - 24 * 3600 * 1000);
+    state.timelineEnd   = new Date(now + 24 * 3600 * 1000);
+  } else {
+    state.timelineStart = new Date(minT);
+    state.timelineEnd   = new Date(maxT + 6 * 3600 * 1000); // 6 h trailing pad
+  }
 }
 
 function buildTimelines() {
@@ -1040,12 +1246,57 @@ function animationLoop(nowMs) {
   requestAnimationFrame(animationLoop);
 }
 
+function rebuildAndRefresh() {
+  if (state.reports && state.reports.length) {
+    buildTimelinesFromReports();
+  } else {
+    buildTimelines();
+  }
+  const range = document.getElementById('dataRange');
+  if (range) range.textContent =
+    `${toKuwaitStr(state.timelineStart)} → ${toKuwaitStr(state.timelineEnd)}`;
+  render();
+}
+
+// Subscribe to dashboard submissions via Server-Sent Events.  Whenever a
+// captain saves a new report, re-fetch it, re-build that vessel's segments,
+// and immediately re-render — no page reload required.
+function subscribeToReportStream() {
+  let es;
+  try { es = new EventSource('/api/stream'); }
+  catch (e) { console.warn('[reports] EventSource unavailable:', e); return; }
+  es.addEventListener('report_saved', async (evt) => {
+    try {
+      const { vessel_id, report_date } = JSON.parse(evt.data);
+      const rec = await fetch(`/api/reports/${vessel_id}/${report_date}`).then(r => r.ok ? r.json() : null);
+      if (!rec) return;
+      // Replace any existing record for this (vid, date)
+      const existing = (state.reportsByVid[vessel_id] ||= []);
+      const ix = existing.findIndex(r => r.report_date === rec.report_date);
+      if (ix >= 0) existing[ix] = rec; else existing.push(rec);
+      existing.sort((a, b) => a.report_date.localeCompare(b.report_date));
+      state.reports = Object.values(state.reportsByVid).flat();
+      rebuildAndRefresh();
+      const ind = document.getElementById('liveStatus');
+      if (ind) ind.textContent = `Updated from dashboard: ${vessel_id} ${report_date}`;
+    } catch (e) {
+      console.warn('[reports] could not apply update:', e);
+    }
+  });
+  es.onerror = () => { /* EventSource auto-reconnects; nothing to do */ };
+  state.reportEventSource = es;
+}
+
 async function main() {
   try {
     state.theme = localStorage.getItem('vesselSimTheme') || 'dark';
     document.documentElement.dataset.theme = state.theme;
     await loadData();
-    buildTimelines();
+    if (state.reports && state.reports.length) {
+      buildTimelinesFromReports();
+    } else {
+      buildTimelines();
+    }
     state.currentTime = state.timelineStart;
     initMap();
     renderLegend();
@@ -1058,6 +1309,7 @@ async function main() {
     if (state.map.getZoom() < 9) state.map.setZoom(10);
     render();
     requestAnimationFrame(animationLoop);
+    subscribeToReportStream();
   } catch (err) {
     console.error(err);
     document.body.innerHTML = `<pre style="padding:20px;color:#ff6b6b">${err.stack || err.message || err}</pre>`;
