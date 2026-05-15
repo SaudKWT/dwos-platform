@@ -305,6 +305,17 @@ function buildTimelinesFromReports() {
       if (s.t1 && s.t1.getTime() > maxT) maxT = s.t1.getTime();
     }
   }
+  // Also include AIS keyframes — newly-polled positions may extend past the
+  // daily-report timeline (e.g. JUNO at 2026-05-15 when the last report is
+  // 2026-05-12).  Without this the slider can't reach the polled data and
+  // the halo can never appear at those times.
+  for (const vid in state.aisTracksByVid) {
+    for (const p of state.aisTracksByVid[vid]) {
+      const t = p.ts.getTime();
+      if (t < minT) minT = t;
+      if (t > maxT) maxT = t;
+    }
+  }
   if (!isFinite(minT) || !isFinite(maxT)) {
     // No reports loaded. Pick today as a placeholder so the controls render.
     const now = Date.now();
