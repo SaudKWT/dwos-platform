@@ -156,19 +156,6 @@ aside h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; c
 .tag.moored { background: var(--tag-moored-bg); color: var(--tag-moored-fg); }
 .tag.transit { background: var(--tag-transit-bg); color: var(--tag-transit-fg); }
 .tag.unknown { background: var(--tag-unknown-bg); color: var(--tag-unknown-fg); }
-.tag.learned {
-  background: rgba(0, 208, 255, 0.16);
-  color: #00aac9;
-  border: 1px solid rgba(0, 208, 255, 0.4);
-  font-weight: 600;
-}
-[data-theme="dark"] .tag.learned { color: #5cd6ff; }
-
-/* Learned-from-AIS route polyline gets a subtle glow so the curved real
-   path is easier to distinguish from the dashed nominal straight line. */
-.leaflet-overlay-pane path.route-learned {
-  filter: drop-shadow(0 0 3px rgba(0, 208, 255, 0.35));
-}
 
 .leaflet-tile-pane { filter: var(--tile-filter); }
 

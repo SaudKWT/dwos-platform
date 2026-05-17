@@ -906,11 +906,12 @@ function drawRoutes() {
 
   if (!state.showRoutes) return;  // both layers hidden
 
-  // Layer 1: planned/interpolated routes from daily reports.  When we have
-  // a learned-from-AIS polyline for this (vessel, from, to), draw a curved
-  // path through the real waypoints — still thin/dashed so the eye reads it
-  // as "story section" rather than truth, but at least it follows the real
-  // path the vessel takes instead of a straight rhumb line.
+  // Layer 1: story routes from the daily reports.  Every one of these is
+  // "captain's narrative," so they all look the same — thin dashed lines in
+  // each vessel's colour.  When we've learned the real shape from AIS the
+  // polyline curves to match; when we haven't, it's a straight from→to.
+  // No visual differentiation between learned and nominal here on purpose:
+  // the only difference is the SHAPE of the path, not its style.
   const seenRoutes = new Set();
   for (const vid in state.timelines) {
     const v = state.vesselsById[vid];
@@ -926,16 +927,10 @@ function drawRoutes() {
         : [[from.lat, from.lon], [to.lat, to.lon]];
       const p = L.polyline(path, {
         color: v.color,
-        weight: s.polyline ? 2.5 : 1.5,
-        opacity: s.polyline ? 0.55 : 0.35,
-        dashArray: s.polyline ? null : '3,5',
-        className: s.polyline ? 'route-learned' : 'route-planned',
+        weight: 1.5,
+        opacity: 0.35,
+        dashArray: '3,5',
       }).addTo(state.map);
-      if (s.polyline) {
-        p.bindTooltip(
-          `${v.name} ${s.from} → ${s.to} · learned from AIS`,
-          { sticky: true });
-      }
       state.routePolylines.push(p);
     }
   }
@@ -1378,11 +1373,8 @@ function vesselCardHtml(v, pos) {
     const from = state.locsById[s.from];
     const to = state.locsById[s.to];
     const frac = Math.min(1, Math.max(0, (state.currentTime - s.t0) / (s.t1 - s.t0)));
-    const learnedBadge = s.polyline
-      ? ' <span class="tag learned" title="Route shape learned from real AIS history">📈 real route</span>'
-      : '';
     const tag = s.repositioning ? '<span class="tag transit">Repositioning</span>' : '<span class="tag transit">Transit</span>';
-    statusHtml = `${tag} ${from.short} → ${to.short} (${Math.round(frac*100)}%)${learnedBadge}`;
+    statusHtml = `${tag} ${from.short} → ${to.short} (${Math.round(frac*100)}%)`;
     const durHr = (s.t1 - s.t0) / 3600000;
     // If we've learned this vessel's real cruise speed from AIS, show it
     // alongside the nominal spec speed so the user sees both.
