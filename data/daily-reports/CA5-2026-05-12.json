@@ -13,7 +13,7 @@
   "task_log": [
     {
       "from_time": "00:01",
-      "to_time": "7:00",
+      "to_time": "07:00",
       "duration_min": 420,
       "task_code": "S04",
       "task_label": "Standby Shuaiba port",
@@ -34,8 +34,8 @@
       "to_location_id": null
     },
     {
-      "from_time": "7:05",
-      "to_time": "7:07",
+      "from_time": "07:05",
+      "to_time": "07:07",
       "duration_min": 2,
       "task_code": "L1F",
       "task_label": "Cargo ops Freeport",
@@ -45,8 +45,8 @@
       "to_location_id": null
     },
     {
-      "from_time": "7:07",
-      "to_time": "9:22",
+      "from_time": "07:07",
+      "to_time": "09:22",
       "duration_min": 135,
       "task_code": "L1F",
       "task_label": "Cargo ops Freeport",
@@ -56,8 +56,8 @@
       "to_location_id": null
     },
     {
-      "from_time": "7:11",
-      "to_time": "9:10",
+      "from_time": "07:11",
+      "to_time": "09:10",
       "duration_min": 119,
       "task_code": "L1F",
       "task_label": "Cargo ops Freeport",
@@ -67,8 +67,8 @@
       "to_location_id": null
     },
     {
-      "from_time": "7:21",
-      "to_time": "7:50",
+      "from_time": "07:21",
+      "to_time": "07:50",
       "duration_min": 29,
       "task_code": "L2E",
       "task_label": "Cargo ops",
@@ -78,8 +78,8 @@
       "to_location_id": null
     },
     {
-      "from_time": "9:15",
-      "to_time": "9:20",
+      "from_time": "09:15",
+      "to_time": "09:20",
       "duration_min": 5,
       "task_code": "L1F",
       "task_label": "Cargo ops Freeport",
@@ -89,8 +89,8 @@
       "to_location_id": null
     },
     {
-      "from_time": "9:20",
-      "to_time": "9:24",
+      "from_time": "09:20",
+      "to_time": "09:24",
       "duration_min": 4,
       "task_code": "L1F",
       "task_label": "Cargo ops Freeport",
@@ -100,8 +100,8 @@
       "to_location_id": null
     },
     {
-      "from_time": "9:24",
-      "to_time": "9:28",
+      "from_time": "09:24",
+      "to_time": "09:28",
       "duration_min": 4,
       "task_code": "S04",
       "task_label": "Standby Shuaiba port",
@@ -111,8 +111,8 @@
       "to_location_id": null
     },
     {
-      "from_time": "9:28",
-      "to_time": "9:30",
+      "from_time": "09:28",
+      "to_time": "09:30",
       "duration_min": 2,
       "task_code": "S04",
       "task_label": "Standby Shuaiba port",
@@ -122,8 +122,8 @@
       "to_location_id": null
     },
     {
-      "from_time": "9:30",
-      "to_time": "9:42",
+      "from_time": "09:30",
+      "to_time": "09:42",
       "duration_min": 12,
       "task_code": "I02",
       "task_label": "In transit (channel)",
@@ -133,7 +133,7 @@
       "to_location_id": null
     },
     {
-      "from_time": "9:42",
+      "from_time": "09:42",
       "to_time": "12:12",
       "duration_min": 150,
       "task_code": "I01",

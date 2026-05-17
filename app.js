@@ -167,12 +167,21 @@ const TRANSIT_CODES = new Set(['I01', 'I02']);
 
 function parseTaskTime(reportDate, hhmm) {
   if (!hhmm) return null;
-  if (hhmm === '24:00') {
+  // Defensive: source-PDF task logs sometimes have unpadded hours
+  // ("7:00" instead of "07:00").  The ISO date parser rejects them and
+  // returns Invalid Date, which silently breaks the vessel's whole
+  // timeline (CA5 12-May had 20 such fields).  Normalise here.
+  const m = /^\s*(\d{1,2})\s*:\s*(\d{2})\s*$/.exec(hhmm);
+  if (!m) return null;
+  const hh = parseInt(m[1], 10);
+  const mm = m[2];
+  if (hh === 24 && mm === '00') {
     const d = new Date(reportDate + 'T00:00:00+03:00');
     d.setUTCDate(d.getUTCDate() + 1);
     return d;
   }
-  return parseLocalTime(`${reportDate}T${hhmm}`);
+  if (hh > 23) return null;
+  return parseLocalTime(`${reportDate}T${String(hh).padStart(2, '0')}:${mm}`);
 }
 
 function codeIsTransit(code) {

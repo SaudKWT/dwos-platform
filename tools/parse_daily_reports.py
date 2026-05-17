@@ -211,8 +211,8 @@ def parse_juno_docx(docx_path: Path) -> dict:
                 continue
             # Heuristic: a task-log row starts with a time HH:MM or HH:MM-
             if len(cells) >= 5 and re.match(r"^\d{1,2}:\d{2}-?$", cells[0]):
-                from_t = cells[0].rstrip("-")
-                to_t = cells[1] if cells[1] and re.match(r"^\d{1,2}:\d{2}$", cells[1]) else None
+                from_t = _norm_time(cells[0].rstrip("-"))
+                to_t = _norm_time(cells[1]) if cells[1] and re.match(r"^\d{1,2}:\d{2}$", cells[1]) else None
                 hrs = cells[2] if cells[2] else None
                 code = cells[3]
                 desc = cells[4]
@@ -321,6 +321,10 @@ def _fix_time(s: str) -> str | None:
         return f"{int(m.group(1)):02d}:{m.group(2)}"
     return None
 
+# Same normalizer used by the docx (Allianz Juno) path so all emitted
+# from_time / to_time values are guaranteed HH:MM zero-padded.
+_norm_time = _fix_time
+
 
 def extract_task_log_block(text: str, vessel_id: str) -> list[dict]:
     """Parse the operational task log block from the Crest PDF layout text.
@@ -372,6 +376,10 @@ def _append_row(rows: list[dict], vessel_id: str,
                 hrs: str | None, code: str | None, desc: str) -> None:
     if not (from_t and code):
         return
+    # Zero-pad times.  Both Crest PDF layouts can yield "7:00" instead
+    # of "07:00" which the simulator's ISO parser later rejects.
+    from_t = _fix_time(from_t) or from_t
+    to_t   = _fix_time(to_t)   if to_t else None
     locs = find_locations(desc, vessel_id)
     rows.append({
         "from_time": from_t,
