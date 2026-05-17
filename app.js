@@ -1281,7 +1281,10 @@ function updateLiveUi(statusText) {
   const st = document.getElementById('liveStatus');
   if (btn) {
     btn.classList.toggle('active', state.liveMode);
-    btn.textContent = state.liveMode ? '■ Live (on)' : '● Live';
+    // Keep label short so it never wraps inside the narrow control row.
+    // Active state is conveyed by the green pill + pulsing dot in CSS.
+    btn.textContent = state.liveMode ? 'Live' : 'Live';
+    btn.setAttribute('aria-pressed', state.liveMode ? 'true' : 'false');
   }
   if (ind) ind.hidden = !state.liveMode;
   if (st) {

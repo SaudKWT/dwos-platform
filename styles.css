@@ -105,12 +105,34 @@ aside h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; c
 .controls button:hover { background: var(--bg-control-hover); }
 .controls button.primary { background: var(--primary); border-color: var(--primary); color: white; }
 .controls button.live-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   border-color: #2bb673; color: #2bb673;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 6px 14px;
+  white-space: nowrap;          /* keep "Live" on one line */
+  line-height: 1.1;
+}
+.controls button.live-btn::before {
+  /* Status dot inside the button — outline when off, solid when on */
+  content: "";
+  width: 9px; height: 9px; border-radius: 50%;
+  background: transparent;
+  box-shadow: inset 0 0 0 2px #2bb673;
+  transition: background 120ms ease;
 }
 .controls button.live-btn:hover { background: rgba(43,182,115,0.12); }
 .controls button.live-btn.active {
   background: #2bb673; color: white; border-color: #2bb673;
   box-shadow: 0 0 0 2px rgba(43,182,115,0.25);
+  text-transform: uppercase;
+}
+.controls button.live-btn.active::before {
+  background: #fff;
+  box-shadow: inset 0 0 0 2px #fff, 0 0 0 0 rgba(255,255,255,0.7);
+  animation: livePulse 1.4s ease-in-out infinite;
 }
 .controls .live-status { font-size: 11px; color: var(--text-faint); }
 
