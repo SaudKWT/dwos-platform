@@ -270,6 +270,104 @@ def find_transit_episodes(positions: list[dict]) -> list[dict]:
 
 
 # ---------------------------------------------------------------------------
+# Second pass: per-day port-to-port routes.
+# Rationale: Datalastic keyframes are sparse, so a single 8-hour trip often
+# splits into 3-4 cruise episodes the episode-based pass can't link.  But
+# if a vessel started a calendar day stationary at port X and ended it
+# stationary at port Y (≠ X), we know they made a trip — and every cruise
+# fix in between is a waypoint along the path, even with big AIS gaps.
+# ---------------------------------------------------------------------------
+
+def find_daily_routes(positions: list[dict]) -> list[dict]:
+    """Return episodes built by 'first stationary-at-port' → 'last
+    stationary-at-port' boundaries, one per calendar UTC day.
+
+    Skips days where:
+      * Both endpoints are at the same port (vessel stayed put).
+      * Either endpoint isn't a stationary fix within LOC_RADIUS of a known
+        location (we can't anchor the trip confidently).
+    """
+    episodes: list[dict] = []
+    if not positions:
+        return episodes
+
+    # Bucket by UTC date.
+    by_day: dict[str, list[dict]] = {}
+    for p in positions:
+        by_day.setdefault(p["ts"][:10], []).append(p)
+
+    for date, day_pos in sorted(by_day.items()):
+        day_pos = sorted(day_pos, key=lambda x: x["ts"])
+
+        # First stationary-at-port fix of the day.
+        from_id = None; from_idx = None
+        for i, p in enumerate(day_pos):
+            sog = p.get("sog") or 0
+            if sog <= STATIONARY_SOG_KT:
+                loc, _ = _infer_loc(p, LOC_RADIUS_NM)
+                if loc is not None:
+                    from_id, from_idx = loc, i
+                    break
+        if from_id is None:
+            continue
+
+        # Last stationary-at-port fix of the day, AFTER from_idx.
+        to_id = None; to_idx = None
+        for j in range(len(day_pos) - 1, from_idx, -1):
+            p = day_pos[j]
+            sog = p.get("sog") or 0
+            if sog <= STATIONARY_SOG_KT:
+                loc, _ = _infer_loc(p, LOC_RADIUS_NM)
+                if loc is not None:
+                    to_id, to_idx = loc, j
+                    break
+        if to_id is None or from_id == to_id:
+            continue
+
+        # Departure: last "at FROM" fix (we want the moment the vessel
+        # actually leaves the port radius, not the first wake-up at the
+        # berth).  Then collect every moving fix between departure and
+        # arrival as waypoints.
+        depart_idx = from_idx
+        for k in range(from_idx + 1, to_idx):
+            p = day_pos[k]
+            loc, _ = _infer_loc(p, LOC_RADIUS_NM)
+            if loc == from_id and (p.get("sog") or 0) <= APPROACH_SOG_KT:
+                depart_idx = k
+            else:
+                break
+        arrive_idx = to_idx
+        for k in range(to_idx - 1, depart_idx, -1):
+            p = day_pos[k]
+            loc, _ = _infer_loc(p, LOC_RADIUS_NM)
+            if loc == to_id and (p.get("sog") or 0) <= APPROACH_SOG_KT:
+                arrive_idx = k
+            else:
+                break
+
+        leg = day_pos[depart_idx:arrive_idx + 1]
+        if len(leg) < 2:
+            continue
+        t0 = parse_ts(leg[0]["ts"])
+        t1 = parse_ts(leg[-1]["ts"])
+        dur_min = (t1 - t0).total_seconds() / 60
+        if dur_min < 15:  # too short to be a real port-to-port trip
+            continue
+        speeds = [p.get("sog") for p in leg if p.get("sog") is not None]
+        mean_sog = statistics.mean(speeds) if speeds else 0
+
+        episodes.append({
+            "from_loc": from_id, "to_loc": to_id,
+            "t0": leg[0]["ts"], "t1": leg[-1]["ts"],
+            "duration_min": dur_min, "mean_sog_kt": mean_sog,
+            "n_fixes": len(leg),
+            "waypoints": [[p["lat"], p["lon"]] for p in leg],
+            "source": "daily",
+        })
+    return episodes
+
+
+# ---------------------------------------------------------------------------
 # Per-vessel & per-route aggregation
 # ---------------------------------------------------------------------------
 
@@ -288,8 +386,12 @@ def aggregate(by_vid: dict[str, list[dict]]) -> dict:
                 "sample_count": len(speeds),
             }
 
-        # Per-leg
+        # Per-leg — episode pass (short cruise runs)
         episodes = find_transit_episodes(positions)
+        # Daily-trip pass — catches sparse-keyframe routes the episode pass
+        # would miss (e.g. CA1 OD→OPH on 16-May spans 11 hours and 3 cruise
+        # episodes with hour-long AIS gaps between).
+        episodes += find_daily_routes(positions)
         for e in episodes:
             if not e["from_loc"] or not e["to_loc"] or e["from_loc"] == e["to_loc"]:
                 continue
