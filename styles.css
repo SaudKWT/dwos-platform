@@ -157,6 +157,175 @@ aside h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; c
 .tag.transit { background: var(--tag-transit-bg); color: var(--tag-transit-fg); }
 .tag.unknown { background: var(--tag-unknown-bg); color: var(--tag-unknown-fg); }
 
+/* Vessel card click affordance */
+.vessel-card { cursor: pointer; transition: transform 0.08s ease, box-shadow 0.08s ease; }
+.vessel-card:hover { transform: translateX(2px); }
+.vessel-card:focus-visible {
+  outline: 2px solid var(--vc, #fff);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   Vessel detail sheet — full-page big-font view, opened by tap
+   on a side-panel card.  Closed by ✕, backdrop click, or Escape.
+   ============================================================ */
+.vsheet[hidden] { display: none !important; }
+.vsheet {
+  position: fixed; inset: 0;
+  z-index: 9000;
+  display: flex; align-items: center; justify-content: center;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+body.vsheet-open { overflow: hidden; }
+.vsheet-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(8, 16, 26, 0.78);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.vsheet-panel {
+  position: relative;
+  width: min(1200px, 95vw);
+  max-height: 92vh;
+  overflow-y: auto;
+  background: #f4f6f8;
+  color: #1d2733;
+  border-radius: 14px;
+  border-top: 8px solid var(--vc, #f5b400);
+  box-shadow: 0 24px 48px rgba(0,0,0,0.55);
+  padding: 26px 32px 32px;
+}
+[data-theme="dark"] .vsheet-panel {
+  background: #0e1924;
+  color: #e7eef5;
+}
+
+.vsheet-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  padding-bottom: 16px;
+  margin-bottom: 22px;
+}
+[data-theme="dark"] .vsheet-header { border-bottom-color: rgba(255,255,255,0.08); }
+.vsheet-header h1 { margin: 0; font-size: 30px; letter-spacing: 0.2px; }
+.vsheet-header .sub { margin: 4px 0 0; font-size: 15px; color: #5b6b7c; }
+[data-theme="dark"] .vsheet-header .sub { color: #a8b8c9; }
+.vsheet-header .when { margin: 8px 0 0; font-size: 16px; font-weight: 500; }
+.vsheet-close {
+  background: transparent; color: inherit; border: 1px solid currentColor;
+  width: 38px; height: 38px; border-radius: 50%;
+  font-size: 18px; cursor: pointer; line-height: 1;
+}
+.vsheet-close:hover { background: rgba(0,0,0,0.06); }
+[data-theme="dark"] .vsheet-close:hover { background: rgba(255,255,255,0.08); }
+
+.vsheet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+  margin-bottom: 26px;
+}
+.vsheet-grid .card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+[data-theme="dark"] .vsheet-grid .card { background: #18242f; box-shadow: none; }
+.vsheet-grid .card h2 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--vc, #0d2540);
+}
+[data-theme="dark"] .vsheet-grid .card h2 { color: var(--vc); }
+.vsheet-grid .card ul { list-style: none; margin: 0; padding: 0; }
+.vsheet-grid .card li {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 6px 0;
+  border-bottom: 1px dotted rgba(0,0,0,0.07);
+  font-size: 17px;
+}
+.vsheet-grid .card li:last-child { border-bottom: 0; }
+[data-theme="dark"] .vsheet-grid .card li { border-bottom-color: rgba(255,255,255,0.07); }
+.vsheet-grid .card li span { color: #5b6b7c; font-size: 14px; }
+[data-theme="dark"] .vsheet-grid .card li span { color: #94a4b5; }
+.vsheet-grid .card li b { font-weight: 700; font-size: 17px; }
+.vsheet-grid .card li b.long { font-weight: 500; font-size: 15px; text-align: right; max-width: 60%; }
+
+.vsheet-tasks { margin-bottom: 22px; }
+.vsheet-tasks h2 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  color: var(--vc, #0d2540);
+}
+.vsheet-tasks h2 .muted { color: #94a4b5; font-weight: 400; font-size: 14px; margin-left: 6px; }
+.vsheet-tasks-wrap { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+[data-theme="dark"] .vsheet-tasks-wrap { background: #18242f; box-shadow: none; }
+.vsheet-tasks table { width: 100%; border-collapse: collapse; font-size: 16px; }
+.vsheet-tasks th {
+  background: rgba(0,0,0,0.04);
+  text-align: left;
+  padding: 10px 14px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #5b6b7c;
+}
+[data-theme="dark"] .vsheet-tasks th { background: rgba(255,255,255,0.04); color: #94a4b5; }
+.vsheet-tasks td {
+  padding: 9px 14px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  vertical-align: top;
+}
+[data-theme="dark"] .vsheet-tasks td { border-top-color: rgba(255,255,255,0.05); }
+.vsheet-tasks td.t { font-variant-numeric: tabular-nums; font-weight: 600; width: 72px; }
+.vsheet-tasks td.c { width: 80px; }
+.vsheet-tasks td.loc { width: 60px; text-align: center; font-weight: 600; color: var(--vc); }
+.vsheet-tasks td.empty { text-align: center; color: #94a4b5; padding: 18px; }
+.vsheet-tasks .code {
+  background: rgba(0,0,0,0.06);
+  padding: 2px 7px; border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+}
+[data-theme="dark"] .vsheet-tasks .code { background: rgba(255,255,255,0.08); }
+
+.vsheet-note {
+  background: #fff;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+[data-theme="dark"] .vsheet-note { background: #18242f; box-shadow: none; }
+.vsheet-note h2 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--vc);
+}
+.vsheet-note p { margin: 0; font-size: 16px; white-space: pre-wrap; }
+
+.vsheet-footer {
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  font-size: 13px;
+  color: #5b6b7c;
+}
+[data-theme="dark"] .vsheet-footer { color: #94a4b5; border-top-color: rgba(255,255,255,0.08); }
+
+.vsheet-empty {
+  background: #fff; border-radius: 10px; padding: 32px;
+  text-align: center; font-size: 16px;
+}
+[data-theme="dark"] .vsheet-empty { background: #18242f; }
+.vsheet-empty a { color: var(--vc); font-weight: 600; }
+
 .leaflet-tile-pane { filter: var(--tile-filter); }
 
 /* Berth markers (Shuaiba B20 / B4 / merged) */

@@ -1403,7 +1403,7 @@ function vesselCardHtml(v, pos) {
       sourceHtml = `<div class="source report">📝 Position: <b>interpolated from daily report</b> · no AIS within ±30 min</div>`;
     }
   }
-  return `<div class="vessel-card" style="--vc:${v.color}">
+  return `<div class="vessel-card" data-vessel-id="${v.id}" style="--vc:${v.color}" role="button" tabindex="0" title="Click for full daily activities">
     <div class="name">${v.name} <span class="sub">${v.length_m}×${v.beam_m} m · ${v.speed_kts} kts</span></div>
     <div class="status">${statusHtml}</div>
     ${sourceHtml}
@@ -1419,16 +1419,164 @@ function renderLegend() {
   );
   items.push('<div style="margin-top:6px"><span style="color:#ff7849">▲</span> Rig &nbsp; <span style="color:#6e84ff">■</span> Port/Berth</div>');
   document.getElementById('legend').innerHTML = items.join('');
+  // Old "Notes from source PDFs" block removed — it referred to a stale
+  // data layer that was replaced by the captains' daily reports.
+  const notes = document.getElementById('notes');
+  if (notes) notes.innerHTML = '';
+}
 
-  const notes = [
-    '<b>Notes from source PDFs:</b>',
-    '• 06-May: Crest Argus 5 row truncated (ETD unknown — placeholder 11:00).',
-    '• 07-May: Juno 2nd run ETD 01.30hrs treated as 13:30 (suspected typo).',
-    '• 08-May: Crest Argus 3 ETD TBC — placeholder 15:00.',
-    '• 10-May plan was skipped on the Sunday — May 11 inferred from snapshot.',
-    '• Transit times computed from coords ÷ speed. Default 60 min STBY at rig, 30 min at via stops.',
-  ];
-  document.getElementById('notes').innerHTML = notes.join('<br/>');
+// ----------------------------------------------------------------------------
+// Vessel detail sheet — full-page big-font view of one vessel's day.
+// Opens when the user clicks any side-panel vessel card; closes on ✕, on
+// click-outside-content, or on Escape.
+// ----------------------------------------------------------------------------
+
+function todayDateForVessel(vid) {
+  // Pick the captain's report that brackets the simulator's current time.
+  // Falls back to the most recent report we have for that vessel.
+  const reports = (state.reportsByVid && state.reportsByVid[vid]) || [];
+  if (!reports.length) return null;
+  const cur = state.currentTime;
+  if (cur) {
+    const isoDay = new Date(cur.getTime() + TZ_OFFSET_MIN * 60 * 1000)
+      .toISOString().slice(0, 10);
+    const hit = reports.find(r => r.report_date === isoDay);
+    if (hit) return hit;
+    // closest by date
+    let best = reports[0];
+    let bestDiff = Math.abs(new Date(best.report_date + 'T00:00:00Z') - cur);
+    for (const r of reports) {
+      const diff = Math.abs(new Date(r.report_date + 'T00:00:00Z') - cur);
+      if (diff < bestDiff) { best = r; bestDiff = diff; }
+    }
+    return best;
+  }
+  return reports[reports.length - 1];
+}
+
+function openVesselSheet(vid) {
+  const v = state.vesselsById[vid];
+  if (!v) return;
+  const rep = todayDateForVessel(vid);
+  const learnedV = state.learnedVessels && state.learnedVessels[v.id];
+  const sheet = document.getElementById('vesselSheet');
+  if (!sheet) return;
+
+  const safety = (rep && rep.safety) || {};
+  const cons = (rep && rep.consumables) || {};
+  const fuel = cons.fuel_oil || {};
+  const water = cons.fresh_water || {};
+  const lifts = (rep && rep.lifts) || {};
+  const provs = (rep && rep.provisions) || {};
+  const delays = (rep && rep.delays) || {};
+  const compiled = (rep && rep.compiled_by) || {};
+
+  const taskRowsHtml = (rep && Array.isArray(rep.task_log) ? rep.task_log : [])
+    .map(r => `
+      <tr>
+        <td class="t">${escapeText(r.from_time || '')}</td>
+        <td class="t">${escapeText(r.to_time || '—')}</td>
+        <td class="c"><span class="code">${escapeText(r.task_code || '')}</span></td>
+        <td>${escapeText(r.description || '')}</td>
+        <td class="loc">${escapeText(r.location_id || '')}</td>
+      </tr>`).join('');
+
+  const summaryLine = rep
+    ? `Report for <b>${rep.report_date}</b>${rep.voyage_no ? ' · Voyage ' + escapeText(rep.voyage_no) : ''}`
+    : 'No daily report available for this vessel yet.';
+
+  sheet.innerHTML = `
+    <div class="vsheet-backdrop"></div>
+    <div class="vsheet-panel" role="dialog" aria-modal="true" aria-label="${escapeText(v.name)} daily activities" style="--vc:${v.color}">
+      <header class="vsheet-header">
+        <div>
+          <h1>${escapeText(v.name)}</h1>
+          <p class="sub">${escapeText(v.type)} · ${v.length_m}×${v.beam_m} m · ${v.speed_kts} kt spec${learnedV ? ' · <b>' + learnedV.cruise_speed_kts.toFixed(1) + ' kt real</b>' : ''}</p>
+          <p class="when">${summaryLine}</p>
+        </div>
+        <button type="button" class="vsheet-close" aria-label="Close">✕</button>
+      </header>
+
+      ${rep ? `
+      <section class="vsheet-grid">
+        <div class="card">
+          <h2>Safety</h2>
+          <ul>
+            <li><span>Accidents</span><b>${escapeText(safety.accidents || 'Nil')}</b></li>
+            <li><span>Incidents</span><b>${escapeText(safety.incidents || 'Nil')}</b></li>
+            <li><span>Near miss</span><b>${escapeText(safety.near_miss || 'Nil')}</b></li>
+            <li><span>Security level</span><b>${rep.security_level ?? '—'}</b></li>
+            <li><span>Days since port call</span><b>${rep.days_since_port_call ?? '—'}</b></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h2>Consumables</h2>
+          <ul>
+            <li><span>Fuel ROB</span><b>${escapeText(fuel.rob || '—')}</b></li>
+            <li><span>Fuel consumed (24h)</span><b>${escapeText(fuel.consumed || '—')}</b></li>
+            <li><span>Water ROB</span><b>${escapeText(water.rob || '—')}</b></li>
+            <li><span>Water consumed (24h)</span><b>${escapeText(water.consumed || '—')}</b></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h2>Provisions</h2>
+          <ul>
+            <li><span>Dry store</span><b>${provs.dry_store_days ?? '—'} days</b></li>
+            <li><span>Fresh &amp; frozen</span><b>${provs.fresh_frozen_days ?? '—'} days</b></li>
+            <li><span>Drinking water</span><b>${provs.drinking_water_days ?? '—'} days</b></li>
+            <li><span>Fuel unpumpable</span><b>${escapeText(provs.fuel_oil_unpumpable || '—')}</b></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h2>Lifts &amp; deck</h2>
+          <ul>
+            <li><span>Loaded</span><b>${escapeText(String(lifts.loaded ?? '—'))}</b></li>
+            <li><span>Discharged</span><b>${escapeText(String(lifts.discharged ?? '—'))}</b></li>
+            <li><span>Deck utilization</span><b>${lifts.utilization_pct != null ? lifts.utilization_pct + ' %' : '—'}</b></li>
+            <li><span>On deck</span><b class="long">${escapeText(lifts.on_deck || '—')}</b></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="vsheet-tasks">
+        <h2>Operational task log <span class="muted">(${(rep.task_log || []).length} entries)</span></h2>
+        <div class="vsheet-tasks-wrap">
+          <table>
+            <thead><tr><th>From</th><th>To</th><th>Code</th><th>Description</th><th>Where</th></tr></thead>
+            <tbody>${taskRowsHtml || '<tr><td colspan="5" class="empty">No task-log entries.</td></tr>'}</tbody>
+          </table>
+        </div>
+      </section>
+
+      ${rep.issues_comments ? `<section class="vsheet-note"><h2>Issues, concerns &amp; comments</h2><p>${escapeText(rep.issues_comments)}</p></section>` : ''}
+      ${rep.accident_summary ? `<section class="vsheet-note"><h2>Accident / incident / near-miss summary</h2><p>${escapeText(rep.accident_summary)}</p></section>` : ''}
+      ${rep.requirements_next_port_call ? `<section class="vsheet-note"><h2>Requirements next port call</h2><p>${escapeText(rep.requirements_next_port_call)}</p></section>` : ''}
+
+      ${compiled.name ? `<footer class="vsheet-footer">Compiled by ${escapeText(compiled.name)} · ${escapeText(compiled.role || 'Master')}</footer>` : ''}
+      ` : `<section class="vsheet-empty">
+            <p>No captain's daily report on file for this vessel near the
+            simulator's current time. Submit one via the
+            <a href="/admin.html" target="_blank">captain dashboard</a>.</p>
+          </section>`}
+    </div>`;
+  sheet.hidden = false;
+  document.body.classList.add('vsheet-open');
+  // Auto-focus the close button for keyboard users.
+  const closeBtn = sheet.querySelector('.vsheet-close');
+  if (closeBtn) closeBtn.focus();
+}
+
+function closeVesselSheet() {
+  const sheet = document.getElementById('vesselSheet');
+  if (!sheet) return;
+  sheet.hidden = true;
+  sheet.innerHTML = '';
+  document.body.classList.remove('vsheet-open');
+}
+
+function escapeText(s) {
+  return String(s ?? '').replace(/[&<>"]/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 }
 
 function setupControls() {
@@ -1516,6 +1664,37 @@ function setupControls() {
 
   document.getElementById('themeBtn').addEventListener('click', () => {
     applyTheme(state.theme === 'dark' ? 'light' : 'dark');
+  });
+
+  // Click a side-panel vessel card -> open the detail sheet.  Delegated
+  // because cards are re-rendered on every tick.
+  const cardsHost = document.getElementById('vesselCards');
+  if (cardsHost) {
+    cardsHost.addEventListener('click', (e) => {
+      const card = e.target.closest('.vessel-card[data-vessel-id]');
+      if (!card) return;
+      openVesselSheet(card.dataset.vesselId);
+    });
+    cardsHost.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      const card = e.target.closest('.vessel-card[data-vessel-id]');
+      if (!card) return;
+      e.preventDefault();
+      openVesselSheet(card.dataset.vesselId);
+    });
+  }
+  // Dismiss: backdrop click, ✕ button, or Escape.
+  const sheet = document.getElementById('vesselSheet');
+  if (sheet) {
+    sheet.addEventListener('click', (e) => {
+      if (e.target.classList.contains('vsheet-backdrop') ||
+          e.target.classList.contains('vsheet-close')) {
+        closeVesselSheet();
+      }
+    });
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !sheet?.hidden) closeVesselSheet();
   });
 }
 
