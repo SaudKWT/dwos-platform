@@ -1,0 +1,294 @@
+{
+  "consumables": {
+    "fuel_oil": {
+      "max_capacity": "3.063 M3",
+      "consumed": "-         491.727",
+      "discharged": "M3",
+      "rob": "458.273 M3",
+      "remaining_to_load": "-\n                                    (85%)",
+      "loaded": "Rx",
+      "remarks": ""
+    }
+  },
+  "task_log": [
+    {
+      "from_time": "00:01",
+      "to_time": "07:30",
+      "duration_min": 450,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "Vsl anchorage safe area, Rig Oriental Dragon stby waiting further instruction",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:30",
+      "to_time": "07:40",
+      "duration_min": 10,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "SBE",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:40",
+      "to_time": "08:06",
+      "duration_min": 26,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Heave up anchor and proceed to OD-1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:06",
+      "to_time": "08:25",
+      "duration_min": 19,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "DP Mode on",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:25",
+      "to_time": "08:52",
+      "duration_min": 27,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Permission granted entering 500m zone",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:52",
+      "to_time": "08:58",
+      "duration_min": 6,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Vsl in position p/s crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:58",
+      "to_time": "09:00",
+      "duration_min": 2,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "FW hose connected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:00",
+      "to_time": "10:37",
+      "duration_min": 97,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Transfer FW to OD1 - 100m3",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "10:45",
+      "to_time": "10:53",
+      "duration_min": 8,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "FW hose disconnected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "10:53",
+      "to_time": "11:15",
+      "duration_min": 22,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Deck cargo ops",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "11:18",
+      "to_time": "11:55",
+      "duration_min": 37,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Pull out move to stbd crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:50",
+      "to_time": "12:55",
+      "duration_min": 5,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "In position at stbd crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:55",
+      "to_time": "12:56",
+      "duration_min": 1,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "2 off signer crew disembarked by personal transfer",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:56",
+      "to_time": "13:15",
+      "duration_min": 19,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Pull out move to clear area",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:15",
+      "to_time": "13:25",
+      "duration_min": 10,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Drop anchor at clear area",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:35",
+      "to_time": "19:00",
+      "duration_min": 325,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Anchor secured, Finish ME",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "19:00",
+      "to_time": "19:05",
+      "duration_min": 5,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "SBE",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "19:05",
+      "to_time": "19:18",
+      "duration_min": 13,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Commenced heave up anchor",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "19:18",
+      "to_time": "21:55",
+      "duration_min": 167,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "Anchor aweight departure to Shuaiba port",
+      "location_id": "B20",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "21:55",
+      "to_time": "22:50",
+      "duration_min": 55,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "Get instruction from port control to hold position",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "22:50",
+      "to_time": "23:00",
+      "duration_min": 70,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "Get permission entering the port",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "23:00",
+      "to_time": "24:00",
+      "duration_min": 60,
+      "task_code": "S04",
+      "task_label": "Standby Shuaiba port",
+      "description": "Vessel secured alongside at berth 20, Shuaiaba Port. Finish ME",
+      "location_id": "B20",
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {
+    "accidents": "Nil",
+    "incidents": "Nil",
+    "near_miss": "Nil"
+  },
+  "provisions": {
+    "dry_store_days": 8,
+    "fresh_frozen_days": 8,
+    "drinking_water_days": 8,
+    "fuel_oil_unpumpable": "20 M3"
+  },
+  "delays": {
+    "arrival_time": "NA",
+    "departure_time": "NA"
+  },
+  "lifts": {},
+  "report_date": "2026-05-15",
+  "voyage_no": "67",
+  "days_since_port_call": 3,
+  "issues_comments": "3\n                                                   Crest Argus 5\n                                                 Daily Vessel Report\n                                                Remaining Provisions Store On-board\nDry Store             : 8 Days\nFresh & Frozen Store: 8 Days\nDrinking Water        : 8 Days\nFO Unpumpable : 20 M3\nDurability for safe operation :\nDelay Arrival Time  : NA\nDelay Departure Time : NA",
+  "accident_summary": "Nil",
+  "compiled_by": {
+    "name": "Ahmad Sakour",
+    "role": "Master"
+  },
+  "vessel_id": "CA5",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CREST ARGUS 5 - Daily Midnight Report - 15.05.2026",
+    "email_from": "Crest Argus5 | OFCO <crestargus5@ofco-int.com>",
+    "email_date": "2026-05-15T21:29:44+00:00",
+    "attachment_name": "Crest Argus 5_Daily vessel report _15.05.2026.pdf",
+    "submitted_via": "historical_import"
+  }
+}

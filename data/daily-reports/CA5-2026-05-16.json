@@ -1,0 +1,151 @@
+{
+  "consumables": {
+    "fuel_oil": {
+      "max_capacity": "1.537 M3",
+      "consumed": "-         490.190",
+      "discharged": "M3",
+      "rob": "459.810 M3",
+      "remaining_to_load": "-\n                                    (85%)",
+      "loaded": "Rx",
+      "remarks": ""
+    }
+  },
+  "task_log": [
+    {
+      "from_time": "00:00",
+      "to_time": "06:42",
+      "duration_min": 402,
+      "task_code": "S04",
+      "task_label": "Standby Shuaiba port",
+      "description": "Vsl alongside at berth 20, Shuaiba Port",
+      "location_id": "B20",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "06:42",
+      "to_time": "06:55",
+      "duration_min": 13,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "SBE",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "06:55",
+      "to_time": "06:59",
+      "duration_min": 4,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "Deck cargo ops",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:10",
+      "to_time": "07:18",
+      "duration_min": 8,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Vsl Cast off",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:18",
+      "to_time": "09:48",
+      "duration_min": 150,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "Clear from break water, departure to Oriental Dragon 1 with full speed",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:48",
+      "to_time": "09:55",
+      "duration_min": 7,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "Arrived at Oriental Dragon 1 location proceed to anchorage area",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:55",
+      "to_time": "10:06",
+      "duration_min": 11,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "Vsl drop anchor at clear area",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "10:06",
+      "to_time": "10:12",
+      "duration_min": 6,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "Anchor secured, Finish ME",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "10:12",
+      "to_time": "24:00",
+      "duration_min": 828,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "Vsl anchorage safe area, Rig Oriental Dragon stby waiting further instruction",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {
+    "accidents": "Nil",
+    "incidents": "Nil",
+    "near_miss": "Nil"
+  },
+  "provisions": {
+    "dry_store_days": 7,
+    "fresh_frozen_days": 7,
+    "drinking_water_days": 7,
+    "fuel_oil_unpumpable": "20 M3"
+  },
+  "delays": {
+    "arrival_time": "NA",
+    "departure_time": "NA"
+  },
+  "lifts": {},
+  "report_date": "2026-05-16",
+  "voyage_no": "68",
+  "days_since_port_call": 1,
+  "issues_comments": "3\n                                                   Crest Argus 5\n                                                 Daily Vessel Report\n                                                Remaining Provisions Store On-board\nDry Store             : 7 Days\nFresh & Frozen Store: 7 Days\nDrinking Water        : 7 Days\nFO Unpumpable : 20 M3\nDurability for safe operation :\nDelay Arrival Time  : NA\nDelay Departure Time : NA",
+  "accident_summary": "Nil",
+  "compiled_by": {
+    "name": "Ahmad Sakour",
+    "role": "Master"
+  },
+  "vessel_id": "CA5",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CREST ARGUS 5 - Daily Midnight Report - 16.05.2026",
+    "email_from": "Crest Argus5 | OFCO <crestargus5@ofco-int.com>",
+    "email_date": "2026-05-16T22:46:34+00:00",
+    "attachment_name": "Crest Argus 5_Daily vessel report _16.05.2026.pdf",
+    "submitted_via": "historical_import"
+  }
+}

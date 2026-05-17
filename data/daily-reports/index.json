@@ -149,6 +149,102 @@
       "report_date": "2026-05-12",
       "file": "daily-reports/JUNO-2026-05-12.json",
       "task_log_rows": 33
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-13",
+      "file": "daily-reports/CA1-2026-05-13.json",
+      "task_log_rows": 10
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-13",
+      "file": "daily-reports/CA3-2026-05-13.json",
+      "task_log_rows": 19
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-05-13",
+      "file": "daily-reports/CA5-2026-05-13.json",
+      "task_log_rows": 1
+    },
+    {
+      "vessel_id": "JUNO",
+      "report_date": "2026-05-13",
+      "file": "daily-reports/JUNO-2026-05-13.json",
+      "task_log_rows": 43
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-14",
+      "file": "daily-reports/CA1-2026-05-14.json",
+      "task_log_rows": 7
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-14",
+      "file": "daily-reports/CA3-2026-05-14.json",
+      "task_log_rows": 17
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-05-14",
+      "file": "daily-reports/CA5-2026-05-14.json",
+      "task_log_rows": 5
+    },
+    {
+      "vessel_id": "JUNO",
+      "report_date": "2026-05-14",
+      "file": "daily-reports/JUNO-2026-05-14.json",
+      "task_log_rows": 34
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-15",
+      "file": "daily-reports/CA1-2026-05-15.json",
+      "task_log_rows": 8
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-15",
+      "file": "daily-reports/CA3-2026-05-15.json",
+      "task_log_rows": 17
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-05-15",
+      "file": "daily-reports/CA5-2026-05-15.json",
+      "task_log_rows": 22
+    },
+    {
+      "vessel_id": "JUNO",
+      "report_date": "2026-05-15",
+      "file": "daily-reports/JUNO-2026-05-15.json",
+      "task_log_rows": 30
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-16",
+      "file": "daily-reports/CA1-2026-05-16.json",
+      "task_log_rows": 18
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-16",
+      "file": "daily-reports/CA3-2026-05-16.json",
+      "task_log_rows": 28
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-05-16",
+      "file": "daily-reports/CA5-2026-05-16.json",
+      "task_log_rows": 9
+    },
+    {
+      "vessel_id": "JUNO",
+      "report_date": "2026-05-16",
+      "file": "daily-reports/JUNO-2026-05-16.json",
+      "task_log_rows": 27
     }
   ]
 }

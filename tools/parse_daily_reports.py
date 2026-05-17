@@ -298,14 +298,16 @@ _ROW_FULL_RE = re.compile(
     r"([A-Z]\w{0,3}(?:/[A-Z]\w{0,3})?)\s+(.+?)\s*$"
 )
 # CA5's two-line layout:
-#   Line A (just hrs + code):  "<spaces> H:MM  <spaces> CODE"
+#   Line A (hrs + code, optionally followed by description text):
+#     "<spaces> H:MM  <spaces> CODE [<spaces> <desc>]"
 _ROW_PARTIAL_HRS_CODE_RE = re.compile(
-    r"^\s*(\d{1,2}:\d{2})\s+([A-Z]\w{0,3}(?:/[A-Z]\w{0,3})?)\s*$"
+    r"^\s*(\d{1,2}:\d{2})\s+([A-Z]\w{0,3}(?:/[A-Z]\w{0,3})?)(?:\s+(\S.*?))?\s*$"
 )
-#   Line B (from + to + desc): "<spaces> H:MM <spaces> H:MM <spaces> <desc>"
+#   Line B (from + to, optionally followed by description text):
+#     "<spaces> H:MM <spaces> H:MM [<spaces> <desc>]"
 # (Some CA5 reports drop the colon: "0712"; treat as typo, accept it.)
 _ROW_PARTIAL_FROM_TO_DESC_RE = re.compile(
-    r"^\s*(\d{1,2}:?\d{2})\s+(\d{1,2}:?\d{2})\s+(\S.*?)\s*$"
+    r"^\s*(\d{1,2}:?\d{2})\s+(\d{1,2}:?\d{2})(?:\s+(\S.*?))?\s*$"
 )
 
 
@@ -339,33 +341,42 @@ def extract_task_log_block(text: str, vessel_id: str) -> list[dict]:
     if not block:
         return []
     rows: list[dict] = []
-    pending: tuple[str | None, str | None] = (None, None)  # (hrs, code)
+    # (hrs, code, desc-from-line-A) — desc may be None
+    pending: tuple[str | None, str | None, str | None] = (None, None, None)
     for raw_line in block.splitlines():
         line = raw_line.rstrip()
         if not line.strip():
-            pending = (None, None)
+            pending = (None, None, None)
             continue
         # 1) Full single-line row (CA1/CA3)
         m = _ROW_FULL_RE.match(line)
         if m:
             from_t, to_t, hrs, code, desc = m.groups()
             _append_row(rows, vessel_id, from_t, to_t, hrs, code, desc)
-            pending = (None, None)
+            pending = (None, None, None)
             continue
-        # 2) CA5 partial: hrs + code alone
+        # 2) CA5 partial: hrs + code (optionally with description on the same line)
         m = _ROW_PARTIAL_HRS_CODE_RE.match(line)
         if m:
-            pending = (m.group(1), m.group(2))
+            pending = (m.group(1), m.group(2), m.group(3))
             continue
-        # 3) CA5 partial: from + to + desc; pair with pending hrs+code if any
+        # 3) CA5 partial: from + to (optionally with description); pair with pending hrs+code
         m = _ROW_PARTIAL_FROM_TO_DESC_RE.match(line)
         if m and pending[0] is not None:
-            from_t_raw, to_t_raw, desc = m.groups()
+            from_t_raw, to_t_raw, desc_b = m.groups()
             from_t = _fix_time(from_t_raw)
             to_t = _fix_time(to_t_raw)
             if from_t and to_t:
+                # Prefer line-B description; fall back to whatever was on line A.
+                # If both are present, concatenate (line B usually has the
+                # detail; line A may carry the first part of a wrapped desc).
+                desc_a = pending[2]
+                if desc_a and desc_b:
+                    desc = f"{desc_a} {desc_b}".strip()
+                else:
+                    desc = desc_b or desc_a or ""
                 _append_row(rows, vessel_id, from_t, to_t, pending[0], pending[1], desc)
-                pending = (None, None)
+                pending = (None, None, None)
                 continue
         # otherwise ignore (header continuation, footers, etc.)
     return rows
