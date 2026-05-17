@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Vessel Movement Plan",
+  "description": "Offshore Supervisor's planned vessel movements for the next 48 hours. The simulator treats this as the FORECAST for plan_date and plan_date+1. When the actual daily-vessel-report for those days lands, it overrides the relevant slices of this plan.",
+  "type": "object",
+  "required": ["plan_date", "vessels"],
+  "properties": {
+    "plan_date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "The 'today' date of the plan — the date shown in the email subject ('Vessel Movement Plan for the next 48 Hrs. DD-MMM-YYYY'). Plan narrative covers this day plus 'Tomorrow'."
+    },
+    "issued_date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "Calendar date the supervisor sent the plan (typically same as plan_date, in the evening)."
+    },
+    "issued_by": {
+      "type": "string",
+      "description": "Supervisor's full name."
+    },
+    "issued_role": {
+      "type": "string",
+      "description": "Free-text role / title (e.g. 'IODS Operations Supervisor (Offshore Project), HPM')."
+    },
+    "subject": {
+      "type": "string",
+      "description": "Email subject line as received."
+    },
+    "narrative": {
+      "type": "string",
+      "description": "Full plain-text body of the email / extracted PDF text — preserved verbatim for reference."
+    },
+    "vessels": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["vessel_id"],
+        "properties": {
+          "vessel_id": {
+            "type": "string",
+            "enum": ["JUNO", "CA1", "CA3", "CA5"]
+          },
+          "current_status": {
+            "type": "string",
+            "description": "Bullet describing the vessel's position/state at the moment the plan was written (today's bullet)."
+          },
+          "tomorrow_plan": {
+            "type": "string",
+            "description": "Bullet(s) describing the planned next-day movements."
+          },
+          "additional": {
+            "type": "string",
+            "description": "Any remaining narrative bullets (return legs, conditional plans)."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Free-text supervisor notes specific to this vessel."
+          }
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "description": "Provenance of this plan record.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["dashboard_submission", "imported_email", "imported_pdf"]
+        },
+        "email_subject": { "type": "string" },
+        "email_from":    { "type": "string" },
+        "email_date":    { "type": "string" },
+        "attachment_name": { "type": "string" },
+        "submitted_via": { "type": "string" },
+        "submitted_at":  { "type": "string" }
+      }
+    }
+  }
+}

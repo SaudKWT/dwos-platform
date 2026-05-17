@@ -34,6 +34,81 @@
   padding: 0 24px;
 }
 
+/* Tab strip ------------------------------------------------------------- */
+
+.tab-strip {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px 24px 0;
+  display: flex;
+  gap: 6px;
+  border-bottom: 1px solid #d6dde6;
+}
+.tab-btn {
+  background: transparent;
+  color: #5b6b7c;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  top: 1px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.tab-btn:hover { background: rgba(13, 37, 64, 0.06); color: #0d2540; }
+.tab-btn.active {
+  background: #f4f6f8;
+  color: #0d2540;
+  border-color: #d6dde6;
+  border-bottom-color: #f4f6f8;
+}
+.tab-sub {
+  font-size: 11px;
+  font-weight: 400;
+  color: #8896a4;
+}
+.tab-btn.active .tab-sub { color: #5b6b7c; }
+
+/* Movement-plan vessel cards ------------------------------------------- */
+
+.plan-vessel {
+  background: #f7faff;
+  border: 1px solid #d8e1ee;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+.plan-vessel-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: #0d2540;
+  margin: 0 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.plan-vessel-title .vid-pill {
+  background: #0d2540;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  letter-spacing: 0.4px;
+}
+.plan-vessel label.block { margin-top: 8px; }
+
+.hint-sub {
+  color: #8896a4;
+  font-weight: 400;
+  font-size: 11px;
+  margin-left: 6px;
+}
+
 .card {
   background: #fff;
   border-radius: 8px;

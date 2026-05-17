@@ -10,8 +10,8 @@
 <body class="admin-body">
 <header class="admin-header">
   <div class="admin-title">
-    <h1>Daily Vessel Report</h1>
-    <p class="subtitle">Captains: fill in your shift's report. Submissions flow into the simulator immediately.</p>
+    <h1 id="adminTitle">Daily Vessel Report</h1>
+    <p class="subtitle" id="adminSubtitle">Captains: fill in your shift's report. Submissions flow into the simulator immediately.</p>
   </div>
   <div class="admin-header-actions">
     <button type="button" class="btn admin-link-btn" id="generatePdfTopBtn">📄 Generate PDF</button>
@@ -19,7 +19,16 @@
   </div>
 </header>
 
-<main class="admin-main">
+<nav class="tab-strip" role="tablist">
+  <button type="button" class="tab-btn active" data-tab="report" role="tab" aria-selected="true">
+    📋 Daily Vessel Report <span class="tab-sub">(captain · one per vessel/day)</span>
+  </button>
+  <button type="button" class="tab-btn" data-tab="plan" role="tab" aria-selected="false">
+    🗺 Movement Plan <span class="tab-sub">(supervisor · next 48 hrs)</span>
+  </button>
+</nav>
+
+<main class="admin-main" id="tab-report">
   <!-- LOAD EXISTING ---------------------------------------------------- -->
   <section class="card">
     <h2>Load existing report</h2>
@@ -157,6 +166,67 @@
       <button type="submit" class="btn btn-primary">Submit report</button>
       <button type="button" class="btn" id="generatePdfBtn">📄 Generate PDF</button>
       <span class="status" id="submitStatus"></span>
+    </div>
+  </form>
+</main>
+
+<!-- ==================== MOVEMENT PLAN TAB ==================== -->
+<main class="admin-main" id="tab-plan" hidden>
+
+  <section class="card">
+    <h2>Load existing plan</h2>
+    <p class="hint">Plans are keyed by the date that appears in the email subject ("Vessel Movement Plan for the next 48 Hrs. <em>DD-MMM-YYYY</em>"). One plan per day, covering the same day + the next.</p>
+    <div class="row">
+      <label>Plan date <input type="date" id="planLoadDate" /></label>
+      <button class="btn" id="planLoadBtn" type="button">Load</button>
+      <button class="btn btn-ghost" id="planNewBtn" type="button">Start blank</button>
+      <span class="status" id="planLoadStatus"></span>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <label>Recent plans
+        <select id="planRecent">
+          <option value="">(none yet)</option>
+        </select>
+      </label>
+    </div>
+  </section>
+
+  <form id="planForm" class="report-form">
+
+    <section class="card">
+      <h2>1 · Plan header</h2>
+      <div class="grid two">
+        <label>Plan date <span class="hint-sub">(date in subject)</span>
+          <input type="date" name="plan_date" required />
+        </label>
+        <label>Issued date <span class="hint-sub">(when email sent)</span>
+          <input type="date" name="issued_date" />
+        </label>
+        <label>Issued by <input type="text" name="issued_by" placeholder="Nirmal Mishra" /></label>
+        <label>Role <input type="text" name="issued_role" placeholder="IODS Operations Supervisor (Offshore Project), HPM" /></label>
+      </div>
+      <label class="block">Subject
+        <input type="text" name="subject" placeholder="Vessel Movement Plan for the next 48 Hrs. 17-May-2026" />
+      </label>
+    </section>
+
+    <section class="card">
+      <h2>2 · Per-vessel narrative <span class="badge">drives the forecast</span></h2>
+      <p class="hint">For each vessel, write the current status (today's bullet) and the planned next-day movements. Daily vessel reports submitted later for the same day will override this plan in the simulator.</p>
+      <div id="planVessels"><!-- 4 vessel cards inserted by JS --></div>
+    </section>
+
+    <section class="card">
+      <h2>3 · Optional — paste full email body</h2>
+      <p class="hint">Optional: paste the entire email body for archival / re-parsing.  Submitting the form does not auto-extract from here.</p>
+      <label class="block">
+        <textarea name="narrative" rows="6" placeholder="Full email body (optional)"></textarea>
+      </label>
+    </section>
+
+    <div class="submit-row">
+      <button type="submit" class="btn btn-primary">Submit plan</button>
+      <span class="status" id="planSubmitStatus"></span>
     </div>
   </form>
 </main>

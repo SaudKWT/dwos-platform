@@ -30,6 +30,7 @@ const __dirname   = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = __dirname;
 const REPORTS_DIR  = path.join(PROJECT_ROOT, 'data', 'daily-reports');
 const AIS_DIR      = path.join(PROJECT_ROOT, 'data', 'ais-history');
+const PLANS_DIR    = path.join(PROJECT_ROOT, 'data', 'movement-plans');
 const PORT         = Number(process.env.PORT || 5173);
 const HOST         = process.env.HOST || '127.0.0.1';
 
@@ -328,6 +329,46 @@ async function rebuildIndex() {
   return rows;
 }
 
+async function rebuildPlansIndex() {
+  const files = (await fs.readdir(PLANS_DIR).catch(() => []))
+    .filter(f => f.endsWith('.json') && f !== 'index.json');
+  const rows = [];
+  for (const f of files) {
+    try {
+      const rec = JSON.parse(await fs.readFile(path.join(PLANS_DIR, f), 'utf8'));
+      if (!rec.plan_date) continue;
+      rows.push({
+        plan_date:   rec.plan_date,
+        issued_date: rec.issued_date || null,
+        issued_by:   rec.issued_by || null,
+        subject:     rec.subject || null,
+        vessels:     (rec.vessels || []).map(v => v.vessel_id),
+        source_type: (rec.source || {}).type || null,
+        file:        `movement-plans/${f}`,
+      });
+    } catch { /* skip malformed */ }
+  }
+  rows.sort((a, b) => a.plan_date.localeCompare(b.plan_date));
+  const idxPath = path.join(PLANS_DIR, 'index.json');
+  await fs.mkdir(PLANS_DIR, { recursive: true });
+  await fs.writeFile(idxPath, JSON.stringify({ plans: rows }, null, 2), 'utf8');
+  return rows;
+}
+
+function validatePlan(body) {
+  if (!body || typeof body !== 'object') return 'body must be an object';
+  if (!DATE_RE.test(body.plan_date || '')) return 'plan_date must be YYYY-MM-DD';
+  if (!Array.isArray(body.vessels)) return 'vessels must be an array';
+  if (body.vessels.length === 0) return 'vessels must contain at least one entry';
+  for (const v of body.vessels) {
+    if (!v || typeof v !== 'object') return 'every vessel entry must be an object';
+    if (!VESSEL_IDS.has(v.vessel_id)) {
+      return `vessel_id "${v.vessel_id}" must be one of JUNO, CA1, CA3, CA5`;
+    }
+  }
+  return null;
+}
+
 function validateReport(body) {
   if (!body || typeof body !== 'object') return 'body must be an object';
   if (!VESSEL_IDS.has(body.vessel_id)) return 'vessel_id must be one of JUNO, CA1, CA3, CA5';
@@ -393,6 +434,51 @@ async function handleApi(req, res, url) {
     return send(res, 200, { ok: true, vessel_id: body.vessel_id, report_date: body.report_date });
   }
 
+  // -------------------- Movement plans --------------------
+  // GET /api/movement-plans               -> index of all plans
+  if (req.method === 'GET' && url.pathname === '/api/movement-plans') {
+    const idxPath = path.join(PLANS_DIR, 'index.json');
+    try {
+      const buf = await fs.readFile(idxPath);
+      return send(res, 200, buf.toString('utf8'));
+    } catch {
+      const rows = await rebuildPlansIndex();
+      return send(res, 200, { plans: rows });
+    }
+  }
+  // GET /api/movement-plans/:date         -> one plan by plan_date
+  const mPlan = url.pathname.match(/^\/api\/movement-plans\/(\d{4}-\d{2}-\d{2})$/);
+  if (req.method === 'GET' && mPlan) {
+    const date = mPlan[1];
+    const p = path.join(PLANS_DIR, `${date}.json`);
+    try {
+      const buf = await fs.readFile(p);
+      return send(res, 200, buf.toString('utf8'));
+    } catch {
+      return send(res, 404, { error: 'no plan for that date' });
+    }
+  }
+  // POST /api/movement-plans              -> save / overwrite plan
+  if (req.method === 'POST' && url.pathname === '/api/movement-plans') {
+    let body;
+    try { body = await readJsonBody(req); }
+    catch (e) { return send(res, 400, { error: 'invalid JSON: ' + e.message }); }
+    const err = validatePlan(body);
+    if (err) return send(res, 400, { error: err });
+    body.source = {
+      ...(body.source || {}),
+      type: 'dashboard_submission',
+      submitted_via: 'admin.html',
+      submitted_at: new Date().toISOString(),
+    };
+    await fs.mkdir(PLANS_DIR, { recursive: true });
+    const out = path.join(PLANS_DIR, `${body.plan_date}.json`);
+    await fs.writeFile(out, JSON.stringify(body, null, 2), 'utf8');
+    await rebuildPlansIndex();
+    bus.emit('plan_saved', { plan_date: body.plan_date });
+    return send(res, 200, { ok: true, plan_date: body.plan_date });
+  }
+
   // GET /api/ais-history                 -> index of all imported AIS tracks
   if (req.method === 'GET' && url.pathname === '/api/ais-history') {
     try {
@@ -426,9 +512,11 @@ async function handleApi(req, res, url) {
     });
     res.write('retry: 2000\n\n');
     const onSaved    = (p) => res.write(`event: report_saved\ndata: ${JSON.stringify(p)}\n\n`);
+    const onPlan     = (p) => res.write(`event: plan_saved\ndata: ${JSON.stringify(p)}\n\n`);
     const onPosition = (p) => res.write(`event: live_position\ndata: ${JSON.stringify(p)}\n\n`);
     const onStatus   = (p) => res.write(`event: live_status\ndata: ${JSON.stringify(p)}\n\n`);
-    bus.on('report_saved', onSaved);
+    bus.on('report_saved',  onSaved);
+    bus.on('plan_saved',    onPlan);
     bus.on('live_position', onPosition);
     bus.on('live_status',   onStatus);
     // Send current live snapshot on connect so the UI can sync.
@@ -436,7 +524,8 @@ async function handleApi(req, res, url) {
     const keepalive = setInterval(() => res.write(': keep-alive\n\n'), 25000);
     req.on('close', () => {
       clearInterval(keepalive);
-      bus.off('report_saved', onSaved);
+      bus.off('report_saved',  onSaved);
+      bus.off('plan_saved',    onPlan);
       bus.off('live_position', onPosition);
       bus.off('live_status',   onStatus);
     });
@@ -480,6 +569,7 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, HOST, async () => {
   try { await rebuildIndex(); } catch (e) { console.warn('[server] could not build index:', e.message); }
+  try { await rebuildPlansIndex(); } catch (e) { console.warn('[server] could not build plans index:', e.message); }
   console.log(`KOC vessel-movement server`);
   console.log(`  Simulator : http://${HOST}:${PORT}/`);
   console.log(`  Dashboard : http://${HOST}:${PORT}/admin.html`);

@@ -581,3 +581,226 @@ function generatePdf() {
 
 document.getElementById('generatePdfBtn').addEventListener('click', generatePdf);
 document.getElementById('generatePdfTopBtn')?.addEventListener('click', generatePdf);
+
+// ---------------------------------------------------------------------------
+// TAB SWITCHING — Daily Report ⇄ Movement Plan
+// ---------------------------------------------------------------------------
+
+const TAB_TITLES = {
+  report: {
+    title: 'Daily Vessel Report',
+    subtitle: "Captains: fill in your shift's report. Submissions flow into the simulator immediately.",
+    showPdfBtn: true,
+  },
+  plan: {
+    title: 'Vessel Movement Plan',
+    subtitle: 'Offshore supervisor: file the next-48-hour movement plan. Daily reports later override this for completed days.',
+    showPdfBtn: false,
+  },
+};
+
+function showTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    const active = b.dataset.tab === name;
+    b.classList.toggle('active', active);
+    b.setAttribute('aria-selected', active ? 'true' : 'false');
+  });
+  document.getElementById('tab-report').hidden = (name !== 'report');
+  document.getElementById('tab-plan').hidden   = (name !== 'plan');
+  const meta = TAB_TITLES[name];
+  if (meta) {
+    document.getElementById('adminTitle').textContent    = meta.title;
+    document.getElementById('adminSubtitle').textContent = meta.subtitle;
+    const pdfBtn = document.getElementById('generatePdfTopBtn');
+    if (pdfBtn) pdfBtn.hidden = !meta.showPdfBtn;
+  }
+}
+
+document.querySelectorAll('.tab-btn').forEach(b => {
+  b.addEventListener('click', () => showTab(b.dataset.tab));
+});
+
+// ---------------------------------------------------------------------------
+// MOVEMENT PLAN FORM
+// ---------------------------------------------------------------------------
+
+const PLAN_VESSELS = [
+  { id: 'JUNO', name: 'Allianz Juno' },
+  { id: 'CA1',  name: 'Crest Argus 1' },
+  { id: 'CA3',  name: 'Crest Argus 3' },
+  { id: 'CA5',  name: 'Crest Argus 5' },
+];
+
+const planForm           = document.getElementById('planForm');
+const planVesselsHost    = document.getElementById('planVessels');
+const planLoadDate       = document.getElementById('planLoadDate');
+const planLoadBtn        = document.getElementById('planLoadBtn');
+const planNewBtn         = document.getElementById('planNewBtn');
+const planRecentSel      = document.getElementById('planRecent');
+const planLoadStatus     = document.getElementById('planLoadStatus');
+const planSubmitStatus   = document.getElementById('planSubmitStatus');
+
+function buildPlanVesselCard(v) {
+  const card = document.createElement('div');
+  card.className = 'plan-vessel';
+  card.dataset.vesselId = v.id;
+  card.innerHTML = `
+    <h3 class="plan-vessel-title"><span class="vid-pill">${v.id}</span> ${v.name}</h3>
+    <label class="block">Current status (today)
+      <textarea name="current_status" rows="2" placeholder="e.g. Vessel currently STBY at Shuaiba Port"></textarea>
+    </label>
+    <label class="block">Tomorrow plan
+      <textarea name="tomorrow_plan" rows="2" placeholder="e.g. Tomorrow 17th May, Vessel will sail to OPH via NSBP, ETD 10:00"></textarea>
+    </label>
+    <label class="block">Additional / return legs <span class="hint-sub">(optional)</span>
+      <textarea name="additional" rows="2" placeholder="Optional: extra bullets, return legs, conditional plans"></textarea>
+    </label>
+    <label class="block">Internal notes <span class="hint-sub">(not in supervisor's email — your annotations)</span>
+      <textarea name="notes" rows="1" placeholder="Any context for your team"></textarea>
+    </label>
+  `;
+  return card;
+}
+
+PLAN_VESSELS.forEach(v => planVesselsHost.appendChild(buildPlanVesselCard(v)));
+
+function defaultSubject(planDate) {
+  if (!planDate) return '';
+  const [y, m, d] = planDate.split('-').map(Number);
+  const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return `Vessel Movement Plan for the next 48 Hrs. ${String(d).padStart(2, '0')}-${MON[m - 1]}-${y}`;
+}
+
+// Auto-fill the subject when the plan date changes (unless user has typed one)
+planForm.elements['plan_date'].addEventListener('change', () => {
+  const subjEl = planForm.elements['subject'];
+  if (!subjEl.value.trim()) subjEl.value = defaultSubject(planForm.elements['plan_date'].value);
+});
+
+function populatePlanForm(p) {
+  planForm.elements['plan_date'].value   = p.plan_date || '';
+  planForm.elements['issued_date'].value = p.issued_date || '';
+  planForm.elements['issued_by'].value   = p.issued_by || '';
+  planForm.elements['issued_role'].value = p.issued_role || '';
+  planForm.elements['subject'].value     = p.subject || defaultSubject(p.plan_date);
+  planForm.elements['narrative'].value   = p.narrative || '';
+
+  // Index incoming vessels by vessel_id so we can map onto the 4 cards.
+  const byId = Object.fromEntries((p.vessels || []).map(v => [v.vessel_id, v]));
+  planVesselsHost.querySelectorAll('.plan-vessel').forEach(card => {
+    const vid = card.dataset.vesselId;
+    const v = byId[vid] || {};
+    card.querySelector('textarea[name="current_status"]').value = v.current_status || '';
+    card.querySelector('textarea[name="tomorrow_plan"]').value  = v.tomorrow_plan  || '';
+    card.querySelector('textarea[name="additional"]').value     = v.additional     || '';
+    card.querySelector('textarea[name="notes"]').value          = v.notes          || '';
+  });
+}
+
+function blankPlanForm() {
+  planForm.reset();
+  planVesselsHost.querySelectorAll('.plan-vessel').forEach(card => {
+    card.querySelectorAll('textarea').forEach(t => t.value = '');
+  });
+}
+
+planLoadBtn.addEventListener('click', async () => {
+  const date = planLoadDate.value;
+  if (!date) {
+    setStatus(planLoadStatus, 'Pick a plan date.', 'err');
+    return;
+  }
+  await loadPlanByDate(date);
+});
+
+async function loadPlanByDate(date) {
+  setStatus(planLoadStatus, 'Loading…');
+  try {
+    const r = await fetch(`/api/movement-plans/${date}`);
+    if (!r.ok) {
+      setStatus(planLoadStatus, r.status === 404 ? 'No plan for that date.' : 'Error loading.', 'err');
+      return;
+    }
+    const data = await r.json();
+    populatePlanForm(data);
+    setStatus(planLoadStatus, `Loaded plan for ${date}. Edit and submit to overwrite.`, 'ok');
+  } catch (e) {
+    setStatus(planLoadStatus, 'Network error: ' + e.message, 'err');
+  }
+}
+
+planNewBtn.addEventListener('click', () => {
+  blankPlanForm();
+  setStatus(planLoadStatus, 'Blank plan form.', 'ok');
+});
+
+planRecentSel.addEventListener('change', () => {
+  const v = planRecentSel.value;
+  if (v) {
+    planLoadDate.value = v;
+    loadPlanByDate(v);
+  }
+});
+
+async function refreshPlanRecent() {
+  try {
+    const r = await fetch('/api/movement-plans');
+    if (!r.ok) return;
+    const j = await r.json();
+    const plans = (j.plans || []).slice().sort((a, b) => b.plan_date.localeCompare(a.plan_date));
+    planRecentSel.innerHTML = '<option value="">(load recent…)</option>'
+      + plans.map(p => `<option value="${p.plan_date}">${p.plan_date} — ${escapeHtml(p.issued_by || '')}</option>`).join('');
+  } catch { /* offline / no server */ }
+}
+
+refreshPlanRecent();
+
+planForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  setStatus(planSubmitStatus, 'Saving…');
+  const payload = buildPlanPayload();
+  if (!payload.plan_date) {
+    setStatus(planSubmitStatus, 'Plan date is required.', 'err');
+    return;
+  }
+  try {
+    const r = await fetch('/api/movement-plans', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) {
+      setStatus(planSubmitStatus, 'Save failed: ' + (j.error || r.statusText), 'err');
+      return;
+    }
+    setStatus(planSubmitStatus, `Saved plan for ${j.plan_date}. Simulator will pick it up.`, 'ok');
+    refreshPlanRecent();
+  } catch (err) {
+    setStatus(planSubmitStatus, 'Network error: ' + err.message, 'err');
+  }
+});
+
+function buildPlanPayload() {
+  const f = planForm.elements;
+  const v = (name) => (f[name]?.value || '').trim();
+
+  const vessels = Array.from(planVesselsHost.querySelectorAll('.plan-vessel')).map(card => ({
+    vessel_id:      card.dataset.vesselId,
+    current_status: card.querySelector('textarea[name="current_status"]').value.trim(),
+    tomorrow_plan:  card.querySelector('textarea[name="tomorrow_plan"]').value.trim(),
+    additional:     card.querySelector('textarea[name="additional"]').value.trim(),
+    notes:          card.querySelector('textarea[name="notes"]').value.trim(),
+  }));
+
+  return {
+    plan_date:    v('plan_date'),
+    issued_date:  v('issued_date') || null,
+    issued_by:    v('issued_by'),
+    issued_role:  v('issued_role'),
+    subject:      v('subject') || defaultSubject(v('plan_date')),
+    narrative:    v('narrative'),
+    vessels,
+    source: { type: 'dashboard_submission' },
+  };
+}

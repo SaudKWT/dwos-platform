@@ -44,6 +44,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 REPORTS_DIR  = PROJECT_ROOT / "data" / "daily-reports"
 AIS_DIR      = PROJECT_ROOT / "data" / "ais-history"
+PLANS_DIR    = PROJECT_ROOT / "data" / "movement-plans"
 LEARNED_PATH = PROJECT_ROOT / "data" / "learned-profiles.json"
 
 VESSEL_IDS = {"JUNO", "CA1", "CA3", "CA5"}
@@ -301,6 +302,55 @@ def check_simulator_buildable(issues: Issues) -> None:
                 issues.warn(f.name, f"{len(tl) - valid_rows} of {len(tl)} task_log rows have invalid from_time or missing task_code")
 
 
+def check_movement_plans(issues: Issues) -> None:
+    """Validate every movement-plan file against the lightweight schema used
+    by the admin form and the simulator overlay."""
+    if not PLANS_DIR.is_dir():
+        # Plans are optional — skip silently if the folder is absent.
+        return
+    files = sorted(PLANS_DIR.glob("*.json"))
+    for f in files:
+        if f.name == "index.json":
+            continue
+        try:
+            d = json.loads(f.read_text(encoding="utf-8"))
+        except Exception as e:
+            issues.err(f.name, f"unparseable JSON: {e}"); continue
+
+        # Filename must match plan_date
+        plan_date = d.get("plan_date")
+        if not (isinstance(plan_date, str) and DATE_RE.match(plan_date)):
+            issues.err(f.name, f"plan_date {plan_date!r} not YYYY-MM-DD"); continue
+        if f.stem != plan_date:
+            issues.err(f.name, f"filename does not match plan_date={plan_date!r}")
+
+        # Vessels block
+        vessels = d.get("vessels")
+        if not isinstance(vessels, list) or not vessels:
+            issues.err(f.name, "vessels missing or empty"); continue
+        seen_vids: set[str] = set()
+        for v in vessels:
+            if not isinstance(v, dict):
+                issues.err(f.name, f"vessel entry is not an object: {v!r}"); continue
+            vid = v.get("vessel_id")
+            if vid not in VESSEL_IDS:
+                issues.err(f.name, f"vessel_id {vid!r} not in {sorted(VESSEL_IDS)}")
+            elif vid in seen_vids:
+                issues.warn(f.name, f"vessel_id {vid!r} appears more than once")
+            else:
+                seen_vids.add(vid)
+            for k in ("current_status", "tomorrow_plan", "additional", "notes"):
+                if k in v and v[k] is not None and not isinstance(v[k], str):
+                    issues.err(f.name, f"vessel {vid!r}: {k} must be a string or null")
+        if not seen_vids:
+            issues.warn(f.name, "no recognised vessels in plan")
+
+        # Issued date sanity
+        issued = d.get("issued_date")
+        if issued and not (isinstance(issued, str) and DATE_RE.match(issued)):
+            issues.err(f.name, f"issued_date {issued!r} not YYYY-MM-DD")
+
+
 def main() -> int:
     issues = Issues()
     print("Checking daily reports …")
@@ -309,6 +359,8 @@ def main() -> int:
     check_ais_history(issues)
     print("Checking learned profiles …")
     check_learned_profiles(issues)
+    print("Checking movement plans …")
+    check_movement_plans(issues)
     print("Checking simulator can build a timeline for every (vessel, day) …")
     check_simulator_buildable(issues)
 
