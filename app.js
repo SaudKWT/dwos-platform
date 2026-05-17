@@ -1480,13 +1480,37 @@ function openVesselSheet(vid) {
   const delays = (rep && rep.delays) || {};
   const compiled = (rep && rep.compiled_by) || {};
 
+  // Figure out which task-log row is "happening right now" relative to
+  // the simulator's clock.  Rule: the row with the LATEST from_time on
+  // this report_date that's still <= the current sim time.  Only highlight
+  // if the sim clock actually falls on this report's day (otherwise the
+  // user is looking at a different day's report and nothing should glow).
+  let activeIdx = -1;
+  if (rep && Array.isArray(rep.task_log) && rep.task_log.length && state.currentTime) {
+    const cur = new Date(state.currentTime.getTime() + TZ_OFFSET_MIN * 60 * 1000);
+    const curIsoDay = cur.toISOString().slice(0, 10);
+    if (curIsoDay === rep.report_date) {
+      const curMin = cur.getUTCHours() * 60 + cur.getUTCMinutes();
+      let bestMin = -1;
+      rep.task_log.forEach((r, i) => {
+        const m = /^(\d{2}):(\d{2})$/.exec(r.from_time || '');
+        if (!m) return;
+        const rowMin = +m[1] * 60 + +m[2];
+        if (rowMin <= curMin && rowMin >= bestMin) {
+          bestMin = rowMin;
+          activeIdx = i;
+        }
+      });
+    }
+  }
+
   const taskRowsHtml = (rep && Array.isArray(rep.task_log) ? rep.task_log : [])
-    .map(r => `
-      <tr>
+    .map((r, i) => `
+      <tr${i === activeIdx ? ' class="active"' : ''}>
         <td class="t">${escapeText(r.from_time || '')}</td>
         <td class="t">${escapeText(r.to_time || '—')}</td>
         <td class="c"><span class="code">${escapeText(r.task_code || '')}</span></td>
-        <td>${escapeText(r.description || '')}</td>
+        <td>${escapeText(r.description || '')}${i === activeIdx ? ' <span class="now-tag">NOW</span>' : ''}</td>
         <td class="loc">${escapeText(r.location_id || '')}</td>
       </tr>`).join('');
 
@@ -1573,6 +1597,11 @@ function openVesselSheet(vid) {
   // Auto-focus the close button for keyboard users.
   const closeBtn = sheet.querySelector('.vsheet-close');
   if (closeBtn) closeBtn.focus();
+  // Scroll the "NOW" row into view if there is one — saves a click for
+  // the common case where the user wants to see what's happening right
+  // now in a long task log.
+  const activeRow = sheet.querySelector('tr.active');
+  if (activeRow) activeRow.scrollIntoView({ block: 'center', behavior: 'instant' });
 }
 
 function closeVesselSheet() {
@@ -1675,21 +1704,36 @@ function setupControls() {
     applyTheme(state.theme === 'dark' ? 'light' : 'dark');
   });
 
-  // Click a side-panel vessel card -> open the detail sheet.  Delegated
-  // because cards are re-rendered on every tick.
+  // Click a side-panel vessel card -> auto-pause playback and open the
+  // detail sheet.  Uses pointerdown (not click) because while the
+  // simulator is playing, render() rewrites the cards' innerHTML every
+  // frame and the original DOM node is gone by the time 'click' would
+  // fire.  pointerdown fires immediately so the interaction can't be
+  // raced by the next render.
   const cardsHost = document.getElementById('vesselCards');
+  function pauseAndOpenSheet(vid) {
+    if (state.playing) {
+      state.playing = false;
+      const btn = document.getElementById('btnPlay');
+      if (btn) btn.textContent = '▶ Play';
+    }
+    openVesselSheet(vid);
+  }
   if (cardsHost) {
-    cardsHost.addEventListener('click', (e) => {
+    cardsHost.addEventListener('pointerdown', (e) => {
       const card = e.target.closest('.vessel-card[data-vessel-id]');
       if (!card) return;
-      openVesselSheet(card.dataset.vesselId);
+      // Prevent the subsequent (now-orphaned) click from re-opening or
+      // bubbling to anything else.
+      e.preventDefault();
+      pauseAndOpenSheet(card.dataset.vesselId);
     });
     cardsHost.addEventListener('keydown', (e) => {
       if (e.key !== 'Enter' && e.key !== ' ') return;
       const card = e.target.closest('.vessel-card[data-vessel-id]');
       if (!card) return;
       e.preventDefault();
-      openVesselSheet(card.dataset.vesselId);
+      pauseAndOpenSheet(card.dataset.vesselId);
     });
   }
   // Dismiss: backdrop click, ✕ button, or Escape.

@@ -285,6 +285,29 @@ body.vsheet-open { overflow: hidden; }
 .vsheet-tasks td.c { width: 80px; }
 .vsheet-tasks td.loc { width: 60px; text-align: center; font-weight: 600; color: var(--vc); }
 .vsheet-tasks td.empty { text-align: center; color: #94a4b5; padding: 18px; }
+
+/* The row corresponding to the activity happening right now (relative
+   to the simulator's clock) gets a green highlight + a "NOW" badge. */
+.vsheet-tasks tr.active td {
+  background: rgba(45, 195, 95, 0.13);
+  font-weight: 600;
+  box-shadow: inset 4px 0 0 #2dc35f;
+}
+[data-theme="dark"] .vsheet-tasks tr.active td {
+  background: rgba(45, 195, 95, 0.18);
+}
+.vsheet-tasks .now-tag {
+  display: inline-block;
+  background: #2dc35f;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
 .vsheet-tasks .code {
   background: rgba(0,0,0,0.06);
   padding: 2px 7px; border-radius: 4px;
