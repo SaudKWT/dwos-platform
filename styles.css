@@ -81,6 +81,12 @@ header .theme-btn {
   padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 12px;
 }
 header .theme-btn:hover { background: var(--bg-control-hover); }
+header .admin-btn {
+  background: var(--bg-control); color: var(--text); border: 1px solid var(--border-strong);
+  padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 12px;
+  text-decoration: none; display: inline-flex; align-items: center;
+}
+header .admin-btn:hover { background: var(--bg-control-hover); }
 
 #map { width: 100%; height: 100%; background: var(--map-bg); }
 
@@ -150,6 +156,19 @@ aside h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; c
 .tag.moored { background: var(--tag-moored-bg); color: var(--tag-moored-fg); }
 .tag.transit { background: var(--tag-transit-bg); color: var(--tag-transit-fg); }
 .tag.unknown { background: var(--tag-unknown-bg); color: var(--tag-unknown-fg); }
+.tag.learned {
+  background: rgba(0, 208, 255, 0.16);
+  color: #00aac9;
+  border: 1px solid rgba(0, 208, 255, 0.4);
+  font-weight: 600;
+}
+[data-theme="dark"] .tag.learned { color: #5cd6ff; }
+
+/* Learned-from-AIS route polyline gets a subtle glow so the curved real
+   path is easier to distinguish from the dashed nominal straight line. */
+.leaflet-overlay-pane path.route-learned {
+  filter: drop-shadow(0 0 3px rgba(0, 208, 255, 0.35));
+}
 
 .leaflet-tile-pane { filter: var(--tile-filter); }
 

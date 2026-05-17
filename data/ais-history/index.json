@@ -25,7 +25,7 @@
       "vessel_id": "CA5",
       "date_utc": "2026-05-10",
       "file": "ais-history/CA5-2026-05-10.json",
-      "positions": 4,
+      "positions": 5,
       "provider": "datalastic"
     },
     {
@@ -39,7 +39,7 @@
       "vessel_id": "CA1",
       "date_utc": "2026-05-12",
       "file": "ais-history/CA1-2026-05-12.json",
-      "positions": 1,
+      "positions": 2,
       "provider": "datalastic"
     },
     {
@@ -53,7 +53,42 @@
       "vessel_id": "JUNO",
       "date_utc": "2026-05-15",
       "file": "ais-history/JUNO-2026-05-15.json",
-      "positions": 4,
+      "positions": 16,
+      "provider": "datalastic"
+    },
+    {
+      "vessel_id": "CA1",
+      "date_utc": "2026-05-16",
+      "file": "ais-history/CA1-2026-05-16.json",
+      "positions": 26,
+      "provider": "datalastic"
+    },
+    {
+      "vessel_id": "CA3",
+      "date_utc": "2026-05-16",
+      "file": "ais-history/CA3-2026-05-16.json",
+      "positions": 9,
+      "provider": "datalastic"
+    },
+    {
+      "vessel_id": "CA5",
+      "date_utc": "2026-05-16",
+      "file": "ais-history/CA5-2026-05-16.json",
+      "positions": 8,
+      "provider": "datalastic"
+    },
+    {
+      "vessel_id": "JUNO",
+      "date_utc": "2026-05-16",
+      "file": "ais-history/JUNO-2026-05-16.json",
+      "positions": 11,
+      "provider": "datalastic"
+    },
+    {
+      "vessel_id": "CA1",
+      "date_utc": "2026-05-17",
+      "file": "ais-history/CA1-2026-05-17.json",
+      "positions": 3,
       "provider": "datalastic"
     }
   ]

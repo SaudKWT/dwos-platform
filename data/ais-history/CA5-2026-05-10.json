@@ -31,6 +31,15 @@
       "nav_status": null
     },
     {
+      "ts": "2026-05-10T13:23:44Z",
+      "lat": 29.221657,
+      "lon": 48.237362,
+      "sog": 4.0,
+      "cog": 27.0,
+      "heading": 124.0,
+      "nav_status": "Underway Using Engine"
+    },
+    {
       "ts": "2026-05-10T13:33:00Z",
       "lat": 29.221657,
       "lon": 48.237362,
@@ -41,7 +50,7 @@
     }
   ],
   "stats": {
-    "count": 4,
+    "count": 5,
     "first_ts": "2026-05-10T11:58:00Z",
     "last_ts": "2026-05-10T13:33:00Z",
     "bbox": [
@@ -54,7 +63,7 @@
   },
   "source": {
     "provider": "datalastic",
-    "imported_at": "2026-05-15T08:17:05.080707Z",
+    "imported_at": "2026-05-16T04:36:54.005560Z",
     "raw_query": "datalastic: mmsi=538010099 days=7"
   }
 }

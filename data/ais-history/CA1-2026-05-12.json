@@ -4,6 +4,15 @@
   "date_utc": "2026-05-12",
   "positions": [
     {
+      "ts": "2026-05-12T13:10:24Z",
+      "lat": 28.913334,
+      "lon": 48.453335,
+      "sog": 6.5,
+      "cog": 305.0,
+      "heading": 175.0,
+      "nav_status": "Underway Using Engine"
+    },
+    {
       "ts": "2026-05-12T13:21:00Z",
       "lat": 29.024597,
       "lon": 48.231205,
@@ -15,18 +24,18 @@
   ],
   "source": {
     "provider": "datalastic",
-    "imported_at": "2026-05-15T08:17:04.433243Z",
+    "imported_at": "2026-05-16T04:36:52.685558Z",
     "raw_query": "datalastic /vessel_pro polled"
   },
   "stats": {
-    "count": 1,
-    "first_ts": "2026-05-12T13:21:00Z",
+    "count": 2,
+    "first_ts": "2026-05-12T13:10:24Z",
     "last_ts": "2026-05-12T13:21:00Z",
     "bbox": [
-      29.024597,
+      28.913334,
       48.231205,
       29.024597,
-      48.231205
+      48.453335
     ],
     "max_sog": 6.5
   }

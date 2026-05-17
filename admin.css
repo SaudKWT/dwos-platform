@@ -20,6 +20,13 @@
 .admin-title .subtitle { margin: 4px 0 0; font-size: 13px; color: #c1cfdc; }
 .admin-link { color: #f5b400; text-decoration: none; font-weight: 500; }
 .admin-link:hover { text-decoration: underline; }
+.admin-header-actions { display: flex; align-items: center; gap: 16px; }
+.admin-link-btn {
+  background: #f5b400; color: #0d2540; border: none;
+  padding: 8px 14px; border-radius: 6px; font-weight: 600;
+  cursor: pointer; font-size: 14px;
+}
+.admin-link-btn:hover { background: #ffc933; }
 
 .admin-main {
   max-width: 1100px;

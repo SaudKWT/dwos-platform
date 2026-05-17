@@ -1,0 +1,51 @@
+{
+  "vessel_id": "CA1",
+  "mmsi": "538010097",
+  "date_utc": "2026-05-17",
+  "positions": [
+    {
+      "ts": "2026-05-17T06:02:00Z",
+      "lat": 29.232826,
+      "lon": 48.322701,
+      "sog": 0.0,
+      "cog": 286.0,
+      "heading": 124.0,
+      "nav_status": "Restricted manoeuverability"
+    },
+    {
+      "ts": "2026-05-17T06:31:00Z",
+      "lat": 29.23275,
+      "lon": 48.322552,
+      "sog": 0.0,
+      "cog": 231.0,
+      "heading": 134.0,
+      "nav_status": "Restricted manoeuverability"
+    },
+    {
+      "ts": "2026-05-17T07:02:00Z",
+      "lat": 29.232746,
+      "lon": 48.322472,
+      "sog": 0.0,
+      "cog": 191.0,
+      "heading": 132.0,
+      "nav_status": "Restricted manoeuverability"
+    }
+  ],
+  "source": {
+    "provider": "datalastic",
+    "imported_at": "2026-05-17T07:12:01.440637Z",
+    "raw_query": "datalastic /vessel_pro polled"
+  },
+  "stats": {
+    "count": 3,
+    "first_ts": "2026-05-17T06:02:00Z",
+    "last_ts": "2026-05-17T07:02:00Z",
+    "bbox": [
+      29.232746,
+      48.322472,
+      29.232826,
+      48.322701
+    ],
+    "max_sog": 0.0
+  }
+}

@@ -13,7 +13,10 @@
     <h1>Daily Vessel Report</h1>
     <p class="subtitle">Captains: fill in your shift's report. Submissions flow into the simulator immediately.</p>
   </div>
-  <a class="admin-link" href="/">← Back to simulator</a>
+  <div class="admin-header-actions">
+    <button type="button" class="btn admin-link-btn" id="generatePdfTopBtn">📄 Generate PDF</button>
+    <a class="admin-link" href="/">← Back to simulator</a>
+  </div>
 </header>
 
 <main class="admin-main">
@@ -152,6 +155,7 @@
 
     <div class="submit-row">
       <button type="submit" class="btn btn-primary">Submit report</button>
+      <button type="button" class="btn" id="generatePdfBtn">📄 Generate PDF</button>
       <span class="status" id="submitStatus"></span>
     </div>
   </form>
