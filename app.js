@@ -213,9 +213,34 @@ function learnedPathFor(vid, fromId, toId) {
   };
 }
 
+// Walk task rows in document order and enforce monotonic from_time.
+// If a row's HH:MM falls *strictly before* the previous accepted row's,
+// it's almost certainly a captain typo (e.g. JUNO 15-May row 23 reads
+// "13:45" between 15:43 and 16:20 — the source docx confirms it should
+// be 15:45).  In that case shift the row to prev + 1 min so a later
+// stable sort can't sandwich it between earlier entries and compress a
+// multi-hour transit into a few minutes.  HH:MM string compare is safe.
+function monotonicizeRows(rows) {
+  let prev = null;
+  return rows.map(r => {
+    if (!r || !r.from_time) return r;
+    let from = r.from_time;
+    if (prev && from.localeCompare(prev) < 0) {
+      const [ph, pm] = prev.split(':').map(Number);
+      let mins = ph * 60 + pm + 1;
+      if (mins > 24 * 60 - 1) mins = 24 * 60 - 1;
+      from = `${String(Math.floor(mins / 60)).padStart(2, '0')}:${String(mins % 60).padStart(2, '0')}`;
+    }
+    prev = from;
+    return from === r.from_time ? r : { ...r, from_time: from };
+  });
+}
+
 function rowsToSegments(reportDate, rows, vid) {
-  // Sort by from_time (string compare is fine for HH:MM).
-  const sorted = [...rows].filter(r => r && r.from_time)
+  const cleaned = monotonicizeRows(rows).filter(r => r && r.from_time);
+  // Sort by from_time (string compare is fine for HH:MM).  After the
+  // monotonic clamp this is a no-op for well-formed reports.
+  const sorted = cleaned
     .sort((a, b) => a.from_time.localeCompare(b.from_time));
   const out = [];
   let prevKnownLoc = null;
@@ -1485,14 +1510,19 @@ function openVesselSheet(vid) {
   // this report_date that's still <= the current sim time.  Only highlight
   // if the sim clock actually falls on this report's day (otherwise the
   // user is looking at a different day's report and nothing should glow).
+  // Use the SAME monotonic-clamped from_time view that rowsToSegments
+  // does, so the highlighted "NOW" row matches the actual rendered motion
+  // even when the captain typo'd a from_time (see monotonicizeRows).
+  const taskLogRaw  = (rep && Array.isArray(rep.task_log)) ? rep.task_log : [];
+  const taskLogView = monotonicizeRows(taskLogRaw);
   let activeIdx = -1;
-  if (rep && Array.isArray(rep.task_log) && rep.task_log.length && state.currentTime) {
+  if (taskLogView.length && state.currentTime) {
     const cur = new Date(state.currentTime.getTime() + TZ_OFFSET_MIN * 60 * 1000);
     const curIsoDay = cur.toISOString().slice(0, 10);
     if (curIsoDay === rep.report_date) {
       const curMin = cur.getUTCHours() * 60 + cur.getUTCMinutes();
       let bestMin = -1;
-      rep.task_log.forEach((r, i) => {
+      taskLogView.forEach((r, i) => {
         const m = /^(\d{2}):(\d{2})$/.exec(r.from_time || '');
         if (!m) return;
         const rowMin = +m[1] * 60 + +m[2];
@@ -1504,15 +1534,25 @@ function openVesselSheet(vid) {
     }
   }
 
-  const taskRowsHtml = (rep && Array.isArray(rep.task_log) ? rep.task_log : [])
-    .map((r, i) => `
+  // Render the table using the clamped times so what's shown matches the
+  // simulation.  Display the original from_time alongside as a hint when
+  // the value was corrected, so the user can spot the captain's typo.
+  const taskRowsHtml = taskLogView
+    .map((r, i) => {
+      const orig = taskLogRaw[i] && taskLogRaw[i].from_time;
+      const fixed = (orig && orig !== r.from_time);
+      const fromCell = fixed
+        ? `${escapeText(r.from_time)} <span class="fix-tag" title="captain wrote ${escapeText(orig)} — adjusted to keep the timeline monotonic">~${escapeText(orig)}</span>`
+        : escapeText(r.from_time || '');
+      return `
       <tr${i === activeIdx ? ' class="active"' : ''}>
-        <td class="t">${escapeText(r.from_time || '')}</td>
+        <td class="t">${fromCell}</td>
         <td class="t">${escapeText(r.to_time || '—')}</td>
         <td class="c"><span class="code">${escapeText(r.task_code || '')}</span></td>
         <td>${escapeText(r.description || '')}${i === activeIdx ? ' <span class="now-tag">NOW</span>' : ''}</td>
         <td class="loc">${escapeText(r.location_id || '')}</td>
-      </tr>`).join('');
+      </tr>`;
+    }).join('');
 
   const summaryLine = rep
     ? `Report for <b>${rep.report_date}</b>${rep.voyage_no ? ' · Voyage ' + escapeText(rep.voyage_no) : ''}`
