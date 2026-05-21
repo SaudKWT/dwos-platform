@@ -444,12 +444,33 @@ def parse_crest_pdf(pdf_path: Path, vessel_id: str) -> dict:
         out["safety"] = {"accidents": sm.group(1), "incidents": sm.group(2), "near_miss": sm.group(3)}
 
     # 24-hr consumables — single-row scalars.
-    # Fuel oil row
-    m = re.search(r"Fuel oil\s+(\S+\s*\S*)\s+(\S+\s*\S*)\s+(\S+)\s+(\S+\s*\S*)\s+(\S+\s*\S*)\s+(\S+)", text)
+    # Fuel oil row. The PDF table has 7 columns: Product | Max Cap | Consumed |
+    # Discharged | ROB | Rem. To Load | Loaded. Each value cell is either
+    # "<num> M3" / "<num> MT", a bare number, or a "-" / "Nil" placeholder.
+    # Max Cap has a parenthesised safe-fill percentage ("950 M3 (80%)").
+    # Some PDFs render M3 as M + superscript 3, which pdftotext -layout drops
+    # the 3 from this line — we accept "M" as a unit and re-normalise below.
+    cell = r"(?:[\d,.]+\s*(?:M3|MT|m3|M)|[\d,.]+|-|Nil|nil|N/A)"
+    m = re.search(
+        rf"Fuel oil\s+([\d,.]+\s*(?:M3|M)\s*\(\s*\d+\s*%\s*\))\s+"
+        rf"({cell})\s+({cell})\s+({cell})\s+({cell})(?:\s+({cell}))?",
+        text,
+    )
     if m:
+        def _norm_unit(v: str | None) -> str | None:
+            if not v:
+                return v
+            v = re.sub(r"\s+", " ", v).strip()
+            # Re-attach the dropped superscript "3": "950 M (80%)" -> "950 M3 (80%)",
+            # "564.646 M" -> "564.646 M3". Skip if already "M3"/"MT"/no unit.
+            return re.sub(r"(?<=\d)\s*M(?!3|T|t)\b", " M3", v)
         out["consumables"]["fuel_oil"] = {
-            "max_capacity": m.group(1), "consumed": m.group(2), "discharged": m.group(3),
-            "rob": m.group(4), "remaining_to_load": m.group(5), "loaded": m.group(6),
+            "max_capacity": _norm_unit(m.group(1)),
+            "consumed": _norm_unit(m.group(2)),
+            "discharged": _norm_unit(m.group(3)),
+            "rob": _norm_unit(m.group(4)),
+            "remaining_to_load": _norm_unit(m.group(5)),
+            "loaded": _norm_unit(m.group(6)) if m.group(6) else None,
             "remarks": "",
         }
     # Fresh water (label varies: "Fresh Water" / "Fresh water")

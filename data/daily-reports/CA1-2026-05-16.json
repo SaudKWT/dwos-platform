@@ -1,12 +1,12 @@
 {
   "consumables": {
     "fuel_oil": {
-      "max_capacity": "950 M3",
-      "consumed": "(80%)     4.605",
-      "discharged": "M3",
-      "rob": "-          482.575",
-      "remaining_to_load": "M3          467.425",
-      "loaded": "M3",
+      "max_capacity": "950 M3 (80%)",
+      "consumed": "4.605 M3",
+      "discharged": "-",
+      "rob": "482.575 M3",
+      "remaining_to_load": "467.425 M3",
+      "loaded": "-",
       "remarks": ""
     }
   },

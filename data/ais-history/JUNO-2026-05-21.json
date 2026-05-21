@@ -1,0 +1,32 @@
+{
+  "vessel_id": "JUNO",
+  "mmsi": "636025030",
+  "date_utc": "2026-05-21",
+  "positions": [
+    {
+      "ts": "2026-05-21T03:50:00Z",
+      "lat": 25.492767,
+      "lon": 54.860523,
+      "sog": 11.6,
+      "cog": 91,
+      "heading": 91,
+      "nav_status": "Under way using engine"
+    }
+  ],
+  "source": {
+    "provider": "datalastic",
+    "imported_at": "2026-05-21T08:44:50.683Z",
+    "raw_query": "datalastic /vessel_pro live"
+  },
+  "stats": {
+    "count": 1,
+    "first_ts": "2026-05-21T03:50:00Z",
+    "last_ts": "2026-05-21T03:50:00Z",
+    "bbox": [
+      25.492767,
+      54.860523,
+      25.492767,
+      54.860523
+    ]
+  }
+}

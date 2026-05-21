@@ -337,14 +337,26 @@ function fillGapsWithMoored(segs) {
 
 function mergeRunsOfSameLoc(segs) {
   // Merge consecutive moored segments that are at the same location.
-  // Keeps the human-readable "purpose" of the first segment in the run, but
-  // tags the merged block with how many sub-events it covered so the popup
-  // can hint at it.
+  // We retain every underlying sub-event in `sub_events` so the side-panel
+  // card can show *only* the activity matching the current sim time (the full
+  // list is still available in the daily-activity sheet on click).
+  // `purpose` is kept as a concatenated fallback for code paths that don't
+  // know about sub_events (popups, etc.).
   const out = [];
   for (const s of segs) {
     const prev = out[out.length - 1];
     if (prev && prev.type === 'moored' && s.type === 'moored' && prev.loc === s.loc
         && prev.t1.getTime() === s.t0.getTime()) {
+      if (!prev.sub_events) {
+        prev.sub_events = [{
+          t0: prev.t0, t1: prev.t1,
+          purpose: prev.purpose, raw: prev.raw, filler: prev.filler,
+        }];
+      }
+      prev.sub_events.push({
+        t0: s.t0, t1: s.t1,
+        purpose: s.purpose, raw: s.raw, filler: s.filler,
+      });
       prev.t1 = s.t1;
       prev.merged_count = (prev.merged_count || 1) + 1;
       // Keep a comma-separated trail of sub-purposes (truncate to keep ui sane)
@@ -358,6 +370,32 @@ function mergeRunsOfSameLoc(segs) {
     out.push({ ...s });
   }
   return out;
+}
+
+// Pick the sub-event of a merged moored block that's active at time `t`.
+// Falls back to the segment's own purpose when there are no sub_events.
+function activeSubEvent(segment, t) {
+  if (!segment || segment.type !== 'moored') return null;
+  const subs = segment.sub_events;
+  if (!subs || !subs.length) return null;
+  const tn = (t instanceof Date) ? t.getTime() : +t;
+  for (const sub of subs) {
+    if (tn >= sub.t0.getTime() && tn < sub.t1.getTime()) return sub;
+  }
+  if (tn < subs[0].t0.getTime()) return subs[0];
+  return subs[subs.length - 1];
+}
+
+// Next sub-event strictly after `t` within the same merged block.
+function nextSubEvent(segment, t) {
+  if (!segment || segment.type !== 'moored') return null;
+  const subs = segment.sub_events;
+  if (!subs || !subs.length) return null;
+  const tn = (t instanceof Date) ? t.getTime() : +t;
+  for (const sub of subs) {
+    if (sub.t0.getTime() > tn) return sub;
+  }
+  return null;
 }
 
 function buildTimelinesFromReports() {
@@ -1405,7 +1443,10 @@ function vesselCardHtml(v, pos) {
   } else if (s.type === 'moored') {
     const loc = state.locsById[s.loc];
     statusHtml = `<span class="tag moored">Moored</span> ${loc ? loc.short : s.loc}`;
-    metaHtml = `${s.purpose || 'STBY'}`;
+    // Show ONLY the activity that's current at the simulation clock — the
+    // full chain is available by tapping the card (daily-activity sheet).
+    const active = activeSubEvent(s, state.currentTime);
+    metaHtml = (active && active.purpose) ? active.purpose : (s.purpose || 'STBY');
   } else {
     const from = state.locsById[s.from];
     const to = state.locsById[s.to];
@@ -1421,10 +1462,20 @@ function vesselCardHtml(v, pos) {
       : `${v.speed_kts} kts`;
     metaHtml = `${s.purpose || ''} · ${s.distance_nm ? s.distance_nm.toFixed(1) + ' nm' : ''} · ${durHr.toFixed(1)} h @ ${speedText}${s.eta_anchored ? ' · ETA anchored' : ''}`;
   }
-  const next = nextTransit(v.id, state.currentTime);
-  const nextHtml = next
-    ? `<div class="next">Next: ${state.locsById[next.from].short} → ${state.locsById[next.to].short} @ ${toKuwaitStr(next.t0)}</div>`
-    : '<div class="next">No further planned movements.</div>';
+  // Build the "Next" line. Prefer the next sub-event within the current
+  // merged moored block (e.g. "STBY → SBE → Heave anchor") because that's
+  // the immediate next thing the captain expects; fall back to the next
+  // planned transit when this block has no more sub-events.
+  const nextSub = (s && s.type === 'moored') ? nextSubEvent(s, state.currentTime) : null;
+  const nextTr  = nextTransit(v.id, state.currentTime);
+  let nextHtml;
+  if (nextSub && nextSub.purpose) {
+    nextHtml = `<div class="next">Next: ${escapeText(nextSub.purpose)} @ ${toKuwaitStr(nextSub.t0)}</div>`;
+  } else if (nextTr) {
+    nextHtml = `<div class="next">Next: ${state.locsById[nextTr.from].short} → ${state.locsById[nextTr.to].short} @ ${toKuwaitStr(nextTr.t0)}</div>`;
+  } else {
+    nextHtml = '<div class="next">No further planned movements.</div>';
+  }
 
   // Position source badge — tells the user whether the dot on the map is from
   // real AIS or interpolated from the captain's daily-report timeline.
@@ -1446,7 +1497,6 @@ function vesselCardHtml(v, pos) {
     ${sourceHtml}
     <div class="meta">${metaHtml}</div>
     ${nextHtml}
-    ${s && s.raw ? `<div class="raw">${s.raw}</div>` : ''}
   </div>`;
 }
 
