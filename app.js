@@ -189,6 +189,117 @@ function codeIsTransit(code) {
   return code.split(/[/+]/).some(c => TRANSIT_CODES.has(c.trim()));
 }
 
+// Standby task codes from the captains' reports: S01 (on location), S02
+// (alongside rig in DP), S03 (semi DP / base), S04 (Shuaiba port), S05
+// (awaiting instructions) and A01 (at anchor).  Some rows carry a slash
+// combination like "S01/A01".
+const STANDBY_CODES = new Set(['S01', 'S02', 'S03', 'S04', 'S05', 'A01']);
+
+function codeIsStandby(code, label) {
+  if (code && code.split(/[/+]/).some(c => STANDBY_CODES.has(c.trim().toUpperCase()))) return true;
+  return /standby/i.test(label || '');
+}
+
+// Pretty-print a duration in minutes as "131h 24m" / "5h" / "42m".
+function fmtDur(min) {
+  min = Math.round(min || 0);
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  if (h && m) return `${h}h ${m}m`;
+  if (h) return `${h}h`;
+  return `${m}m`;
+}
+
+// Classify a NON-standby task-log row into a plain-language activity bucket so
+// the standby table can show WHAT the vessel actually did during its stay at a
+// location — cargo loading/unloading, water or fuel bunkering, crew transfer,
+// provisions, etc.  Returns null for rows that should not be counted against a
+// location's stay (transit between locations).
+function classifyActivity(code, label, desc) {
+  const c  = (code || '').toUpperCase();
+  const tl = `${label || ''} ${desc || ''}`.toLowerCase();
+  if (codeIsTransit(c)) return null;                  // movement, not at-location
+  // Bunkering is detected from the DESCRIPTION first, because the captains
+  // sometimes code a fuel/water hose transfer as "Cargo ops" (e.g. L1F).
+  // Fresh / potable water transfer.  "\bfw\b" safely skips "FWE"/"F.W.E"
+  // (= Finished With Engine) since those have no word boundary after "fw".
+  if (/\bfw\b|\bdw\b|fresh water|potable|drinking water/.test(tl) && !/f\.?w\.?e/.test(tl))
+    return 'Water bunkering';
+  // Diesel / fuel-oil bunkering ("FO hose", "Rx FO", diesel, MGO, bunker).
+  // Exclude consumable stat lines and slop-to-mud-tank transfers.
+  if (/\bfo\b|fuel oil hose|diesel|\bmgo\b|\bd\.?o\.?\b|bunker/.test(tl) &&
+      !/unpumpable|mud tank|slop/.test(tl))
+    return 'Diesel bunkering';
+  // Cargo: loading / unloading / back-load / lift handling (by code or words).
+  if (/\bL\d|\bDP1\b|\bB1\b/.test(c) ||
+      /cargo|lift|loading|unload|off ?load|back ?load|discharg|hand carry|\bh\.?c\b|basket/.test(tl))
+    return 'Cargo loading / unloading';
+  if (/provision|food|stores/.test(tl))             return 'Provisions';
+  if (/\bpax\b|passenger|on.?signer|off.?signer|crew change/.test(tl)) return 'Crew / passenger transfer';
+  if (/slop|mud tank/.test(tl))                      return 'Slop / mud transfer';
+  // Base oil / brine transfer (captains write "base oil hose", "Rx base oil").
+  if (/base ?oil|brine/.test(tl))                    return 'Base oil bunkering';
+  // Break the old catch-all "Other" into the real jobs hiding inside code O1.
+  if (/tank clean|mud tk|agitator|hetco/.test(tl))   return 'Tank cleaning';
+  if (/inspection|coast guard|\bmoi\b|officer|\bhall\b/.test(tl)) return 'Inspection';
+  if (/\bfwe\b|f\.w\.e|finish(ed)? ?me\b|finished with engine/.test(tl)) return 'Idle (engines off)';
+  if (/give way|waiting|stby at|standby for instruction|standby waiting|cancel ops/.test(tl)) return 'Waiting / giving way';
+  if (/pull out|cast off|anchor|heave|aweigh|\bsbe\b|s\.b\.e|dp ?(setup|set up|mode|on|off)|500 ?m|proceed|shift|position|arriv|enter|outside|clear|underway|drop back/.test(tl))
+    return 'Maneuvering';
+  return 'Other activity';
+}
+
+// Aggregate, across ALL of a vessel's daily reports, how long it sat in a
+// standby task at each location (rig / berth / port) AND what activities it
+// performed there.  Rows whose own location_id is null inherit the last known
+// location (location_id is the position at the END of a segment), carried
+// forward across reports so an overnight standby is attributed to where the
+// vessel actually was.
+function standbyByLocation(vid) {
+  const reports = (state.reportsByVid && state.reportsByVid[vid]) || [];
+  const totals = new Map();   // locId -> standby minutes
+  const acts   = new Map();   // locId -> Map(activity label -> minutes)
+  let lastLoc = null, total = 0;
+  for (const rep of reports) {
+    const rows = Array.isArray(rep.task_log) ? rep.task_log : [];
+    for (const r of rows) {
+      if (r.location_id) lastLoc = r.location_id;
+      const mn = r.duration_min || 0;
+      if (mn <= 0) continue;
+      const key = lastLoc || '__sea';
+      if (codeIsStandby(r.task_code, r.task_label)) {
+        totals.set(key, (totals.get(key) || 0) + mn);
+        total += mn;
+      } else {
+        const cat = classifyActivity(r.task_code, r.task_label, r.description);
+        if (!cat) continue;     // skip transit
+        if (!acts.has(key)) acts.set(key, new Map());
+        const m = acts.get(key);
+        m.set(cat, (m.get(cat) || 0) + mn);
+      }
+    }
+  }
+  const keys = new Set([...totals.keys(), ...acts.keys()]);
+  const out = [...keys].map(id => {
+    const loc = state.locsById[id];
+    const am  = acts.get(id) || new Map();
+    const activities = [...am.entries()]
+      .map(([label, minutes]) => ({ label, minutes }))
+      .sort((a, b) => b.minutes - a.minutes);
+    const standby = totals.get(id) || 0;
+    return {
+      id,
+      minutes: standby,
+      activities,
+      // Rank locations by the full time spent there (standby + activity).
+      stayMinutes: standby + activities.reduce((s, x) => s + x.minutes, 0),
+      name: loc ? (loc.name || loc.short) : (id === '__sea' ? 'At anchor / untagged' : id),
+      type: loc ? loc.type : 'sea',
+    };
+  }).sort((a, b) => b.stayMinutes - a.stayMinutes);
+  return { rows: out, total, reportCount: reports.length };
+}
+
 // Look up a learned route's waypoints (if any) and frame them so the path
 // runs canonical_from_coords → AIS_waypoints → canonical_to_coords.  This
 // satisfies the constraint "AIS may not reach the port but the simulator
@@ -244,15 +355,21 @@ function rowsToSegments(reportDate, rows, vid) {
     .sort((a, b) => a.from_time.localeCompare(b.from_time));
   const out = [];
   let prevKnownLoc = null;
+  // Rows consumed as "en-route" evidence by an earlier transit leg —
+  // they must not spawn their own hold-position segments.
+  const absorbed = new Set();
   for (let i = 0; i < sorted.length; i++) {
+    if (absorbed.has(i)) continue;
     const r = sorted[i];
     const t0 = parseTaskTime(reportDate, r.from_time);
     let t1 = parseTaskTime(reportDate, r.to_time);
+    let endKind = t1 ? 'explicit' : null;
     if (!t1) {
       // Use the next row's from_time, or end-of-day, as the implicit end.
       const next = sorted[i + 1];
       t1 = next ? parseTaskTime(reportDate, next.from_time)
                 : parseTaskTime(reportDate, '24:00');
+      endKind = next ? 'nextRow' : 'eod';
     }
     if (!t0 || !t1 || t1 <= t0) continue;
 
@@ -265,9 +382,57 @@ function rowsToSegments(reportDate, rows, vid) {
       const fromLoc = state.locsById[from];
       const toLoc   = state.locsById[to];
       const learned = learnedPathFor(vid, from, to);
+
+      // ------------------------------------------------------------------
+      // Real end-of-transit inference.  Captains log a departure row and
+      // then keep logging en-route events as separate rows ("CLEAR
+      // BREAKWATER" 5 min after "C/OFF ... PROCEED TO OD.1").  Naively
+      // ending the leg at the next row's from_time compressed an 18 nm
+      // trip into 5 minutes — the vessel teleported at 200+ kts, then sat
+      // "moored" at the rig while it was actually still sailing.
+      // Rule: while the following rows are transit-coded and carry no
+      // location, the vessel is still underway — absorb them.  The leg
+      // ends at the first row that either confirms presence at the
+      // destination (location_id === to, e.g. "ENTER 500 M ZONE AT OD.1")
+      // or is a stationary activity (non-transit code).
+      // ------------------------------------------------------------------
+      if (endKind === 'nextRow' || endKind === 'eod') {
+        let found = null;
+        for (let j = i + 1; j < sorted.length; j++) {
+          const r2 = sorted[j];
+          const t2 = parseTaskTime(reportDate, r2.from_time);
+          if (!t2 || t2 <= t0) continue;
+          const r2loc = r2.location_id || r2.to_location_id || null;
+          if (codeIsTransit(r2.task_code) && !r2loc) { absorbed.add(j); continue; }
+          found = { t: t2, kind: r2loc === to ? 'arrival' : 'boundary' };
+          break;
+        }
+        if (found) { t1 = found.t; endKind = found.kind; }
+        else { t1 = parseTaskTime(reportDate, '24:00'); endKind = 'eod'; }
+      }
+
+      // Speed sanity net: when the end is still only inferred (no explicit
+      // to_time and no arrival confirmation), a missing arrival row can
+      // leave the leg absurdly slow (a 30-min hop stretched over hours).
+      // Clamp to the vessel's real cruise speed learned from AIS (fallback:
+      // spec speed); the gap-filler then moors it at the destination.
+      let estimated = false;
+      if (fromLoc && toLoc && (endKind === 'boundary' || endKind === 'eod')) {
+        const dNm = distNm(fromLoc, toLoc);
+        const lv = state.learnedVessels && state.learnedVessels[vid];
+        const vv = state.vesselsById[vid];
+        const cruise = (lv && lv.cruise_speed_kts) || (vv && vv.speed_kts) || 10;
+        const durH = (t1 - t0) / 3600000;
+        if (durH > 0 && dNm / durH < cruise * 0.4) {
+          t1 = new Date(t0.getTime() + (dNm / cruise) * 3600000);
+          estimated = true;
+        }
+      }
+
       out.push({
         type: 'transit',
         t0, t1, from, to,
+        eta_estimated: estimated,
         purpose: r.description || r.task_label || '',
         raw: r.description || '',
         task_code: r.task_code,
@@ -279,6 +444,38 @@ function rowsToSegments(reportDate, rows, vid) {
         learned_speed_kts: learned ? learned.avg_speed_kts : null,
       });
       prevKnownLoc = to;
+      // Aborted-trip repair: a transit A→B immediately followed by B→A where
+      // BOTH legs are physically impossible (CA5 11-May: "departure to
+      // Shuaiba" 14:25, "return back for cargo" 14:50 — it never reached
+      // Shuaiba, it turned around a few miles out).  Reinterpret as an
+      // out-and-back to the point the vessel could actually reach at its
+      // real cruise speed.
+      const cur = out[out.length - 1];
+      const prev = out[out.length - 2];
+      if (prev && prev.type === 'transit' && cur.type === 'transit'
+          && prev.to === cur.from && prev.from === cur.to
+          && prev.distance_nm && cur.t0.getTime() === prev.t1.getTime()) {
+        const lv = state.learnedVessels && state.learnedVessels[vid];
+        const vv = state.vesselsById[vid];
+        const cruise = (lv && lv.cruise_speed_kts) || (vv && vv.speed_kts) || 10;
+        const d1h = (prev.t1 - prev.t0) / 3600000;
+        const d2h = (cur.t1 - cur.t0) / 3600000;
+        const tooFast = h => h > 0 && prev.distance_nm / h > cruise * 1.6;
+        if (tooFast(d1h) && tooFast(d2h)) {
+          const A = state.locsById[prev.from];
+          const B = state.locsById[prev.to];
+          if (A && B) {
+            const f = Math.min(0.9, (cruise * d1h) / prev.distance_nm);
+            const turn = [A.lat + (B.lat - A.lat) * f, A.lon + (B.lon - A.lon) * f];
+            prev.polyline = [[A.lat, A.lon], turn];
+            prev.distance_nm *= f;
+            prev.turned_back = true;
+            cur.polyline = [turn, [A.lat, A.lon]];
+            cur.distance_nm = prev.distance_nm;
+            cur.turned_back = true;
+          }
+        }
+      }
     } else if (transit && (from === to || !to)) {
       // Transit row but we don't know where it's going. Hold position.
       const loc = to || from || prevKnownLoc;
@@ -410,7 +607,24 @@ function buildTimelinesFromReports() {
       segs.push(...rowsSegs);
     }
     segs.sort((a, b) => a.t0 - b.t0);
-    tl[vid] = mergeRunsOfSameLoc(fillGapsWithMoored(segs));
+    // Resolve overlaps (duplicate rows, transits crossing midnight logged in
+    // both days' reports): the later segment's start wins, earlier one is
+    // truncated.  Without this positionAt() finds whichever segment sorts
+    // first and the vessel can jump back and forth between two positions.
+    const clean = [];
+    for (const s of segs) {
+      const prev = clean[clean.length - 1];
+      if (prev && prev.t1.getTime() > s.t0.getTime()) {
+        if (s.type === 'moored' && prev.type === 'moored' && prev.loc === s.loc
+            && s.t1.getTime() <= prev.t1.getTime()) {
+          continue; // duplicate stay fully inside the previous one
+        }
+        prev.t1 = s.t0;
+        if (prev.t1.getTime() <= prev.t0.getTime()) clean.pop();
+      }
+      clean.push(s);
+    }
+    tl[vid] = mergeRunsOfSameLoc(fillGapsWithMoored(clean));
   }
   state.timelines = tl;
 
@@ -895,7 +1109,7 @@ function rebuildLocationMarkers() {
     let html, iconSize, iconAnchor;
     if (loc.type === 'rig') {
       const px = iconPx(60, 30);
-      html = `<div class="rig-marker" style="width:${px}px;height:${px}px"><div class="rig-body">${jackupRigSvg()}</div><div class="rig-label">${loc.short}</div></div>`;
+      html = `<div class="rig-marker" style="width:${px}px;height:${px}px"><div class="rig-body">${jackupRigSvg()}</div><div class="rig-label">${loc.short}</div><div class="rig-occ" data-occ="${loc.id}" hidden></div></div>`;
       iconSize = [px, px];
       iconAnchor = [px / 2, px / 2];
     } else if (loc.type === 'port') {
@@ -955,6 +1169,7 @@ function initMap() {
 
   rebuildLocationMarkers();
   rebuildVesselMarkers();
+  drawRigSafetyZones();
   drawRoutes();
 
   state.map.on('zoomend', () => {
@@ -962,6 +1177,28 @@ function initMap() {
     rebuildVesselMarkers();
     render();
   });
+}
+
+// Dashed 500 m safety-zone ring around every rig — the zone the captains'
+// logs keep referring to ("ENTER 500 M SAFETY ZONE").  Drawn once; radius is
+// in real metres so it scales with zoom automatically.
+function drawRigSafetyZones() {
+  (state.rigZones || []).forEach(c => state.map.removeLayer(c));
+  state.rigZones = [];
+  for (const loc of state.locs) {
+    if (loc.type !== 'rig') continue;
+    const c = L.circle([loc.lat, loc.lon], {
+      radius: 500,
+      color: '#ff7849',
+      weight: 1,
+      opacity: 0.45,
+      dashArray: '4,5',
+      fillColor: '#ff7849',
+      fillOpacity: 0.05,
+      interactive: false,
+    }).addTo(state.map);
+    state.rigZones.push(c);
+  }
 }
 
 function drawRoutes() {
@@ -1375,13 +1612,112 @@ function render() {
         // in the first cut — that's why nothing was pulsing.
         const vm = el.querySelector('.vessel-marker') || el;
         vm.classList.toggle('is-ais-source', !!pos.ais);
+        const underway = !!(pos.segment && pos.segment.type === 'transit');
+        vm.classList.toggle('is-underway', underway);
         const body = el.querySelector('.vessel-body');
         if (body) body.style.transform = `rotate(${pos.heading || 0}deg)`;
+        // Map label shows the current speed while the vessel is underway.
+        const label = el.querySelector('.vessel-label');
+        if (label) {
+          const kts = underway ? transitSpeedKts(pos.segment) : null;
+          const txt = kts ? `${v.id} · ${kts.toFixed(1)} kt` : v.id;
+          if (label.textContent !== txt) label.textContent = txt;
+        }
       }
     }
     cards.push(vesselCardHtml(v, pos));
   }
-  document.getElementById('vesselCards').innerHTML = cards.join('');
+  const cardsHtml = cards.join('');
+  if (cardsHtml !== state._lastCardsHtml) {
+    document.getElementById('vesselCards').innerHTML = cardsHtml;
+    state._lastCardsHtml = cardsHtml;
+  }
+  updateTransitLines(positions);
+  updateRigOccupancy(positions);
+}
+
+// Average speed of a transit segment along its actual path (learned polyline
+// when we have one, straight-line otherwise).
+function transitSpeedKts(seg) {
+  if (!seg || seg.type !== 'transit') return null;
+  const durH = (seg.t1 - seg.t0) / 3600000;
+  if (!(durH > 0)) return null;
+  let dNm = seg.distance_nm;
+  if (Array.isArray(seg.polyline) && seg.polyline.length >= 2) {
+    dNm = 0;
+    for (let i = 0; i < seg.polyline.length - 1; i++) {
+      dNm += distNm({ lat: seg.polyline[i][0], lon: seg.polyline[i][1] },
+                    { lat: seg.polyline[i + 1][0], lon: seg.polyline[i + 1][1] });
+    }
+  }
+  return dNm ? dNm / durH : null;
+}
+
+// Solid "path covered so far" line behind each vessel in transit — makes it
+// obvious where the vessel came from and how far along the trip it is.
+function updateTransitLines(positions) {
+  (state.transitLines || []).forEach(l => state.map.removeLayer(l));
+  state.transitLines = [];
+  for (const v of state.vessels) {
+    const p = positions[v.id];
+    if (!p || !p.segment || p.segment.type !== 'transit' || p.ais) continue;
+    const seg = p.segment;
+    const from = state.locsById[seg.from];
+    const to = state.locsById[seg.to];
+    const path = (Array.isArray(seg.polyline) && seg.polyline.length >= 2)
+      ? seg.polyline
+      : (from && to ? [[from.lat, from.lon], [to.lat, to.lon]] : null);
+    if (!path) continue;
+    const frac = Math.min(1, Math.max(0, (state.currentTime - seg.t0) / (seg.t1 - seg.t0)));
+    const covered = coveredPolyline(path, frac);
+    covered.push([p.lat, p.lon]);
+    const line = L.polyline(covered, {
+      color: v.color,
+      weight: 3,
+      opacity: 0.85,
+      lineCap: 'round',
+      interactive: false,
+    }).addTo(state.map);
+    state.transitLines.push(line);
+  }
+}
+
+// Points of `poly` from its start up to fraction `frac` of its total length.
+function coveredPolyline(poly, frac) {
+  let total = 0;
+  const lens = [];
+  for (let i = 0; i < poly.length - 1; i++) {
+    const d = distNm({ lat: poly[i][0], lon: poly[i][1] },
+                     { lat: poly[i + 1][0], lon: poly[i + 1][1] });
+    lens.push(d);
+    total += d;
+  }
+  if (total === 0) return [poly[0]];
+  let target = frac * total;
+  const out = [poly[0]];
+  for (let i = 0; i < lens.length; i++) {
+    if (target <= lens[i]) break;
+    target -= lens[i];
+    out.push(poly[i + 1]);
+  }
+  return out;
+}
+
+// Badge on each rig marker with the number of vessels currently alongside.
+function updateRigOccupancy(positions) {
+  const counts = {};
+  for (const v of state.vessels) {
+    const p = positions[v.id];
+    if (p && p.segment && p.segment.type === 'moored') {
+      counts[p.segment.loc] = (counts[p.segment.loc] || 0) + 1;
+    }
+  }
+  document.querySelectorAll('.rig-occ').forEach(el => {
+    const n = counts[el.dataset.occ] || 0;
+    const txt = n ? `⚓${n}` : '';
+    if (el.textContent !== txt) el.textContent = txt;
+    el.hidden = !n;
+  });
 }
 
 function renderLive() {
@@ -1451,16 +1787,18 @@ function vesselCardHtml(v, pos) {
     const from = state.locsById[s.from];
     const to = state.locsById[s.to];
     const frac = Math.min(1, Math.max(0, (state.currentTime - s.t0) / (s.t1 - s.t0)));
-    const tag = s.repositioning ? '<span class="tag transit">Repositioning</span>' : '<span class="tag transit">Transit</span>';
-    statusHtml = `${tag} ${from.short} → ${to.short} (${Math.round(frac*100)}%)`;
-    const durHr = (s.t1 - s.t0) / 3600000;
-    // If we've learned this vessel's real cruise speed from AIS, show it
-    // alongside the nominal spec speed so the user sees both.
-    const learnedV = state.learnedVessels && state.learnedVessels[v.id];
-    const speedText = learnedV
-      ? `${learnedV.cruise_speed_kts.toFixed(1)} kt real · ${v.speed_kts} kt spec`
-      : `${v.speed_kts} kts`;
-    metaHtml = `${s.purpose || ''} · ${s.distance_nm ? s.distance_nm.toFixed(1) + ' nm' : ''} · ${durHr.toFixed(1)} h @ ${speedText}${s.eta_anchored ? ' · ETA anchored' : ''}`;
+    const tag = s.repositioning ? '<span class="tag transit">Repositioning</span>' : '<span class="tag transit">Underway</span>';
+    statusHtml = `${tag} ${from.short} → ${to.short}${s.turned_back ? ' <span class="sub">(turned back en route)</span>' : ''}
+      <div class="tbar"><div class="tbar-fill" style="width:${Math.round(frac * 100)}%"></div></div>`;
+    const kts = transitSpeedKts(s);
+    const remainMin = Math.max(0, (s.t1 - state.currentTime) / 60000);
+    const etaText = `ETA ${toKuwaitStr(s.t1).slice(11)}${s.eta_estimated ? ' (est.)' : ''} · in ${fmtDur(remainMin)}`;
+    metaHtml = [
+      s.purpose || '',
+      s.distance_nm ? `${s.distance_nm.toFixed(1)} nm` : '',
+      kts ? `${kts.toFixed(1)} kt` : '',
+      etaText,
+    ].filter(Boolean).join(' · ');
   }
   // Build the "Next" line. Prefer the next sub-event within the current
   // merged moored block (e.g. "STBY → SBE → Heave anchor") because that's
@@ -1504,7 +1842,9 @@ function renderLegend() {
   const items = state.vessels.map(v =>
     `<div><span class="sw" style="background:${v.color}"></span>${v.name} · ${v.type}</div>`
   );
-  items.push('<div style="margin-top:6px"><span style="color:#ff7849">▲</span> Rig &nbsp; <span style="color:#6e84ff">■</span> Port/Berth</div>');
+  items.push('<div style="margin-top:6px"><span style="color:#ff7849">▲</span> Rig &nbsp; <span style="color:#6e84ff">■</span> Port/Berth &nbsp; <span style="color:#ff7849">◌</span> 500 m zone</div>');
+  items.push('<div>Solid line = path covered this trip · dashed = known route</div>');
+  items.push('<div>Glowing vessel = underway · <span style="color:#1c8a4b">⚓n</span> on a rig = vessels alongside</div>');
   document.getElementById('legend').innerHTML = items.join('');
   // Old "Notes from source PDFs" block removed — it referred to a stale
   // data layer that was replaced by the captains' daily reports.
@@ -1611,6 +1951,46 @@ function openVesselSheet(vid) {
     ? `Report for <b>${rep.report_date}</b>${rep.voyage_no ? ' · Voyage ' + escapeText(rep.voyage_no) : ''}`
     : 'No daily report available for this vessel yet.';
 
+  // Standby-by-location: total hours this vessel spent on standby at each
+  // rig / berth across every report on file (e.g. "CA3 — 131h at OPH").
+  const sb = standbyByLocation(v.id);
+  const standbyHtml = sb.rows.length ? `
+      <section class="vsheet-standby">
+        <h2>Standby time by location
+          <span class="muted">all ${sb.reportCount} report${sb.reportCount === 1 ? '' : 's'} · total ${fmtDur(sb.total)}</span>
+        </h2>
+        <p class="standby-hint">Activities listed under each location happened <b>during</b> the standby time — they overlap it, they don't add on top of it.</p>
+        <table class="standby-tbl">
+          <thead><tr><th>Location</th><th>Type</th><th class="num">Time</th><th class="share">Share</th></tr></thead>
+          <tbody>
+          ${sb.rows.map(r => {
+            const pct = sb.total ? Math.round(r.minutes / sb.total * 100) : 0;
+            const head = `<tr class="loc-row">
+              <td>${escapeText(r.name)}</td>
+              <td><span class="loc-badge ${escapeText(r.type)}">${escapeText(r.type)}</span></td>
+              <td class="num"><b>${r.minutes ? fmtDur(r.minutes) : '—'}</b><span class="num-cap">standby</span></td>
+              <td class="share"><div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div><span class="pct">${pct}%</span></td>
+            </tr>`;
+            // Sub-item bars are sized relative to the standby window so you can
+            // SEE that jobs run in parallel — several can fill most of the same
+            // block at once (fuel + water + cargo together at a berth).
+            const denom = r.minutes || r.stayMinutes || 1;
+            const subs = r.activities.length
+              ? r.activities.map(a => {
+                  const w = Math.min(100, Math.round(a.minutes / denom * 100));
+                  return `<tr class="act-row">
+                  <td class="act-name">${escapeText(a.label)}</td>
+                  <td></td>
+                  <td class="num">${fmtDur(a.minutes)}</td>
+                  <td class="share"><div class="bar"><div class="bar-fill act-fill" style="width:${w}%"></div></div></td>
+                </tr>`; }).join('')
+              : `<tr class="act-row act-none"><td class="act-name">Standby only — no cargo or bunkering activity</td><td></td><td></td><td></td></tr>`;
+            return head + subs;
+          }).join('')}
+          </tbody>
+        </table>
+      </section>` : '';
+
   sheet.innerHTML = `
     <div class="vsheet-backdrop"></div>
     <div class="vsheet-panel" role="dialog" aria-modal="true" aria-label="${escapeText(v.name)} daily activities" style="--vc:${v.color}">
@@ -1626,16 +2006,6 @@ function openVesselSheet(vid) {
       ${rep ? `
       <section class="vsheet-grid">
         <div class="card">
-          <h2>Safety</h2>
-          <ul>
-            <li><span>Accidents</span><b>${escapeText(safety.accidents || 'Nil')}</b></li>
-            <li><span>Incidents</span><b>${escapeText(safety.incidents || 'Nil')}</b></li>
-            <li><span>Near miss</span><b>${escapeText(safety.near_miss || 'Nil')}</b></li>
-            <li><span>Security level</span><b>${rep.security_level ?? '—'}</b></li>
-            <li><span>Days since port call</span><b>${rep.days_since_port_call ?? '—'}</b></li>
-          </ul>
-        </div>
-        <div class="card">
           <h2>Consumables</h2>
           <ul>
             <li><span>Fuel ROB</span><b>${escapeText(fuel.rob || '—')}</b></li>
@@ -1644,25 +2014,9 @@ function openVesselSheet(vid) {
             <li><span>Water consumed (24h)</span><b>${escapeText(water.consumed || '—')}</b></li>
           </ul>
         </div>
-        <div class="card">
-          <h2>Provisions</h2>
-          <ul>
-            <li><span>Dry store</span><b>${provs.dry_store_days ?? '—'} days</b></li>
-            <li><span>Fresh &amp; frozen</span><b>${provs.fresh_frozen_days ?? '—'} days</b></li>
-            <li><span>Drinking water</span><b>${provs.drinking_water_days ?? '—'} days</b></li>
-            <li><span>Fuel unpumpable</span><b>${escapeText(provs.fuel_oil_unpumpable || '—')}</b></li>
-          </ul>
-        </div>
-        <div class="card">
-          <h2>Lifts &amp; deck</h2>
-          <ul>
-            <li><span>Loaded</span><b>${escapeText(String(lifts.loaded ?? '—'))}</b></li>
-            <li><span>Discharged</span><b>${escapeText(String(lifts.discharged ?? '—'))}</b></li>
-            <li><span>Deck utilization</span><b>${lifts.utilization_pct != null ? lifts.utilization_pct + ' %' : '—'}</b></li>
-            <li><span>On deck</span><b class="long">${escapeText(lifts.on_deck || '—')}</b></li>
-          </ul>
-        </div>
       </section>
+
+      ${standbyHtml}
 
       <section class="vsheet-tasks">
         <h2>Operational task log <span class="muted">(${(rep.task_log || []).length} entries)</span></h2>
@@ -1674,9 +2028,7 @@ function openVesselSheet(vid) {
         </div>
       </section>
 
-      ${rep.issues_comments ? `<section class="vsheet-note"><h2>Issues, concerns &amp; comments</h2><p>${escapeText(rep.issues_comments)}</p></section>` : ''}
-      ${rep.accident_summary ? `<section class="vsheet-note"><h2>Accident / incident / near-miss summary</h2><p>${escapeText(rep.accident_summary)}</p></section>` : ''}
-      ${rep.requirements_next_port_call ? `<section class="vsheet-note"><h2>Requirements next port call</h2><p>${escapeText(rep.requirements_next_port_call)}</p></section>` : ''}
+      ${rep.requirements_next_port_call ? `<section class="vsheet-note"><h2>Requirements next port call</h2><p>${escapeText(tidyText(rep.requirements_next_port_call))}</p></section>` : ''}
 
       ${compiled.name ? `<footer class="vsheet-footer">Compiled by ${escapeText(compiled.name)} · ${escapeText(compiled.role || 'Master')}</footer>` : ''}
       ` : `<section class="vsheet-empty">
@@ -1708,6 +2060,29 @@ function closeVesselSheet() {
 function escapeText(s) {
   return String(s ?? '').replace(/[&<>"]/g, c =>
     ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+}
+
+// Clean raw PDF-extracted report text: drop stray page-number lines and
+// rejoin sentences that the PDF broke mid-line, while keeping real breaks.
+function tidyText(s) {
+  let lines = String(s ?? '')
+    .split('\n')
+    .map(l => l.replace(/\s+/g, ' ').trim())
+    .filter(l => !/^\d{1,3}$/.test(l)); // remove standalone page/section numbers
+
+  const out = [];
+  for (const line of lines) {
+    if (!line) { if (out.length && out[out.length - 1] !== '') out.push(''); continue; }
+    const prev = out.length ? out[out.length - 1] : '';
+    // Join onto previous line when this line is a mid-sentence continuation:
+    // previous didn't end a sentence and this line starts lowercase / punctuation.
+    if (prev && !/[.:!?]$/.test(prev) && /^[a-z,)"'–—-]/.test(line)) {
+      out[out.length - 1] = prev + ' ' + line;
+    } else {
+      out.push(line);
+    }
+  }
+  return out.join('\n').replace(/\n{3,}/g, '\n\n').trim();
 }
 
 function setupControls() {
@@ -1858,7 +2233,11 @@ function clampTime(t) {
 
 function animationLoop(nowMs) {
   if (state.playing && !state.liveMode && state.lastTickMs != null) {
-    const dt = (nowMs - state.lastTickMs) / 1000;
+    // Clamp the per-frame step: when the tab is backgrounded the browser
+    // suspends animation frames, and without the clamp the whole elapsed
+    // wall-time is applied in ONE step on return — the sim leaps hours
+    // ahead and vessels appear to teleport.
+    const dt = Math.min(0.5, (nowMs - state.lastTickMs) / 1000);
     const dSim = dt * state.speed * 1000;
     let next = new Date(state.currentTime.getTime() + dSim);
     if (next > state.timelineEnd) {

@@ -4,247 +4,288 @@
       "vessel_id": "CA3",
       "report_date": "2026-05-06",
       "file": "daily-reports/CA3-2026-05-06.json",
-      "task_log_rows": 25
+      "task_log_rows": 25,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "JUNO",
       "report_date": "2026-05-06",
       "file": "daily-reports/JUNO-2026-05-06.json",
-      "task_log_rows": 31
+      "task_log_rows": 31,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA1",
       "report_date": "2026-05-07",
       "file": "daily-reports/CA1-2026-05-07.json",
-      "task_log_rows": 1
+      "task_log_rows": 1,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA3",
       "report_date": "2026-05-07",
       "file": "daily-reports/CA3-2026-05-07.json",
-      "task_log_rows": 24
+      "task_log_rows": 24,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA5",
       "report_date": "2026-05-07",
       "file": "daily-reports/CA5-2026-05-07.json",
-      "task_log_rows": 15
+      "task_log_rows": 15,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "JUNO",
       "report_date": "2026-05-07",
       "file": "daily-reports/JUNO-2026-05-07.json",
-      "task_log_rows": 22
+      "task_log_rows": 22,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA1",
       "report_date": "2026-05-08",
       "file": "daily-reports/CA1-2026-05-08.json",
-      "task_log_rows": 1
+      "task_log_rows": 1,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA3",
       "report_date": "2026-05-08",
       "file": "daily-reports/CA3-2026-05-08.json",
-      "task_log_rows": 14
+      "task_log_rows": 14,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "JUNO",
       "report_date": "2026-05-08",
       "file": "daily-reports/JUNO-2026-05-08.json",
-      "task_log_rows": 24
+      "task_log_rows": 24,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA1",
       "report_date": "2026-05-09",
       "file": "daily-reports/CA1-2026-05-09.json",
-      "task_log_rows": 2
+      "task_log_rows": 2,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA3",
       "report_date": "2026-05-09",
       "file": "daily-reports/CA3-2026-05-09.json",
-      "task_log_rows": 13
+      "task_log_rows": 13,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA5",
       "report_date": "2026-05-09",
       "file": "daily-reports/CA5-2026-05-09.json",
-      "task_log_rows": 17
+      "task_log_rows": 17,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "JUNO",
       "report_date": "2026-05-09",
       "file": "daily-reports/JUNO-2026-05-09.json",
-      "task_log_rows": 29
+      "task_log_rows": 29,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA1",
       "report_date": "2026-05-10",
       "file": "daily-reports/CA1-2026-05-10.json",
-      "task_log_rows": 10
+      "task_log_rows": 10,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA3",
       "report_date": "2026-05-10",
       "file": "daily-reports/CA3-2026-05-10.json",
-      "task_log_rows": 20
+      "task_log_rows": 20,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA5",
       "report_date": "2026-05-10",
       "file": "daily-reports/CA5-2026-05-10.json",
-      "task_log_rows": 22
+      "task_log_rows": 22,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "JUNO",
       "report_date": "2026-05-10",
       "file": "daily-reports/JUNO-2026-05-10.json",
-      "task_log_rows": 34
+      "task_log_rows": 34,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA1",
       "report_date": "2026-05-11",
       "file": "daily-reports/CA1-2026-05-11.json",
-      "task_log_rows": 10
+      "task_log_rows": 10,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA3",
       "report_date": "2026-05-11",
       "file": "daily-reports/CA3-2026-05-11.json",
-      "task_log_rows": 17
+      "task_log_rows": 17,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA5",
       "report_date": "2026-05-11",
       "file": "daily-reports/CA5-2026-05-11.json",
-      "task_log_rows": 29
+      "task_log_rows": 29,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "JUNO",
       "report_date": "2026-05-11",
       "file": "daily-reports/JUNO-2026-05-11.json",
-      "task_log_rows": 31
+      "task_log_rows": 31,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA1",
       "report_date": "2026-05-12",
       "file": "daily-reports/CA1-2026-05-12.json",
-      "task_log_rows": 19
+      "task_log_rows": 19,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA3",
       "report_date": "2026-05-12",
       "file": "daily-reports/CA3-2026-05-12.json",
-      "task_log_rows": 18
+      "task_log_rows": 18,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA5",
       "report_date": "2026-05-12",
       "file": "daily-reports/CA5-2026-05-12.json",
-      "task_log_rows": 24
+      "task_log_rows": 24,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "JUNO",
       "report_date": "2026-05-12",
       "file": "daily-reports/JUNO-2026-05-12.json",
-      "task_log_rows": 33
+      "task_log_rows": 33,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA1",
       "report_date": "2026-05-13",
       "file": "daily-reports/CA1-2026-05-13.json",
-      "task_log_rows": 10
+      "task_log_rows": 10,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA3",
       "report_date": "2026-05-13",
       "file": "daily-reports/CA3-2026-05-13.json",
-      "task_log_rows": 19
+      "task_log_rows": 19,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA5",
       "report_date": "2026-05-13",
       "file": "daily-reports/CA5-2026-05-13.json",
-      "task_log_rows": 1
+      "task_log_rows": 1,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "JUNO",
       "report_date": "2026-05-13",
       "file": "daily-reports/JUNO-2026-05-13.json",
-      "task_log_rows": 43
+      "task_log_rows": 43,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA1",
       "report_date": "2026-05-14",
       "file": "daily-reports/CA1-2026-05-14.json",
-      "task_log_rows": 7
+      "task_log_rows": 7,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA3",
       "report_date": "2026-05-14",
       "file": "daily-reports/CA3-2026-05-14.json",
-      "task_log_rows": 17
+      "task_log_rows": 17,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA5",
       "report_date": "2026-05-14",
       "file": "daily-reports/CA5-2026-05-14.json",
-      "task_log_rows": 5
+      "task_log_rows": 5,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "JUNO",
       "report_date": "2026-05-14",
       "file": "daily-reports/JUNO-2026-05-14.json",
-      "task_log_rows": 34
+      "task_log_rows": 34,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA1",
       "report_date": "2026-05-15",
       "file": "daily-reports/CA1-2026-05-15.json",
-      "task_log_rows": 8
+      "task_log_rows": 8,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA3",
       "report_date": "2026-05-15",
       "file": "daily-reports/CA3-2026-05-15.json",
-      "task_log_rows": 17
+      "task_log_rows": 17,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA5",
       "report_date": "2026-05-15",
       "file": "daily-reports/CA5-2026-05-15.json",
-      "task_log_rows": 22
+      "task_log_rows": 22,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "JUNO",
       "report_date": "2026-05-15",
       "file": "daily-reports/JUNO-2026-05-15.json",
-      "task_log_rows": 30
+      "task_log_rows": 30,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA1",
       "report_date": "2026-05-16",
       "file": "daily-reports/CA1-2026-05-16.json",
-      "task_log_rows": 18
+      "task_log_rows": 18,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA3",
       "report_date": "2026-05-16",
       "file": "daily-reports/CA3-2026-05-16.json",
-      "task_log_rows": 28
+      "task_log_rows": 28,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "CA5",
       "report_date": "2026-05-16",
       "file": "daily-reports/CA5-2026-05-16.json",
-      "task_log_rows": 9
+      "task_log_rows": 9,
+      "source_type": "imported_email"
     },
     {
       "vessel_id": "JUNO",
       "report_date": "2026-05-16",
       "file": "daily-reports/JUNO-2026-05-16.json",
-      "task_log_rows": 27
+      "task_log_rows": 27,
+      "source_type": "imported_email"
     }
   ]
 }

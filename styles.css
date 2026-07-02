@@ -174,6 +174,20 @@ aside h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; c
 .vessel-card .next { font-size: 10px; color: var(--accent); margin-top: 4px; }
 .vessel-card .sub { color: var(--text-faint); font-weight: 400; font-size: 11px; }
 
+/* Transit progress bar inside a vessel card */
+.vessel-card .tbar {
+  height: 4px;
+  background: var(--tag-unknown-bg, rgba(128,128,128,0.25));
+  border-radius: 2px;
+  margin-top: 5px;
+  overflow: hidden;
+}
+.vessel-card .tbar-fill {
+  height: 100%;
+  background: var(--vc, #999);
+  border-radius: 2px;
+}
+
 .tag { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 10px; margin-right: 4px; }
 .tag.moored { background: var(--tag-moored-bg); color: var(--tag-moored-fg); }
 .tag.transit { background: var(--tag-transit-bg); color: var(--tag-transit-fg); }
@@ -277,6 +291,113 @@ body.vsheet-open { overflow: hidden; }
 .vsheet-grid .card li b { font-weight: 700; font-size: 17px; }
 .vsheet-grid .card li b.long { font-weight: 500; font-size: 15px; text-align: right; max-width: 60%; }
 
+/* Standby-by-location summary (how long the vessel sat on standby at each
+   rig / berth across every report on file). */
+.vsheet-standby { margin-bottom: 22px; }
+.vsheet-standby h2 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  color: var(--vc, #0d2540);
+}
+.vsheet-standby h2 .muted { color: #94a4b5; font-weight: 400; font-size: 14px; margin-left: 6px; }
+.standby-hint { margin: 0 0 10px; font-size: 13px; color: #7b8a99; line-height: 1.45; }
+.standby-hint b { color: #5b6b7c; font-weight: 600; }
+[data-theme="dark"] .standby-hint { color: #8fa0b0; }
+[data-theme="dark"] .standby-hint b { color: #c2ccd6; }
+.standby-tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+[data-theme="dark"] .standby-tbl { background: #18242f; box-shadow: none; }
+.standby-tbl th {
+  background: rgba(0,0,0,0.04);
+  text-align: left;
+  padding: 10px 14px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #5b6b7c;
+}
+[data-theme="dark"] .standby-tbl th { background: rgba(255,255,255,0.04); color: #94a4b5; }
+.standby-tbl td {
+  padding: 11px 14px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  vertical-align: middle;
+}
+[data-theme="dark"] .standby-tbl td { border-top-color: rgba(255,255,255,0.05); }
+.standby-tbl td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; width: 96px; }
+.standby-tbl td.num b { font-size: 17px; }
+.standby-tbl td.num .num-cap { display: block; font-size: 10px; font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; color: #94a4b5; margin-top: 1px; }
+
+/* Activity sub-rows: the cargo / bunkering / etc. done during a location stay. */
+.standby-tbl tr.loc-row td { border-top: 1px solid rgba(0,0,0,0.10); }
+[data-theme="dark"] .standby-tbl tr.loc-row td { border-top-color: rgba(255,255,255,0.09); }
+.standby-tbl tr.act-row td { border-top: none; padding-top: 3px; padding-bottom: 3px; }
+.standby-tbl tr.act-row td.act-name {
+  padding-left: 30px;
+  position: relative;
+  font-size: 14px;
+  color: #5b6b7c;
+}
+[data-theme="dark"] .standby-tbl tr.act-row td.act-name { color: #aab6c2; }
+.standby-tbl tr.act-row td.act-name::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  border-radius: 50%;
+  background: var(--vc, #2870c4);
+  opacity: 0.5;
+}
+.standby-tbl tr.act-row td.num { font-size: 14px; color: #5b6b7c; }
+[data-theme="dark"] .standby-tbl tr.act-row td.num { color: #aab6c2; }
+.standby-tbl tr.act-none td.act-name { font-style: italic; color: #94a4b5; }
+.standby-tbl tr.act-none td.act-name::before { background: #c2ccd6; }
+.standby-tbl tr.act-row:last-child td { padding-bottom: 10px; }
+.standby-tbl td.share { width: 38%; }
+.standby-tbl .bar {
+  display: inline-block;
+  width: calc(100% - 46px);
+  height: 8px;
+  border-radius: 5px;
+  background: rgba(0,0,0,0.08);
+  vertical-align: middle;
+  overflow: hidden;
+}
+[data-theme="dark"] .standby-tbl .bar { background: rgba(255,255,255,0.10); }
+.standby-tbl .bar-fill { height: 100%; border-radius: 5px; background: var(--vc, #2870c4); }
+/* Sub-item bars: full width (no % label beside them), thinner & translucent so
+   they read as activities happening INSIDE the standby block, not on top of it. */
+.standby-tbl tr.act-row .bar { width: 100%; height: 5px; }
+.standby-tbl tr.act-row .bar-fill.act-fill { background: var(--vc, #2870c4); opacity: 0.42; }
+.standby-tbl .pct { font-size: 13px; color: #5b6b7c; margin-left: 8px; font-variant-numeric: tabular-nums; }
+[data-theme="dark"] .standby-tbl .pct { color: #94a4b5; }
+.loc-badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.loc-badge.rig   { background: rgba(245, 180, 0, 0.18);  color: #946b00; }
+.loc-badge.berth { background: rgba(40, 112, 196, 0.16); color: #1d5aa0; }
+.loc-badge.port  { background: rgba(45, 168, 74, 0.16);  color: #1d7a37; }
+.loc-badge.sea   { background: rgba(120, 132, 145, 0.18); color: #5b6b7c; }
+[data-theme="dark"] .loc-badge.rig   { color: #ffce5e; }
+[data-theme="dark"] .loc-badge.berth { color: #7fb2ec; }
+[data-theme="dark"] .loc-badge.port  { color: #6fd189; }
+[data-theme="dark"] .loc-badge.sea   { color: #aab6c2; }
+
 .vsheet-tasks { margin-bottom: 22px; }
 .vsheet-tasks h2 {
   margin: 0 0 12px;
@@ -365,7 +486,7 @@ body.vsheet-open { overflow: hidden; }
   letter-spacing: 0.4px;
   color: var(--vc);
 }
-.vsheet-note p { margin: 0; font-size: 16px; white-space: pre-wrap; }
+.vsheet-note p { margin: 0; font-size: 16px; white-space: pre-line; text-align: left; }
 
 .vsheet-footer {
   margin-top: 20px;
@@ -468,6 +589,24 @@ body.vsheet-open { overflow: hidden; }
   pointer-events: none;
 }
 
+/* Occupancy badge on a rig: how many vessels are alongside right now */
+.rig-occ {
+  position: absolute;
+  top: -7px;
+  right: -10px;
+  background: #1c8a4b;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.7);
+  border-radius: 999px;
+  padding: 1px 5px;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.3;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.45);
+}
+
 /* Vessel markers (SVG bodies, rotate with heading) */
 .vessel-marker {
   position: relative;
@@ -477,6 +616,15 @@ body.vsheet-open { overflow: hidden; }
   transform-origin: center;
   will-change: transform;
   filter: drop-shadow(0 1px 1px rgba(0,0,0,0.5));
+  transition: transform 0.45s ease;
+}
+/* Underway: soft glow in the vessel's own colour so moving boats pop out
+   from moored ones at a glance. */
+.vessel-marker.is-underway .vessel-body {
+  filter: drop-shadow(0 0 5px var(--vc, #fff)) drop-shadow(0 1px 1px rgba(0,0,0,0.5));
+}
+.vessel-marker.is-underway .vessel-label {
+  font-weight: 800;
 }
 .vessel-marker .vessel-body svg { width: 100%; height: 100%; display: block; }
 .vessel-marker .vessel-label {
