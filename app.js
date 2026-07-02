@@ -210,6 +210,18 @@ function fmtDur(min) {
   return `${m}m`;
 }
 
+// Compact countdown from the sim clock ("in 45m", "in 3h 10m", "in 2d 4h")
+// for the cards' "Next:" line — a full date+time stamp on every card was
+// unreadable at a glance.
+function fmtUntil(t) {
+  const min = Math.round((t - state.currentTime) / 60000);
+  if (min < 1) return 'now';
+  if (min < 24 * 60) return 'in ' + fmtDur(min);
+  const d = Math.floor(min / (24 * 60));
+  const h = Math.floor((min % (24 * 60)) / 60);
+  return h ? `in ${d}d ${h}h` : `in ${d}d`;
+}
+
 // Classify a NON-standby task-log row into a plain-language activity bucket so
 // the standby table can show WHAT the vessel actually did during its stay at a
 // location — cargo loading/unloading, water or fuel bunkering, crew transfer,
@@ -1774,7 +1786,10 @@ function vesselCardHtml(v, pos) {
   const s = pos.segment;
   let statusHtml, metaHtml;
   if (!s) {
-    statusHtml = `<span class="tag unknown">${pos.status || 'unknown'}</span>`;
+    const label = pos.status === 'pre-timeline' ? 'No report yet at this time'
+                : pos.status === 'post-timeline' ? 'After last report'
+                : (pos.status || 'unknown');
+    statusHtml = `<span class="tag unknown">${label}</span>`;
     metaHtml = '';
   } else if (s.type === 'moored') {
     const loc = state.locsById[s.loc];
@@ -1808,9 +1823,9 @@ function vesselCardHtml(v, pos) {
   const nextTr  = nextTransit(v.id, state.currentTime);
   let nextHtml;
   if (nextSub && nextSub.purpose) {
-    nextHtml = `<div class="next">Next: ${escapeText(nextSub.purpose)} @ ${toKuwaitStr(nextSub.t0)}</div>`;
+    nextHtml = `<div class="next">Next: ${escapeText(nextSub.purpose.replace(' (gap fill)', ''))} · ${fmtUntil(nextSub.t0)}</div>`;
   } else if (nextTr) {
-    nextHtml = `<div class="next">Next: ${state.locsById[nextTr.from].short} → ${state.locsById[nextTr.to].short} @ ${toKuwaitStr(nextTr.t0)}</div>`;
+    nextHtml = `<div class="next">Next: ${state.locsById[nextTr.from].short} → ${state.locsById[nextTr.to].short} · ${fmtUntil(nextTr.t0)}</div>`;
   } else {
     nextHtml = '<div class="next">No further planned movements.</div>';
   }
