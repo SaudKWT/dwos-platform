@@ -23,8 +23,11 @@ import fs from 'node:fs/promises';
 import fsSync from 'node:fs';
 import { createReadStream } from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { EventEmitter } from 'node:events';
+import { execFile } from 'node:child_process';
+import { randomUUID } from 'node:crypto';
 
 const __dirname   = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = __dirname;
@@ -305,6 +308,33 @@ async function readJsonBody(req, limit = 256 * 1024) {
 // API
 // ---------------------------------------------------------------------------
 
+// Run the Python parser on ONE loose PDF and resolve its JSON envelope.
+// Reuses tools/parse_daily_reports.py so the import screen and the historical
+// importer share exactly the same PDF-reading logic.
+function parsePdfFile(pdfPath, name) {
+  return new Promise((resolve) => {
+    execFile(
+      'python3',
+      [path.join(PROJECT_ROOT, 'tools', 'parse_daily_reports.py'),
+       '--pdf', pdfPath, '--name', name || ''],
+      { cwd: PROJECT_ROOT, timeout: 60_000, maxBuffer: 16 * 1024 * 1024 },
+      (err, stdout, stderr) => {
+        if (!stdout) {
+          resolve({ ok: false, error: (stderr || err?.message || 'parser failed').trim() });
+          return;
+        }
+        try {
+          // The envelope is the last non-empty line of stdout.
+          const line = stdout.trim().split('\n').filter(Boolean).pop();
+          resolve(JSON.parse(line));
+        } catch {
+          resolve({ ok: false, error: 'could not read the parser output' });
+        }
+      },
+    );
+  });
+}
+
 async function rebuildIndex() {
   const files = (await fs.readdir(REPORTS_DIR))
     .filter(f => f.endsWith('.json') && f !== 'index.json');
@@ -432,6 +462,74 @@ async function handleApi(req, res, url) {
     await rebuildIndex();
     bus.emit('report_saved', { vessel_id: body.vessel_id, report_date: body.report_date });
     return send(res, 200, { ok: true, vessel_id: body.vessel_id, report_date: body.report_date });
+  }
+
+  // POST /api/import — bulk-import loose DDR PDFs.
+  // Body: { files: [ { name, data_base64 } ] }.  Each PDF is parsed, validated,
+  // and (auto-)saved as a daily report.  Returns a per-file result summary.
+  if (req.method === 'POST' && url.pathname === '/api/import') {
+    let body;
+    try { body = await readJsonBody(req, 32 * 1024 * 1024); }
+    catch (e) { return send(res, 400, { error: 'invalid upload: ' + e.message }); }
+
+    const files = Array.isArray(body.files) ? body.files : [];
+    if (!files.length) return send(res, 400, { error: 'no files provided' });
+
+    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'koc-import-'));
+    const results = [];
+    const seenInBatch = new Map();   // "vid|date" -> first filename that won it
+    const savedKeys = [];
+
+    try {
+      for (const f of files) {
+        const name = String(f?.name || 'upload.pdf');
+        if (!/\.pdf$/i.test(name)) {
+          results.push({ name, status: 'skipped', reason: 'not a PDF' });
+          continue;
+        }
+        let buf;
+        try { buf = Buffer.from(String(f.data_base64 || ''), 'base64'); }
+        catch { results.push({ name, status: 'error', reason: 'could not decode file' }); continue; }
+        if (!buf.length) { results.push({ name, status: 'error', reason: 'empty file' }); continue; }
+
+        const tmpPath = path.join(tmpDir, `${randomUUID()}.pdf`);
+        await fs.writeFile(tmpPath, buf);
+
+        const parsed = await parsePdfFile(tmpPath, name);
+        if (!parsed.ok) {
+          results.push({ name, status: 'error', reason: parsed.error || 'parse failed' });
+          continue;
+        }
+        const rec = parsed.record;
+        const verr = validateReport(rec);
+        if (verr) { results.push({ name, status: 'error', reason: verr }); continue; }
+
+        const key = `${rec.vessel_id}|${rec.report_date}`;
+        const rows = (rec.task_log || []).length;
+        if (seenInBatch.has(key)) {
+          results.push({ name, vessel_id: rec.vessel_id, report_date: rec.report_date, rows,
+                         status: 'skipped', reason: `same vessel/date as ${seenInBatch.get(key)}` });
+          continue;
+        }
+        seenInBatch.set(key, name);
+
+        const out = path.join(REPORTS_DIR, `${rec.vessel_id}-${rec.report_date}.json`);
+        let existed = true;
+        try { await fs.access(out); } catch { existed = false; }
+        await fs.writeFile(out, JSON.stringify(rec, null, 2), 'utf8');
+        savedKeys.push({ vessel_id: rec.vessel_id, report_date: rec.report_date });
+        results.push({ name, vessel_id: rec.vessel_id, report_date: rec.report_date, rows,
+                       status: existed ? 'overwrote' : 'saved' });
+      }
+    } finally {
+      await fs.rm(tmpDir, { recursive: true, force: true }).catch(() => {});
+    }
+
+    if (savedKeys.length) {
+      await rebuildIndex();
+      for (const k of savedKeys) bus.emit('report_saved', k);
+    }
+    return send(res, 200, { results, saved: savedKeys.length });
   }
 
   // -------------------- Movement plans --------------------

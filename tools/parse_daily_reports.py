@@ -689,5 +689,73 @@ def main() -> int:
     return 0
 
 
+# ---------------------------------------------------------------------------
+# Single-PDF mode (used by the admin dashboard "Import" screen via server.mjs)
+# ---------------------------------------------------------------------------
+
+def parse_single_pdf(pdf_path: Path, name_hint: str | None,
+                     vessel_hint: str | None) -> dict:
+    """Parse ONE loose DDR PDF and return a JSON-serialisable envelope:
+        {ok: True,  vessel_id, report_date, task_log_rows, record}
+        {ok: False, error}
+    The vessel is taken from the PDF's own header text (or the filename),
+    since a loose PDF has no email subject to classify it by.
+    """
+    try:
+        text = pdf_to_layout_text(pdf_path)
+    except FileNotFoundError:
+        return {"ok": False, "error": "PDF reader (pdftotext) is not installed on this machine"}
+    except Exception:  # corrupt / encrypted / not-a-PDF
+        return {"ok": False, "error": "could not read the PDF — it may be corrupted or not a real PDF"}
+
+    vid = vessel_hint or resolve_vessel(text[:3000]) or resolve_vessel(name_hint or "")
+    if not vid:
+        return {"ok": False,
+                "error": "could not identify the vessel (expected Crest Argus 1 / 3 / 5)"}
+
+    try:
+        rec = parse_crest_pdf(pdf_path, vid)
+    except Exception as ex:
+        return {"ok": False, "error": f"parse failed: {ex}"}
+
+    rec["vessel_id"] = vid
+    rec.setdefault("period_end", "24:00")
+
+    # Date fallback from the filename if the PDF body didn't yield one.
+    if not rec.get("report_date") and name_hint:
+        fm = re.search(r"(\d{1,2})[.\-/](\d{1,2})[.\-/](\d{4})", name_hint)
+        if fm:
+            rec["report_date"] = f"{fm.group(3)}-{int(fm.group(2)):02d}-{int(fm.group(1)):02d}"
+        else:
+            fm = re.search(r"(\d{1,2})\s+([A-Za-z]{3,9})\s+(\d{4})", name_hint)
+            if fm:
+                rec["report_date"] = parse_date_dmy(f"{fm.group(1)}-{fm.group(2)}-{fm.group(3)}")
+    if not rec.get("report_date"):
+        return {"ok": False,
+                "error": "could not determine the report date from the PDF or filename"}
+
+    rec["source"] = {
+        "type": "imported_pdf",
+        "attachment_name": name_hint or pdf_path.name,
+        "submitted_via": "admin_import",
+    }
+    return {"ok": True, "vessel_id": vid, "report_date": rec["report_date"],
+            "task_log_rows": len(rec.get("task_log") or []), "record": rec}
+
+
+def cli() -> int:
+    import argparse
+    ap = argparse.ArgumentParser(description="Import vessel daily reports.")
+    ap.add_argument("--pdf", help="parse a single PDF and print a JSON envelope to stdout")
+    ap.add_argument("--name", help="original filename (for date fallback + audit trail)")
+    ap.add_argument("--vessel", help="force vessel id (JUNO/CA1/CA3/CA5)")
+    args = ap.parse_args()
+    if args.pdf:
+        res = parse_single_pdf(Path(args.pdf), args.name, args.vessel)
+        print(json.dumps(res, ensure_ascii=False))
+        return 0  # caller reads the envelope's "ok" flag, not the exit code
+    return main()
+
+
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(cli())

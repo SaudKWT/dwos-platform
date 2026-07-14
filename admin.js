@@ -804,3 +804,113 @@ function buildPlanPayload() {
     source: { type: 'dashboard_submission' },
   };
 }
+
+// ---------------------------------------------------------------------------
+// IMPORT — drop DDR PDFs, parse + auto-save on the local server (/api/import).
+// ---------------------------------------------------------------------------
+
+const importDrop        = document.getElementById('importDrop');
+const importInput       = document.getElementById('importInput');
+const importStatus      = document.getElementById('importStatus');
+const importActions     = document.getElementById('importActions');
+const importResultsWrap = document.getElementById('importResultsWrap');
+const importResultsBody = document.querySelector('#importResults tbody');
+
+// Read a File into base64 (no data: prefix).
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result).split(',').pop());
+    reader.onerror = () => reject(reader.error || new Error('read failed'));
+    reader.readAsDataURL(file);
+  });
+}
+
+const IMPORT_LABELS = {
+  saved:     ['saved', 'Saved'],
+  overwrote: ['overwrote', 'Overwrote'],
+  skipped:   ['skipped', 'Skipped'],
+  error:     ['error', 'Error'],
+};
+
+function renderImportResults(rows) {
+  importResultsBody.innerHTML = rows.map(r => {
+    const [cls, text] = IMPORT_LABELS[r.status] || ['skipped', r.status];
+    const reason = r.reason ? `<div class="reason">${escapeHtml(r.reason)}</div>` : '';
+    return `<tr>
+      <td class="file">${escapeHtml(r.name || '')}</td>
+      <td>${escapeHtml(VESSEL_NAMES[r.vessel_id] || r.vessel_id || '—')}</td>
+      <td>${escapeHtml(r.report_date || '—')}</td>
+      <td>${r.rows ?? '—'}</td>
+      <td><span class="tag ${cls}">${escapeHtml(text)}</span>${reason}</td>
+    </tr>`;
+  }).join('');
+  importResultsWrap.hidden = rows.length === 0;
+}
+
+async function importFiles(fileList) {
+  const files = Array.from(fileList).filter(f => /\.pdf$/i.test(f.name));
+  const nonPdf = Array.from(fileList).length - files.length;
+  if (!files.length) {
+    importActions.hidden = false;
+    setStatus(importStatus, 'Please choose PDF files.', 'err');
+    return;
+  }
+
+  importActions.hidden = false;
+  importDrop.classList.add('busy');
+  setStatus(importStatus, `Reading ${files.length} PDF${files.length > 1 ? 's' : ''}…`);
+
+  try {
+    const payloadFiles = [];
+    for (const f of files) {
+      payloadFiles.push({ name: f.name, data_base64: await fileToBase64(f) });
+    }
+    setStatus(importStatus, `Importing ${files.length} PDF${files.length > 1 ? 's' : ''}…`);
+
+    const r = await fetch('/api/import', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ files: payloadFiles }),
+    });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) {
+      setStatus(importStatus, 'Import failed: ' + (j.error || r.statusText), 'err');
+      return;
+    }
+
+    const results = j.results || [];
+    renderImportResults(results);
+    const saved = results.filter(x => x.status === 'saved' || x.status === 'overwrote').length;
+    const errs  = results.filter(x => x.status === 'error').length;
+    const skips = results.filter(x => x.status === 'skipped').length;
+    const parts = [`${saved} saved`];
+    if (skips) parts.push(`${skips} skipped`);
+    if (errs)  parts.push(`${errs} error${errs > 1 ? 's' : ''}`);
+    if (nonPdf) parts.push(`${nonPdf} non-PDF ignored`);
+    setStatus(importStatus, parts.join(' · '), errs ? 'err' : 'ok');
+  } catch (err) {
+    setStatus(importStatus, 'Network error: ' + err.message, 'err');
+  } finally {
+    importDrop.classList.remove('busy');
+    importInput.value = '';
+  }
+}
+
+importDrop.addEventListener('click', () => importInput.click());
+importDrop.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); importInput.click(); }
+});
+importInput.addEventListener('change', () => {
+  if (importInput.files?.length) importFiles(importInput.files);
+});
+['dragenter', 'dragover'].forEach(evt =>
+  importDrop.addEventListener(evt, (e) => { e.preventDefault(); importDrop.classList.add('dragover'); }));
+['dragleave', 'dragend'].forEach(evt =>
+  importDrop.addEventListener(evt, () => importDrop.classList.remove('dragover')));
+importDrop.addEventListener('drop', (e) => {
+  e.preventDefault();
+  importDrop.classList.remove('dragover');
+  const files = e.dataTransfer?.files;
+  if (files?.length) importFiles(files);
+});

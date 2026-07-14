@@ -408,6 +408,15 @@ export default async function handler(req, res) {
       return send(res, 200, liveSnapshot());
     }
 
+    // POST /api/import — not available on the deployed site (Phase 1 is local only).
+    // The live host can't run the PDF reader or permanently save uploads.
+    if (req.method === 'POST' && url.pathname === '/api/import') {
+      return send(res, 501, {
+        error: 'PDF import runs on your local Mac only for now. Run "node server.mjs" '
+             + 'on your computer, import there, then push to update this site.',
+      });
+    }
+
     send(res, 404, { error: 'api route not found' });
   } catch (e) {
     console.error('[api] error:', e);

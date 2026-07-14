@@ -29,6 +29,32 @@
 </nav>
 
 <main class="admin-main" id="tab-report">
+  <!-- IMPORT PDFs ------------------------------------------------------ -->
+  <section class="card import-card">
+    <h2>Import daily reports (PDF)</h2>
+    <p class="hint">Drop the captains' DDR PDFs here (Crest Argus 1 / 3 / 5). The app reads each one and saves it automatically. A PDF for a vessel + date you already have will overwrite it.</p>
+    <div id="importDrop" class="import-drop" tabindex="0" role="button"
+         aria-label="Drop PDF files here or click to choose">
+      <div class="import-drop-inner">
+        <span class="import-drop-icon">📄⬆</span>
+        <span class="import-drop-title">Drop PDF files here</span>
+        <span class="import-drop-sub">or click to choose — you can pick many at once</span>
+      </div>
+      <input type="file" id="importInput" accept="application/pdf,.pdf" multiple hidden />
+    </div>
+    <div class="import-actions" hidden id="importActions">
+      <span class="status" id="importStatus"></span>
+    </div>
+    <div class="import-results-wrap" hidden id="importResultsWrap">
+      <table class="import-results" id="importResults">
+        <thead>
+          <tr><th>File</th><th>Vessel</th><th>Date</th><th>Rows</th><th>Result</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
   <!-- LOAD EXISTING ---------------------------------------------------- -->
   <section class="card">
     <h2>Load existing report</h2>
