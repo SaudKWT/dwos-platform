@@ -25,7 +25,13 @@ _LOCATION_PATTERNS = [
     # Ports & berths.  Order matters: most specific first.
     (re.compile(r"\bberth\s*(?:no\.?\s*)?(?:#\s*)?20\b", re.I), "B20"),
     (re.compile(r"\bberth\s*(?:no\.?\s*)?(?:#\s*)?4\b",  re.I), "B4"),
+    # Charlie 3's master writes berths as "B# 20" / "B#4" rather than "Berth 20".
+    (re.compile(r"\bb\s*#\s*20\b", re.I), "B20"),
+    (re.compile(r"\bb\s*#\s*4\b",  re.I), "B4"),
     (re.compile(r"\bnorth\s*port\b",   re.I), "NP"),
+    # "North Pier" is the same place as North Port: the same reports log
+    # "ARRIVED IN NORTH PORT MARINA JETTY" and "ALS TO MARINA JETTY IN NORTH PIER".
+    (re.compile(r"\bnorth\s*pier\b",   re.I), "NP"),
     (re.compile(r"\bnsbp\b",           re.I), "NP"),
 
     # Generic "Shuaiba" without a berth number → fall back to vessel's home berth
@@ -34,8 +40,11 @@ _LOCATION_PATTERNS = [
 ]
 
 # A vessel's "default" berth at Shuaiba when no berth number is given.
+# Charlie 3 took over Allianz Juno's role in May 2026 and uses Juno's berth:
+# its logs read "VSL STBY ALS TO B# 4 IN SHUAIBA PORT".
 HOME_BERTH = {
     "JUNO": "B4",
+    "CH3":  "B4",
     "CA1":  "B20",
     "CA3":  "B20",
     "CA5":  "B20",
@@ -51,17 +60,25 @@ def find_locations(text: str, vessel_id: str | None = None) -> list[str]:
     found: list[tuple[int, str]] = []
     for pat, loc in _LOCATION_PATTERNS:
         for m in pat.finditer(text):
-            if loc == "SHUAIBA_GENERIC":
-                resolved = HOME_BERTH.get(vessel_id or "", None)
-                if resolved is None:
-                    continue
-                found.append((m.start(), resolved))
-            else:
-                found.append((m.start(), loc))
+            found.append((m.start(), loc))
     found.sort()
+
+    # "B# 20 IN SHUAIBA PORT" names one place, not two.  When the text already
+    # spells out a berth, the bare word "Shuaiba" is part of that same phrase —
+    # guessing the home berth here would invent a second, wrong location (and
+    # for a vessel whose home berth differs from the one logged, the guess would
+    # win, since callers take the last location as the row's end point).
+    has_explicit_berth = any(loc in ("B4", "B20") for _, loc in found)
+
     seen: set[str] = set()
     ordered: list[str] = []
     for _, loc in found:
+        if loc == "SHUAIBA_GENERIC":
+            if has_explicit_berth:
+                continue
+            loc = HOME_BERTH.get(vessel_id or "", None)
+            if loc is None:
+                continue
         if loc not in seen:
             seen.add(loc)
             ordered.append(loc)
@@ -105,9 +122,20 @@ def label_task(code: str) -> str:
 
 
 # Vessel-name → vessel_id (used when parsing email subjects / arrival reports).
+# Matching is longest-key-first, so the generic "charlie" fallback can never
+# steal a report whose header names a Crest Argus.
 VESSEL_ALIASES = {
     "allianz juno":     "JUNO",
     "juno":             "JUNO",
+    # Charlie 3 replaced Allianz Juno from 20 May 2026.  Its own PDF header
+    # renders the name as "Charlie- 3", hence the punctuation variants.
+    "charlie- 3":       "CH3",
+    "charlie -3":       "CH3",
+    "charlie-3":        "CH3",
+    "charlie 3":        "CH3",
+    "charlie3":         "CH3",
+    "charlie":          "CH3",
+    "ch3":              "CH3",
     "crest argus 1":    "CA1",
     "crest argus1":     "CA1",
     "crestargus1":      "CA1",

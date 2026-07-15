@@ -13,7 +13,7 @@ const REPORTS_DIR  = path.join(PROJECT_ROOT, 'data', 'daily-reports');
 const AIS_DIR      = path.join(PROJECT_ROOT, 'data', 'ais-history');
 const PLANS_DIR    = path.join(PROJECT_ROOT, 'data', 'movement-plans');
 
-const VESSEL_IDS = new Set(['JUNO', 'CA1', 'CA3', 'CA5']);
+const VESSEL_IDS = new Set(['JUNO', 'CH3', 'CA1', 'CA3', 'CA5']);
 const DATE_RE    = /^\d{4}-\d{2}-\d{2}$/;
 
 // SSE bus — shared within a single cold-start invocation only.
@@ -257,14 +257,14 @@ function validatePlan(body) {
   if (body.vessels.length === 0) return 'vessels must contain at least one entry';
   for (const v of body.vessels) {
     if (!v || typeof v !== 'object') return 'every vessel entry must be an object';
-    if (!VESSEL_IDS.has(v.vessel_id)) return `vessel_id "${v.vessel_id}" must be one of JUNO, CA1, CA3, CA5`;
+    if (!VESSEL_IDS.has(v.vessel_id)) return `vessel_id "${v.vessel_id}" must be one of JUNO, CH3, CA1, CA3, CA5`;
   }
   return null;
 }
 
 function validateReport(body) {
   if (!body || typeof body !== 'object') return 'body must be an object';
-  if (!VESSEL_IDS.has(body.vessel_id)) return 'vessel_id must be one of JUNO, CA1, CA3, CA5';
+  if (!VESSEL_IDS.has(body.vessel_id)) return 'vessel_id must be one of JUNO, CH3, CA1, CA3, CA5';
   if (!DATE_RE.test(body.report_date || '')) return 'report_date must be YYYY-MM-DD';
   if (!Array.isArray(body.task_log)) return 'task_log must be an array';
   for (const r of body.task_log) {

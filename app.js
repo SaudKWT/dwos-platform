@@ -1143,10 +1143,12 @@ function rebuildVesselMarkers() {
     if (state.vesselMarkers[v.id]) {
       state.map.removeLayer(state.vesselMarkers[v.id]);
     }
-    const isJuno = v.id === 'JUNO';
-    const lengthPx = iconPx(v.length_m, isJuno ? 22 : 28);
-    const beamPx = iconPx(v.beam_m, isJuno ? 8 : 11);
-    const svg = isJuno ? fastCrewSvg(v.color, v.stroke) : psvSvg(v.color, v.stroke);
+    // Draw by what the vessel *is*, not by its id: Charlie 3 is a fast crew
+    // boat like Juno, and keying off 'JUNO' drew it with the PSV hull.
+    const isCrewBoat = /crew\s*boat/i.test(v.type || '');
+    const lengthPx = iconPx(v.length_m, isCrewBoat ? 22 : 28);
+    const beamPx = iconPx(v.beam_m, isCrewBoat ? 8 : 11);
+    const svg = isCrewBoat ? fastCrewSvg(v.color, v.stroke) : psvSvg(v.color, v.stroke);
     const html = `<div class="vessel-marker" style="--vc:${v.color};width:${beamPx}px;height:${lengthPx}px">
         <div class="vessel-body">${svg}</div>
         <div class="vessel-label">${v.id}</div>
@@ -1580,6 +1582,24 @@ function relativeAgo(ts) {
   return `${hr}h ${min % 60}m ago`;
 }
 
+// Is this vessel in service at time t?  A vessel may join the fleet
+// (active_from) or be replaced by another (retired_on) partway through the
+// timeline; both are dates in vessels.json, read as Kuwait local midnight.
+// retired_on is the first day the vessel is gone, so it and its successor's
+// active_from can carry the same date and never overlap.
+function serviceBound(dateStr) {
+  return dateStr ? Date.parse(`${dateStr}T00:00:00+03:00`) : null;
+}
+
+function isVesselActive(v, t) {
+  const ms = t instanceof Date ? t.getTime() : t;
+  const from = serviceBound(v.active_from);
+  const until = serviceBound(v.retired_on);
+  if (from != null && ms < from) return false;
+  if (until != null && ms >= until) return false;
+  return true;
+}
+
 function render() {
   // Datalastic live: positions land in state.aisTracksByVid and the normal
   // render() path (via positionAt + AIS overlay) handles them — no fork
@@ -1592,15 +1612,29 @@ function render() {
   const frac = (t - state.timelineStart) / range;
   document.getElementById('slider').value = Math.round(frac * 1000);
 
+  // Only vessels in service at this moment. Charlie 3 replaced Allianz Juno, so
+  // outside its own service window a vessel must leave the map entirely —
+  // otherwise the simulator holds Juno's last known position for ever and shows
+  // it moored at B4 beside the boat that took its place.
+  const onDuty = state.vessels.filter(v => isVesselActive(v, t));
+  const onDutyIds = new Set(onDuty.map(v => v.id));
+  for (const v of state.vessels) {
+    const marker = state.vesselMarkers[v.id];
+    if (!marker) continue;
+    const shown = state.map.hasLayer(marker);
+    if (onDutyIds.has(v.id) && !shown) marker.addTo(state.map);
+    else if (!onDutyIds.has(v.id) && shown) state.map.removeLayer(marker);
+  }
+
   // Compute all positions
   const positions = {};
-  for (const v of state.vessels) {
+  for (const v of onDuty) {
     positions[v.id] = positionAt(v.id, t);
   }
   applyAntiOverlap(positions);
 
   const cards = [];
-  for (const v of state.vessels) {
+  for (const v of onDuty) {
     const pos = positions[v.id];
     const marker = state.vesselMarkers[v.id];
     if (pos) {

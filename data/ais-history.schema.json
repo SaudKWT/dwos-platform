@@ -4,7 +4,7 @@
   "type": "object",
   "required": ["vessel_id", "mmsi", "date_utc", "positions", "source"],
   "properties": {
-    "vessel_id": { "type": "string", "enum": ["JUNO", "CA1", "CA3", "CA5"] },
+    "vessel_id": { "type": "string", "enum": ["JUNO", "CH3", "CA1", "CA3", "CA5"] },
     "mmsi":      { "type": "string", "pattern": "^[0-9]{9}$" },
     "date_utc":  { "type": "string", "format": "date", "$comment": "YYYY-MM-DD; the UTC day this file covers. A vessel that crosses the UTC midnight boundary will have its track split across two files." },
 

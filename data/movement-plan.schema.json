@@ -40,7 +40,7 @@
         "properties": {
           "vessel_id": {
             "type": "string",
-            "enum": ["JUNO", "CA1", "CA3", "CA5"]
+            "enum": ["JUNO", "CH3", "CA1", "CA3", "CA5"]
           },
           "current_status": {
             "type": "string",

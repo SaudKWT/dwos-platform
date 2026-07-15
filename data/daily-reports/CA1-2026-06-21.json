@@ -1,0 +1,157 @@
+{
+  "consumables": {
+    "fuel_oil": {
+      "loaded": null,
+      "discharged": "0.011 M3",
+      "consumed": "6.240 M3",
+      "rob": "669.702 M3",
+      "max_capacity": "950 M3 (80%)",
+      "remaining_to_load": "280.298 M3",
+      "remarks": ""
+    },
+    "fresh_water": {
+      "loaded": null,
+      "discharged": "100 M3",
+      "consumed": "3 M3",
+      "rob": "287 M3",
+      "max_capacity": "673 M3 (100%)",
+      "remaining_to_load": "386 M3",
+      "remarks": ""
+    },
+    "drill_water": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": null,
+      "rob": "1014 M3",
+      "max_capacity": "1476 M3 (100%)",
+      "remaining_to_load": "462 M3",
+      "remarks": ""
+    },
+    "base_oil": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": null,
+      "rob": null,
+      "max_capacity": null,
+      "remaining_to_load": null,
+      "remarks": ""
+    }
+  },
+  "task_log": [
+    {
+      "from_time": "00:00",
+      "to_time": "24:00",
+      "duration_min": 1440,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Vessel maintained positioned a/side the P/S crane of Oriental Dragon 1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "00:00",
+      "to_time": "17:30",
+      "duration_min": 1050,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "Deck cargo operation",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "21:15",
+      "to_time": "21:25",
+      "duration_min": 10,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "FW hose connected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "21:37",
+      "to_time": "22:54",
+      "duration_min": 77,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "FW transferred to Oriental Dragon 1: 100 m3",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "23:00",
+      "to_time": "23:05",
+      "duration_min": 5,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "FW hose disconnected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "23:26",
+      "to_time": "23:36",
+      "duration_min": 10,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "DW hose connected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "23:42",
+      "to_time": "24:00",
+      "duration_min": 18,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "DW transfer in progress",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {
+    "accidents": "Nil",
+    "incidents": "Nil",
+    "near_miss": "Nil"
+  },
+  "provisions": {
+    "dry_store_days": 8,
+    "fresh_frozen_days": 8,
+    "drinking_water_days": 8,
+    "fuel_oil_unpumpable": "20KL Delay"
+  },
+  "delays": {
+    "arrival_time": "NA Delay",
+    "departure_time": "NA"
+  },
+  "lifts": {},
+  "report_date": "2026-06-21",
+  "voyage_no": "076/2026",
+  "days_since_port_call": 2,
+  "security_level": 3,
+  "issues_comments": "3\n                                                    Crest Argus 1\n                                                  Daily Vessel Report\n                                           PLEASE ADD FOOD SUPPLIES ONBOARD VESSEL\nRemaining provision stores On-board:                   INTO THIS SECTION\nDry Store               : 08 Days\nFresh & Frozen Store : 08 Days\nDrinking Water          : 08 Days\nFuel Oil unpumpable : 20KL Delay\nArrival Time            : NA Delay\nDeparture Time: NA",
+  "accident_summary": "Report Compiled By:           Master: Capt. Ehab Elsayed Elmelegy Shehab                 Date: 21/06/2026     Time: 24:00\nThe Daily Report shall be communicated by 06:00 each day regardless of the Vessel’s location or employment. A distribution list shall\nbe provided. Any occurrence which impacts the safety or operational capabilities of the Vessel shall be reported immediately and noted\nin the applicable section above. The e-mail title and document file name shall state “Daily Report” and include the name and date of the\nvessel,\nThe report shall be completed in sufficient detail so as to provide a clear and concise illustration of all operational activities\nand events for the period.\n                                                                    4",
+  "compiled_by": {
+    "name": "Capt. Ehab Elsayed Elmelegy Shehab",
+    "role": "Master"
+  },
+  "vessel_id": "CA1",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CREST ARGUS 1 - Daily Midnight Report -21 June 2026",
+    "email_from": "Crest Argus1 | OFCO <crestargus1@ofco-int.com>",
+    "email_date": "2026-06-22 00:04:34+03:00",
+    "attachment_name": "21. Crest Argus 1_Daily vessel report _21 June 2026.pdf",
+    "submitted_via": "msg_batch_import"
+  }
+}

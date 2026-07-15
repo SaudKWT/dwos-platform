@@ -1,12 +1,6 @@
 {
   "version": "0.0.1",
   "configurations": [
-    {
-      "name": "vessel-sim",
-      "runtimeExecutable": "node",
-      "runtimeArgs": ["server.mjs"],
-      "port": 5173,
-      "autoPort": true
-    }
+    { "name": "vessels", "runtimeExecutable": "node", "runtimeArgs": ["server.mjs"], "port": 5173 }
   ]
 }

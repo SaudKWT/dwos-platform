@@ -37,7 +37,14 @@ const PLANS_DIR    = path.join(PROJECT_ROOT, 'data', 'movement-plans');
 const PORT         = Number(process.env.PORT || 5173);
 const HOST         = process.env.HOST || '127.0.0.1';
 
-const VESSEL_IDS  = new Set(['JUNO', 'CA1', 'CA3', 'CA5']);
+const VESSEL_IDS  = new Set(['JUNO', 'CH3', 'CA1', 'CA3', 'CA5']);
+
+// The PDF reader needs pdfplumber, which Homebrew's python3 won't let us install
+// into it (PEP 668).  Prefer the project's own .venv when it exists — create it
+// with:  python3 -m venv .venv && .venv/bin/pip install -r tools/requirements.txt
+const PYTHON = fsSync.existsSync(path.join(PROJECT_ROOT, '.venv', 'bin', 'python3'))
+  ? path.join(PROJECT_ROOT, '.venv', 'bin', 'python3')
+  : 'python3';
 const DATE_RE     = /^\d{4}-\d{2}-\d{2}$/;
 
 const bus = new EventEmitter();
@@ -314,7 +321,7 @@ async function readJsonBody(req, limit = 256 * 1024) {
 function parsePdfFile(pdfPath, name) {
   return new Promise((resolve) => {
     execFile(
-      'python3',
+      PYTHON,
       [path.join(PROJECT_ROOT, 'tools', 'parse_daily_reports.py'),
        '--pdf', pdfPath, '--name', name || ''],
       { cwd: PROJECT_ROOT, timeout: 60_000, maxBuffer: 16 * 1024 * 1024 },
@@ -393,7 +400,7 @@ function validatePlan(body) {
   for (const v of body.vessels) {
     if (!v || typeof v !== 'object') return 'every vessel entry must be an object';
     if (!VESSEL_IDS.has(v.vessel_id)) {
-      return `vessel_id "${v.vessel_id}" must be one of JUNO, CA1, CA3, CA5`;
+      return `vessel_id "${v.vessel_id}" must be one of JUNO, CH3, CA1, CA3, CA5`;
     }
   }
   return null;
@@ -401,7 +408,7 @@ function validatePlan(body) {
 
 function validateReport(body) {
   if (!body || typeof body !== 'object') return 'body must be an object';
-  if (!VESSEL_IDS.has(body.vessel_id)) return 'vessel_id must be one of JUNO, CA1, CA3, CA5';
+  if (!VESSEL_IDS.has(body.vessel_id)) return 'vessel_id must be one of JUNO, CH3, CA1, CA3, CA5';
   if (!DATE_RE.test(body.report_date || '')) return 'report_date must be YYYY-MM-DD';
   if (!Array.isArray(body.task_log)) return 'task_log must be an array';
   for (const r of body.task_log) {

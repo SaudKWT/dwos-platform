@@ -9,7 +9,24 @@
       "speed_kts": 14,
       "home_berth": "B4",
       "color": "#f5b400",
-      "stroke": "#7a5500"
+      "stroke": "#7a5500",
+      "retired_on": "2026-05-20",
+      "$comment": "Replaced by Charlie 3, whose first report is 20 May 2026; Juno's last is 16 May. Without retired_on the app would carry Juno's final position forward for ever and draw it alongside Charlie 3 at the same berth, showing two vessels where there is one."
+    },
+    {
+      "id": "CH3",
+      "name": "Charlie 3",
+      "type": "SV — Fast Crew Boat",
+      "length_m": 48,
+      "beam_m": 11,
+      "speed_kts": 14,
+      "home_berth": "B4",
+      "color": "#8b5cf6",
+      "stroke": "#4c2889",
+      "replaced_vessel": "JUNO",
+      "active_from": "2026-05-20",
+      "specs_provisional": true,
+      "$comment": "Charlie 3 took over Allianz Juno's role and berth on 20 May 2026, the date of its first report; Juno is retired on that date (see JUNO.retired_on) so only one of the two is ever on the map. Berth B4 is confirmed by its own logs ('VSL STBY ALS TO B# 4 IN SHUAIBA PORT'). Size and speed are Juno's figures, used as a stand-in until the real particulars arrive — specs_provisional flags that. Its fuel tank is 55 m3 against Juno's 147 m3, so it is likely a smaller boat."
     },
     {
       "id": "CA1",

@@ -1,0 +1,425 @@
+{
+  "consumables": {
+    "fuel_oil": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": "3.67 m3",
+      "rob": "54.41 m3",
+      "max_capacity": "55 m3 (60%)",
+      "remaining_to_load": "0.59 m3",
+      "remarks": ""
+    },
+    "fresh_water": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": "02 m3",
+      "rob": "12.0 m3",
+      "max_capacity": "20 m3",
+      "remaining_to_load": "08 m3",
+      "remarks": ""
+    }
+  },
+  "task_log": [
+    {
+      "from_time": "00:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "VSL STBY ALS TO B# 20 IN SHUAIBA PORT. CARRIED OUT FIRE & SAFETY ROUND",
+      "location_id": "B20",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "02:35",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "START M/E & CARGO LOADED",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "02:50",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "C/O - PROCEED TO RIG OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "03:50",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "ENTER 500 MTR",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "04:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "ALS TO RIG OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "04:03",
+      "to_time": "04:09",
+      "duration_min": 6,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "CARGO TRANSFER OPR",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "04:16",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "B1",
+      "task_label": "Back-load at rig",
+      "description": "1 BACKLOAD",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "04:18",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "PULLOUT & C/O",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "04:20",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "EXIT 500 MTR",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "05:15",
+      "to_time": "05:25",
+      "duration_min": null,
+      "task_code": "S01",
+      "task_label": "Standby on location",
+      "description": "VSL STBY OUTSIDE BREAKWATER & AWAITING PERMISSION",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "05:35",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "ALS TO B# 4 IN SHUAIBA PORT & STOP M/E",
+      "location_id": "B4",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "10:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "START M/E & CARGO LOADED",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "10:20",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "C/O - PROCEED TO RIG OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "11:20",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "ENTER 500 MTR",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "11:30",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "ALS TO RIG OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "11:32",
+      "to_time": "11:42",
+      "duration_min": 10,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "CARGO TRANSFER OPR",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "11:43",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "PULLOUT & C/O",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "11:45",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "EXIT 500 MTR",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:35",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "VSL ALS TO KOC AL KHOUR IN NORTH PIER",
+      "location_id": "NP",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:10",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "5 PAX EMBARKED",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:30",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "C/O - PROCEED TO RIG OD1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "14:50",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "ENTER 500 MTR",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "14:55",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "ALS TO RIG OD1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "14:56",
+      "to_time": "15:00",
+      "duration_min": 4,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "PAX TRANSFER OPR",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:12",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "CARGO TRANSFER",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:13",
+      "to_time": "18:00",
+      "duration_min": 167,
+      "task_code": "S01",
+      "task_label": "Standby on location",
+      "description": "STBY WITHIN 500 MTR",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "18:05",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "ALS TO RIG OD1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "18:14",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "2 PAX IN",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "18:15",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "PULLOUT & C/O",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "18:20",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "EXIT 500 MTR",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "19:50",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "VSL ALS TO KOC AL KHOUR IN NORTH PIER AND PAX DISEMBARK",
+      "location_id": "NP",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "19:55",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "STOP M/E",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "20:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "CARRIED OUT FIRE & SAFETY ROUND",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "23:59",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03 S03",
+      "task_label": "S03 S03",
+      "description": "VSL STBY ALS TO KOC AL KHOUR IN NORTH PIER. CARRIED OUT FIRE &",
+      "location_id": "NP",
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {
+    "accidents": "Nil",
+    "incidents": "Nil",
+    "near_miss": "Nil"
+  },
+  "provisions": {},
+  "delays": {},
+  "lifts": {},
+  "report_date": "2026-05-31",
+  "voyage_no": "0",
+  "security_level": 2,
+  "compiled_by": {
+    "name": "MASTER CHARLIE 3",
+    "role": "Master"
+  },
+  "vessel_id": "CH3",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CHARLIE 3 - DAILY VESSEL REPORT OF 31.05.2026",
+    "email_from": "Charlie 3 | OFCO <charlie3@ofco-int.com>",
+    "email_date": "2026-06-01 00:03:34+03:00",
+    "attachment_name": "31 MAY 2026 CHARLIE 3 Daily Vessel Report -.pdf",
+    "submitted_via": "msg_batch_import"
+  }
+}

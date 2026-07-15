@@ -7,7 +7,7 @@ position.  Run this whenever the parsers or imports change.
 
 Checks:
   * data/daily-reports/*.json
-      - vessel_id is one of JUNO / CA1 / CA3 / CA5
+      - vessel_id is one of JUNO / CH3 / CA1 / CA3 / CA5
       - report_date is YYYY-MM-DD
       - task_log is a non-empty array
       - every task_log row has a valid HH:MM from_time (zero-padded)
@@ -47,7 +47,7 @@ AIS_DIR      = PROJECT_ROOT / "data" / "ais-history"
 PLANS_DIR    = PROJECT_ROOT / "data" / "movement-plans"
 LEARNED_PATH = PROJECT_ROOT / "data" / "learned-profiles.json"
 
-VESSEL_IDS = {"JUNO", "CA1", "CA3", "CA5"}
+VESSEL_IDS = {"JUNO", "CH3", "CA1", "CA3", "CA5"}
 LOC_IDS    = {"B4", "B20", "NP", "OPH", "OD"}
 
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")

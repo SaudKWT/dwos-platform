@@ -1,0 +1,246 @@
+{
+  "consumables": {
+    "fuel_oil": {
+      "loaded": "- M3",
+      "discharged": "- M3",
+      "consumed": "5.030 M3",
+      "rob": "379.275 M3",
+      "max_capacity": "950 M3 (85%)",
+      "remaining_to_load": "570.725 M3",
+      "remarks": ""
+    },
+    "fresh_water": {
+      "loaded": "- M3",
+      "discharged": "- M3",
+      "consumed": "4 M3",
+      "rob": "154 M3",
+      "max_capacity": "673 M3 (100%)",
+      "remaining_to_load": "519 M3",
+      "remarks": ""
+    },
+    "drill_water": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": null,
+      "rob": "1000 M3",
+      "max_capacity": "1180 M3 (80%)",
+      "remaining_to_load": "180 M3",
+      "remarks": ""
+    },
+    "base_oil": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": null,
+      "rob": "0 Bbls",
+      "max_capacity": "1000 Bbls (80%)",
+      "remaining_to_load": "1000 Bbls",
+      "remarks": ""
+    }
+  },
+  "task_log": [
+    {
+      "from_time": "00:01",
+      "to_time": "01:55",
+      "duration_min": 115,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Vsl at 300 mtrs stbd rig OD 1, up the wind waiting for cargo operation",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "01:55",
+      "to_time": "02:20",
+      "duration_min": 25,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Approaching port side crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "02:20",
+      "to_time": "02:26",
+      "duration_min": 6,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "In post port side crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "02:26",
+      "to_time": "06:50",
+      "duration_min": 256,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Commenced deck cargo operation",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:00",
+      "to_time": "07:15",
+      "duration_min": 15,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Pull out 300 mtrs",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:15",
+      "to_time": "07:55",
+      "duration_min": 40,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Vsl at 300 mtrs fm OD 1 waiting for cargo operation",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:55",
+      "to_time": "08:10",
+      "duration_min": 15,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Approaching port side crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:10",
+      "to_time": "08:15",
+      "duration_min": 5,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "In post port side crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:15",
+      "to_time": "09:05",
+      "duration_min": 50,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Commenced deck cargo operation",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:07",
+      "to_time": "09:25",
+      "duration_min": 18,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Pull out 300 mtrs",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:25",
+      "to_time": "13:00",
+      "duration_min": 215,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Vsl at 300 mtrs fm OD 1 waiting for cargo operation",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:00",
+      "to_time": "13:15",
+      "duration_min": 15,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Pull out 500 mtrs",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:15",
+      "to_time": "13:20",
+      "duration_min": 5,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Exit 500 mtrs DP off proceed to anchorage",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:20",
+      "to_time": "13:25",
+      "duration_min": 5,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Drop anchor at OD 1 clear area",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:25",
+      "to_time": "24:00",
+      "duration_min": 635,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Anchor brought up, Finish ME, Vsl stby at OD 1 clear area w / instruction",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {
+    "accidents": "Nil",
+    "incidents": "Nil",
+    "near_miss": "Nil"
+  },
+  "provisions": {
+    "dry_store_days": 24,
+    "fresh_frozen_days": 24,
+    "drinking_water_days": 24,
+    "fuel_oil_unpumpable": "20 M3"
+  },
+  "delays": {
+    "arrival_time": "NA",
+    "departure_time": "NA"
+  },
+  "lifts": {},
+  "report_date": "2026-07-06",
+  "voyage_no": "78",
+  "days_since_port_call": 5,
+  "next_crew_change": "TBA",
+  "security_level": 3,
+  "issues_comments": "Remaining Provisions Store On-board\n    Dry Store             : 24 Days\n    Fresh & Frozen Store: 24 Days\n    Drinking Water        : 24 Days\n    FO Unpumpable : 20 M3\n    Durability for safe operation :\n    Delay Arrival Time  : NA\n    Delay Departure Time : NA",
+  "accident_summary": "Nil",
+  "compiled_by": {
+    "name": "Ahmad Sakour",
+    "role": "Master"
+  },
+  "vessel_id": "CA5",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CREST ARGUS 5 - Daily Midnight Report - 06.07.2026 ",
+    "email_from": "Crest Argus5 | OFCO <crestargus5@ofco-int.com>",
+    "email_date": "2026-07-07 00:14:19+03:00",
+    "attachment_name": "Crest Argus 5_Daily vessel report _06.07.2026.pdf",
+    "submitted_via": "msg_batch_import"
+  }
+}
