@@ -153,9 +153,9 @@ export default function VesselSheet({ vessel: v, ctx, reports, t, onClose }: {
                   </h2>
                   <p className="mt-1 text-xs text-muted-foreground">
                     The big number is the <b>real time at that location</b>. The lines under it
-                    show what the vessel was doing — standby is just one of them, not the total.
-                    Some jobs run at the same time (a hose connected while cargo is worked), so
-                    the lines can add up to more than the stay.
+                    show what the vessel was doing — <i>idle</i> counts only the hours with no
+                    work logged. Some jobs run at the same time (a hose connected while cargo
+                    is worked), so the lines can add up to more than the stay.
                   </p>
                   <div className="mt-2 overflow-hidden rounded-lg border">
                     <table className="w-full text-sm">
