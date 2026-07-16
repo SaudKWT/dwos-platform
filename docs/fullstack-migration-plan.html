@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en" style="background:#ffffff">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Full-Stack Migration Plan — Vessels Movement</title>
+<style>
+  html, body { background: #ffffff; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1a202c; max-width: 960px; margin: 0 auto; padding: 40px 32px 80px;
+    line-height: 1.6; font-size: 15.5px;
+  }
+  h1 { font-size: 30px; margin: 0 0 4px; letter-spacing: -0.5px; }
+  .subtitle { color: #64748b; margin-bottom: 28px; font-size: 15px; }
+  h2 { font-size: 21px; margin: 44px 0 12px; padding-bottom: 6px; border-bottom: 2px solid #e2e8f0; letter-spacing: -0.3px; }
+  h3 { font-size: 16.5px; margin: 26px 0 8px; }
+  table { border-collapse: collapse; width: 100%; margin: 14px 0 20px; font-size: 14px; }
+  th { background: #f1f5f9; text-align: left; padding: 8px 10px; border: 1px solid #cbd5e1; font-weight: 600; }
+  td { padding: 7px 10px; border: 1px solid #d8e0ea; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  code { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 4px; padding: 1px 5px; font-size: 13px; font-family: "SF Mono", Menlo, Consolas, monospace; }
+  pre { background: #0f172a; color: #e2e8f0; border-radius: 8px; padding: 14px 16px; overflow-x: auto; font-size: 13px; line-height: 1.5; }
+  pre code { background: none; border: none; color: inherit; padding: 0; }
+  .callout { border-left: 4px solid; border-radius: 6px; padding: 12px 16px; margin: 16px 0; }
+  .callout.warn { background: #fffbeb; border-color: #f59e0b; }
+  .callout.info { background: #eff6ff; border-color: #3b82f6; }
+  .callout.good { background: #f0fdf4; border-color: #22c55e; }
+  .callout b:first-child { display: block; margin-bottom: 4px; }
+  .phase { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+  .phase h3 { margin-top: 0; }
+  .phase .goal { color: #475569; font-style: italic; margin: 2px 0 10px; }
+  .tag { display: inline-block; background: #e0e7ff; color: #3730a3; border-radius: 999px; padding: 1px 10px; font-size: 12px; font-weight: 600; margin-left: 8px; vertical-align: middle; }
+  ul { padding-left: 22px; } li { margin: 4px 0; }
+  .small { font-size: 13px; color: #64748b; }
+</style>
+</head>
+<body>
+
+<h1>Full-Stack Migration Plan</h1>
+<div class="subtitle">Vessels Movement app → React + shadcn/ui &nbsp;·&nbsp; ASP.NET Core &nbsp;·&nbsp; SQL Server (schema0726.sql) &nbsp;—&nbsp; 16 July 2026</div>
+
+<div class="callout good">
+  <b>✅ Status — Phases 0–2 are built and running; Phase 3 is started.</b>
+  Decisions taken: <b>hosting stays local</b> for now, the delivered schema is <b>read-only</b> (we add our own tables only), and <b>access stays open</b> until the auth decision is made.
+  <br><br>
+  <b>Working today:</b> SQL Server in a local container with all 43 legacy tables + 12 new marine tables; every JSON file imported and verified (255 reports, 4,835 task rows, 127 AIS fixes); an ASP.NET Core API serving data <i>identical</i> to the old files; a React + shadcn client with a working map and reports browser.
+  <br><br>
+  <b>Not done yet:</b> the map's transit interpolation, the data-entry forms, PDF import, live AIS, and authentication. See §11.
+</div>
+
+<h2>1 · What we have today</h2>
+<p>The current app is a single Node project with no framework and no database — everything lives in JSON files on disk.</p>
+<table>
+  <tr><th>Piece</th><th>Today</th><th>Notes</th></tr>
+  <tr><td>Map simulator</td><td><code>index.html</code> + <code>app.js</code> (~2,450 lines, Leaflet)</td><td>Timeline playback of vessel movements, live AIS overlay, routes, day/night themes</td></tr>
+  <tr><td>Data-entry forms</td><td><code>admin.html</code> + <code>admin.js</code> (~900 lines)</td><td>Captain's daily report + supervisor's 48-hr movement plan, with PDF drag-and-drop import</td></tr>
+  <tr><td>Backend</td><td><code>server.mjs</code> (local) and <code>api/server.mjs</code> (Vercel)</td><td>Zero-dependency Node HTTP server; JSON API + Server-Sent Events + live AIS polling (Datalastic)</td></tr>
+  <tr><td>Storage</td><td>JSON files under <code>data/</code></td><td>5 vessels, ~90 locations (berths/rigs), 256 daily reports, 7+ movement plans, AIS history</td></tr>
+  <tr><td>PDF parsing</td><td>Python scripts in <code>tools/</code> (pdfplumber)</td><td>Reads the daily-report and movement-plan PDFs</td></tr>
+  <tr><td>Login</td><td>One shared token in a cookie (<code>middleware.js</code> on Vercel)</td><td>No users, no roles</td></tr>
+</table>
+
+<h2>2 · Where we're going</h2>
+<table>
+  <tr><th>Layer</th><th>Target</th><th>Key packages</th></tr>
+  <tr><td>Frontend</td><td>React 18 + TypeScript + Vite</td><td>shadcn/ui + Tailwind CSS, TanStack Query, React Router, react-leaflet, zod, react-hook-form</td></tr>
+  <tr><td>Backend</td><td>ASP.NET Core 8 Web API (LTS)</td><td>EF Core 8 (SqlServer), SignalR (replaces SSE), JWT bearer auth, Serilog</td></tr>
+  <tr><td>Database</td><td>SQL Server, database <code>DWO</code></td><td>schema0726.sql as the base + new marine tables (section 4)</td></tr>
+</table>
+
+<h3>Running it today</h3>
+<pre><code># 1 · database (SQL Server needs a container — no native macOS build)
+colima start --vm-type=vz --vz-rosetta --cpu 2 --memory 4 --disk 20
+docker compose --env-file keys.env up -d
+./database/migrate.sh
+
+# 2 · load the data (re-runnable; verifies itself afterwards)
+set -a; source keys.env; set +a
+dotnet run --project server/Koc.Vessels.Importer
+
+# 3 · API   -> http://127.0.0.1:5280  (swagger at /swagger)
+dotnet run --project server/Koc.Vessels.Api
+
+# 4 · client -> http://localhost:5173
+npm run dev --prefix client</code></pre>
+<p class="small">Credentials live in <code>keys.env</code> at the repo root — untracked, <code>chmod 600</code>, per your convention. The old app still runs untouched from the repo root throughout.</p>
+
+<h3>New repo layout</h3>
+<pre><code>vessels-movement/
+├─ client/                  # React + Vite + shadcn
+│  ├─ src/
+│  │  ├─ pages/             # MapPage, ReportsPage, PlanPage, AdminPage, LoginPage
+│  │  ├─ components/        # shadcn components + map widgets
+│  │  ├─ features/          # simulator/ (ported timeline engine), reports/, plans/, live/
+│  │  ├─ api/               # typed client (generated from OpenAPI)
+│  │  └─ lib/
+├─ server/
+│  ├─ Koc.Vessels.Api/            # controllers, SignalR hub, auth, DI
+│  ├─ Koc.Vessels.Domain/         # entities, enums
+│  ├─ Koc.Vessels.Infrastructure/ # EF Core DbContext, repositories, Datalastic client
+│  └─ Koc.Vessels.Importer/       # one-off console app: JSON files → SQL Server
+├─ database/
+│  ├─ 001-schema0726.sql          # the provided script, converted to UTF-8
+│  ├─ 002-marine-tables.sql       # new vessel tables (section 4)
+│  └─ 003-seed-reference.sql      # statuses, locations, vessels
+├─ tools/                   # keep Python PDF parsers (called by the API)
+└─ docs/</code></pre>
+
+<h2>3 · The important finding about the schema</h2>
+<div class="callout warn">
+  <b>⚠️ schema0726.sql has no vessel tables.</b>
+  The script is the corporate drilling database: 43 tables covering users &amp; permissions (<code>User</code>, <code>Role</code>, <code>Privilege</code>, <code>UserProfile</code>…), assets and wells (<code>Asset</code>, <code>Field</code>, <code>Zone</code>, <code>Well</code>), rigs and contracts (<code>Rig</code>, <code>RigInfo</code>, <code>Contract</code>, <code>Contractor</code>), drilling operations (<code>Drilling</code>, <code>Workover</code>), and budgeting (<code>AFE</code>, <code>BudgetProposal</code>…). Nothing in it stores a vessel, a movement plan, a daily report, or an AIS position.
+</div>
+<p>So the plan is: <b>run the schema as-is, reuse what fits, and add a small set of new marine tables that follow the exact same style</b> (int identity <code>ID</code> primary key, <code>IsActive</code>/<code>IsDeleted</code> flags, <code>dbo</code> schema, Kuwait-local datetimes).</p>
+<table>
+  <tr><th>Schema table we reuse</th><th>Used for</th></tr>
+  <tr><td><code>User</code>, <code>UserProfile</code>, <code>Role</code>, <code>UserRole</code>, <code>Privilege</code>, <code>RolePrivilege</code>, <code>UserPrivilege</code></td><td>Real login with per-user accounts and roles (Captain, Supervisor, Viewer, Admin) — replaces the single shared cookie token</td></tr>
+  <tr><td><code>Rig</code>, <code>Well</code> (has Latitude/Longitude), <code>Asset</code>, <code>Field</code></td><td>Offshore destinations — rig locations like Oriental Phoenix / Oriental Dragon link to real <code>Rig</code> rows instead of free text</td></tr>
+  <tr><td><code>Status</code> (per-module statuses), <code>Module</code>, <code>Form</code></td><td>Movement statuses (STBY, Sailing, Alongside…) and menu/permission wiring</td></tr>
+  <tr><td><code>Log</code>, <code>UserAccessLog</code></td><td>Audit trail — who saved which report, logins</td></tr>
+  <tr><td><code>Contractor</code>, <code>Contract</code></td><td>Vessel owners/charters (Allianz, Crest) if you want them tracked</td></tr>
+</table>
+
+<h2>4 · New marine tables (002-marine-tables.sql)</h2>
+<p>Eight tables, mirroring today's JSON schemas one-for-one so nothing is lost in migration:</p>
+<table>
+  <tr><th>New table</th><th>Replaces</th><th>Key columns</th></tr>
+  <tr><td><code>Vessel</code></td><td><code>data/vessels.json</code></td><td>ID, VesselCode (JUNO/CH3/CA1…), VesselName, VesselType, LengthM, BeamM, SpeedKts, HomeBerthLocationID, MMSI, MapColor, MapStroke, ActiveFrom, RetiredOn, ReplacedVesselID, SpecsProvisional, IsActive, IsDeleted</td></tr>
+  <tr><td><code>MarineLocation</code></td><td><code>data/locations.json</code></td><td>ID, LocationCode (B4, B20, NP, OPH, OD…), LocationName, ShortName, Latitude, Longitude, LocationType (berth/rig/anchorage/waypoint), BerthUse, RigID (nullable FK → dbo.Rig), IsActive</td></tr>
+  <tr><td><code>MarineLocationAlias</code></td><td><code>locations.json → aliases</code></td><td>ID, MarineLocationID, Alias — keeps PDF import working ("Rig Oriental Phoenix" → OPH)</td></tr>
+  <tr><td><code>VesselDailyReport</code></td><td><code>data/daily-reports/*.json</code> (256 files)</td><td>ID, VesselID, ReportDate (unique per vessel+date), VoyageNo, CompiledByName, SubmittedAt, SafetyAccidents/Incidents/NearMiss, DaysSincePortCall, SecurityLevel, SourceType (pdf/form), RawJson <span class="small">(nvarchar(max) — full original payload so nothing is ever lost)</span></td></tr>
+  <tr><td><code>VesselReportTask</code></td><td>report <code>task_log[]</code></td><td>ID, VesselDailyReportID, FromTime, ToTime, ActivityText, MarineLocationID (nullable), SortOrder</td></tr>
+  <tr><td><code>VesselReportConsumable</code></td><td>report <code>consumables</code></td><td>ID, VesselDailyReportID, ConsumableName (fuel_oil, fresh_water, …), Previous, Received, Consumed, Rob, Unit</td></tr>
+  <tr><td><code>MovementPlan</code></td><td><code>data/movement-plans/</code> + <code>plans.json</code></td><td>ID, PlanDate (unique), IssuedDate, IssuedBy, IssuedRole, Subject, Narrative, SourceType, RawJson</td></tr>
+  <tr><td><code>MovementPlanLeg</code></td><td>plan <code>movements[]</code> + <code>snapshots</code></td><td>ID, MovementPlanID, VesselID, LegType (snapshot/movement/return), Etd, Eta, FromLocationID, ToLocationID, ViaJson, Purpose, RawText, EtdUncertain</td></tr>
+  <tr><td><code>AisPosition</code></td><td><code>data/ais-history/</code> + live poll</td><td>ID (bigint), VesselID, Timestamp, Latitude, Longitude, SpeedKts, CourseDeg, HeadingDeg, Source (datalastic/aisstream/import). Index on (VesselID, Timestamp)</td></tr>
+</table>
+<div class="callout info">
+  <b>Why keep <code>RawJson</code> columns?</b>
+  The PDF reports vary between vessels (Juno has 2 tanks, Crest vessels have mud/barite/cement). Storing the full original JSON beside the relational columns means the new system starts with zero data loss, and we can promote more fields to real columns later without re-importing.
+</div>
+
+<h2>5 · Backend plan (ASP.NET Core 8)</h2>
+<h3>5.1 Data access</h3>
+<ul>
+  <li><b>EF Core, database-first scaffold</b> of the full DWO schema once (<code>dotnet ef dbcontext scaffold</code>), then hand-maintained entity classes. The provided script has no foreign keys declared, so navigation properties are added manually in the model config for the relationships we actually use.</li>
+  <li>Schema changes ship as plain, numbered SQL scripts in <code>database/</code> (applied with <b>DbUp</b> on startup) — safest when the DB is shared with other corporate tools that expect this exact schema.</li>
+  <li>All datetimes stay <b>Kuwait local (UTC+3)</b>, matching the existing convention (the schema's own <code>Log.Timestamp</code> default is <code>getdate()+3h</code>) and all existing JSON data.</li>
+</ul>
+
+<h3>5.2 Auth</h3>
+<ul>
+  <li>Login endpoint checks <code>dbo.User</code> — <code>PasswordHash</code>/<code>PasswordSalt</code> (HMAC-SHA512, the standard pattern for this column pair). New users created with hash+salt only; the legacy plain <code>Password</code> column is never written.</li>
+  <li>Issues a <b>JWT</b> carrying user ID + roles; React stores it and sends it as a Bearer header. Roles: <b>Viewer</b> (map only), <b>Captain</b> (submit daily report), <b>Supervisor</b> (submit movement plan), <b>Admin</b> (manage vessels/locations/users).</li>
+  <li>Endpoints guarded with role policies; every write also inserts a row into <code>dbo.Log</code>.</li>
+</ul>
+
+<h3>5.3 API surface (parity with today, same shapes)</h3>
+<table>
+  <tr><th>Endpoint</th><th>Replaces</th></tr>
+  <tr><td><code>POST /api/auth/login</code>, <code>GET /api/auth/me</code></td><td>cookie middleware</td></tr>
+  <tr><td><code>GET/POST /api/reports</code>, <code>GET /api/reports/{vessel}/{date}</code></td><td>same routes in server.mjs</td></tr>
+  <tr><td><code>GET/POST /api/movement-plans</code></td><td>same</td></tr>
+  <tr><td><code>GET /api/ais-history</code></td><td>same</td></tr>
+  <tr><td><code>GET/POST /api/vessels</code>, <code>/api/locations</code></td><td>vessels.json / locations.json (now editable in Admin)</td></tr>
+  <tr><td><code>POST /api/import</code> (PDF upload)</td><td>same — API saves the PDF, shells out to the existing Python parsers in <code>tools/</code>, returns parsed JSON for review before saving</td></tr>
+  <tr><td>SignalR hub <code>/hubs/live</code></td><td>SSE <code>/api/stream</code> — pushes <code>report_saved</code>, <code>plan_saved</code>, <code>ais_position</code></td></tr>
+  <tr><td><code>GET /api/live</code>, <code>POST /api/live/start|stop</code></td><td>same — Datalastic polling moves into a hosted <code>BackgroundService</code>, positions saved to <code>AisPosition</code> and broadcast over SignalR</td></tr>
+</table>
+<p>Swagger/OpenAPI is on from day one; the React client's TypeScript API layer is generated from it, so front and back can't drift.</p>
+
+<div class="callout info">
+  <b>PDF parsing stays in Python (for now).</b>
+  The pdfplumber parsers in <code>tools/</code> are battle-tested against 250+ real PDFs. Rewriting them in C# is high-risk, low-reward. The API calls them as a child process exactly like <code>server.mjs</code> does today. A C# port (PdfPig) can be a later, separate task.
+</div>
+
+<h2>6 · Frontend plan (React + shadcn/ui)</h2>
+<ul>
+  <li><b>Scaffold:</b> Vite + React + TS, Tailwind, shadcn/ui init. Dark theme default (matches the current look), light theme via the existing toggle.</li>
+  <li><b>Pages:</b>
+    <ul>
+      <li><b>Map</b> — the simulator. The timeline engine inside <code>app.js</code> (position interpolation, plan-vs-report reconciliation, AIS overlay) is ported as <b>pure TypeScript modules</b> with no DOM code, then rendered through <code>react-leaflet</code>. This is the biggest single work item (~2,450 lines) and ports mostly 1:1 since the logic is already framework-free.</li>
+      <li><b>Daily Report</b> — the captain form rebuilt with shadcn <code>Form</code> + zod validation generated from <code>daily-report.schema.json</code>; PDF drag-and-drop → <code>POST /api/import</code> → review screen → save.</li>
+      <li><b>Movement Plan</b> — supervisor form, same pattern.</li>
+      <li><b>Admin</b> — vessels, locations &amp; aliases, users/roles (new capability, backed by the schema's security tables).</li>
+      <li><b>Login</b> — replaces login.html.</li>
+    </ul>
+  </li>
+  <li><b>Data:</b> TanStack Query for fetching/caching; SignalR client for live updates (report saved elsewhere → map refreshes, like today's SSE).</li>
+</ul>
+
+<h2>7 · Data migration (Koc.Vessels.Importer)</h2>
+<p>A one-off console app, re-runnable (wipe-and-reload) until cutover:</p>
+<ol>
+  <li>Seed <code>Vessel</code> from <code>vessels.json</code> (5 vessels incl. Juno's retirement / Charlie 3 handover fields).</li>
+  <li>Seed <code>MarineLocation</code> + <code>MarineLocationAlias</code> from <code>locations.json</code>.</li>
+  <li>Import all 256 <code>daily-reports/*.json</code> → <code>VesselDailyReport</code> + task/consumable rows + RawJson.</li>
+  <li>Import movement plans (<code>movement-plans/</code>, falling back to <code>plans.json</code>) → <code>MovementPlan</code> + legs.</li>
+  <li>Import <code>ais-history/</code> → <code>AisPosition</code>.</li>
+  <li><b>Verify:</b> row counts match file counts; spot-check 3 vessels' timelines render identically in old and new UIs on the same date.</li>
+</ol>
+
+<h2>8 · Phases</h2>
+
+<div class="phase">
+  <h3>Phase 0 — Foundations <span class="tag">~1 day</span></h3>
+  <div class="goal">Repo restructured, database up, nothing user-visible changes.</div>
+  <ul>
+    <li>Create <code>client/ server/ database/</code> layout (old app keeps running from root during the whole migration).</li>
+    <li>SQL Server 2022 in Docker for local dev (Mac: <code>mcr.microsoft.com/mssql/server</code>); convert schema0726.sql to UTF-8, run it, confirm all 44 tables.</li>
+    <li>Connection string + JWT secret go in the project's own <code>keys.env</code> (never committed).</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <h3>Phase 1 — Database + import <span class="tag">~2 days</span></h3>
+  <div class="goal">All historical data lives in SQL Server.</div>
+  <ul>
+    <li>Write and run <code>002-marine-tables.sql</code> + seed script.</li>
+    <li>Build the Importer; run it; pass the verification checks in section 7.</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <h3>Phase 2 — API + auth <span class="tag">~3 days</span></h3>
+  <div class="goal">ASP.NET Core serves everything the Node server serves today, plus real login.</div>
+  <ul>
+    <li>Scaffold solution, EF model, DbUp, Swagger.</li>
+    <li>JWT login against <code>dbo.User</code>; seed Admin/Supervisor/Captain/Viewer roles + your admin account.</li>
+    <li>Read + write endpoints, PDF import bridge to Python, SignalR hub.</li>
+    <li><b>Checkpoint:</b> the <i>old</i> vanilla frontend pointed at the new API works (shapes are kept compatible) — proves parity before any UI work.</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <h3>Phase 3 — React map (read-only parity) <span class="tag">~4–5 days</span></h3>
+  <div class="goal">The simulator runs in React with identical behaviour.</div>
+  <ul>
+    <li>Vite + shadcn scaffold, login page, routing, generated API client.</li>
+    <li>Port the timeline engine to TS modules; render with react-leaflet; playback controls, routes, themes, live-AIS overlay.</li>
+    <li><b>Checkpoint:</b> side-by-side old vs new on 3 sample dates — same positions, same tracks.</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <h3>Phase 4 — Forms + admin <span class="tag">~3–4 days</span></h3>
+  <div class="goal">Captains and the supervisor do their data entry in the new UI.</div>
+  <ul>
+    <li>Daily-report form + PDF import review flow; movement-plan form; live "report saved" toasts via SignalR.</li>
+    <li>Admin pages: vessels, locations/aliases, users &amp; roles.</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <h3>Phase 5 — Deploy + cutover <span class="tag">~2 days</span></h3>
+  <div class="goal">New stack in production; old app retired.</div>
+  <ul>
+    <li>Hosting: <b>Vercel can't run ASP.NET Core</b>. Recommended: Azure App Service + Azure SQL (or IIS + SQL Server if this must live on a KOC network). React build is served by the API itself (single deploy) or any static host.</li>
+    <li>Point AIS live polling at production; final data re-import; freeze the JSON files (kept in git as archive).</li>
+    <li>Retire <code>server.mjs</code>, <code>api/</code>, <code>middleware.js</code>, Vercel project.</li>
+  </ul>
+</div>
+
+<p><b>Total: roughly 15–17 working days</b> of focused effort, with a working checkpoint at the end of every phase.</p>
+
+<h2>9 · Decisions &amp; risks</h2>
+<table>
+  <tr><th>Item</th><th>Recommendation</th><th>Why / risk</th></tr>
+  <tr><td>Where to host</td><td>Azure App Service + Azure SQL</td><td>Vercel is Node/edge only. If this must run inside a KOC network, the same code deploys to IIS + on-prem SQL Server unchanged.</td></tr>
+  <tr><td>Schema ownership</td><td>Treat schema0726 as read-mostly; all our tables are new ones</td><td>If the drilling DB is shared with another system, we never alter its tables — we only read Users/Rigs/Wells and add our own.</td></tr>
+  <tr><td>No foreign keys in the script</td><td>Add FKs only on the <i>new</i> marine tables</td><td>The legacy tables ship without FK constraints; adding them could break the other system's inserts.</td></tr>
+  <tr><td>PDF parsing</td><td>Keep Python sidecar</td><td>Proven on 250+ real PDFs; a C# rewrite is a separate later project.</td></tr>
+  <tr><td>Timezone</td><td>Store Kuwait local everywhere</td><td>Matches the schema's own convention and all existing data; converting to UTC mid-migration doubles the bug surface.</td></tr>
+  <tr><td>Legacy <code>Password</code> column</td><td>Never write it; hash+salt only</td><td>Plain-text-capable column is a liability; flag for cleanup once confirmed nothing else reads it.</td></tr>
+  <tr><td>Map engine port</td><td>Port logic as pure TS first, UI second</td><td>Biggest risk of subtle behaviour drift; the side-by-side checkpoint in Phase 3 catches it.</td></tr>
+</table>
+
+<h2>10 · What building it actually taught us</h2>
+<p>Four things only showed up once the code ran. They are recorded here because each one would otherwise be re-discovered the hard way.</p>
+
+<div class="callout warn">
+  <b>1. EF Core silently rounded every coordinate — and the tests still passed.</b>
+  Entity Framework does not read column precision from the database. Left alone it sends every decimal as <code>decimal(18,2)</code>, so latitude <code>28.912411</code> arrived as <code>28.91</code> — about a kilometre of error on every vessel and berth — and the <code>decimal(10,7)</code> column never got a chance to hold the real value. No error was raised anywhere.
+  <br><br>
+  Worse, the importer's own verification passed it, twice over: it compared row <i>counts</i> (which were perfect), and it read back the objects EF still had in memory rather than the rows in SQL Server, so it was checking the importer against itself.
+  <br><br>
+  <b>Fixed:</b> explicit <code>HasPrecision</code> on every decimal; verification now reads with <code>AsNoTracking</code> and compares actual coordinate values. It was confirmed to fail on deliberately corrupted data before being trusted. <b>Rule:</b> any new decimal property needs a matching <code>HasPrecision</code>.
+</div>
+
+<div class="callout info">
+  <b>2. The two "plans" are different things.</b>
+  <code>data/movement-plans/*.json</code> is the supervisor's <i>narrative</i> as emailed (prose per vessel). <code>data/plans.json</code> is a hand-curated <i>structure</i> (snapshots and legs with ETDs) that the map animates. They cover overlapping but different dates. Both now hang off one <code>MovementPlan</code> header, so a date can have narrative, structure, or both.
+</div>
+
+<div class="callout info">
+  <b>3. "Shuaiba Port" is not a place.</b>
+  The alias list maps it to the pseudo-target <code>B20_or_B4</code>: it means berth 4 to the crew boats and berth 20 to the PSVs. Pointing it at either berth would put half the fleet at the wrong one. The alias table therefore allows a <b>null</b> location plus a <code>ResolutionHint</code>, and the caller resolves it against the vessel's home berth.
+</div>
+
+<div class="callout info">
+  <b>4. A task log records changes, not intervals.</b>
+  Most rows have <b>no <code>to_time</code></b> (a row runs until the next one starts), and only about a third carry a <code>location_id</code> — a captain writes the place when it <i>changes</i>. Reading the schema literally (requiring both a start and an end, skipping unlocated rows) drops most of the log and blinks vessels off the map. The ported engine carries the last known location forward, which was verified row-by-row against Juno's and Crest Argus 3's actual logs.
+</div>
+
+<h2>11 · What is left</h2>
+<table>
+  <tr><th>Item</th><th>Notes</th></tr>
+  <tr><td><b>Transit interpolation</b> (map)</td><td>The biggest remaining piece. On a passage row the <code>location_id</code> is the <i>destination</i>, so a vessel currently shows at its destination for the duration of the trip instead of moving along the route. The legacy engine solves this with real accumulated knowledge — including a rule that stops vessels "teleporting at 200 knots" when a captain logs en-route events as separate rows. It must be ported faithfully, not reinvented.</td></tr>
+  <tr><td>Playback, routes, AIS overlay, light theme</td><td>Remaining parts of the map port (plan Phase 3).</td></tr>
+  <tr><td>Data-entry forms + PDF import</td><td>Plan Phase 4. The API's <code>POST</code> endpoints work and are tested; the PDF bridge to the existing Python parsers is not wired yet.</td></tr>
+  <tr><td>Live AIS polling</td><td>Datalastic poller moves into a hosted <code>BackgroundService</code>, broadcasting over SignalR (the hub is in place).</td></tr>
+  <tr><td>Authentication</td><td>Deferred by decision. The API is <b>open</b> — safe on a local machine, not beyond it. The legacy <code>User</code>/<code>Role</code>/<code>Privilege</code> tables are ready when you want it.</td></tr>
+</table>
+
+<h2>12 · Still to decide</h2>
+<ul>
+  <li><b>Hosting</b> — local for now. Azure App Service + Azure SQL, or on-prem IIS, when it leaves this machine. (Vercel cannot run ASP.NET Core.)</li>
+  <li><b>Is the real DWO database shared</b> with a live drilling system? Everything is built as if the answer is yes, which is the safe assumption.</li>
+  <li><b>Who gets which role</b> when authentication is turned on.</li>
+  <li><b>Charlie 3's MMSI</b> — unknown, so it is left null rather than invented. It has no live AIS until that arrives.</li>
+</ul>
+
+</body>
+</html>

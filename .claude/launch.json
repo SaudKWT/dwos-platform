@@ -1,6 +1,11 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "vessels", "runtimeExecutable": "node", "runtimeArgs": ["server.mjs"], "port": 5173 }
+    {
+      "name": "client",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "client"],
+      "port": 5173
+    }
   ]
 }

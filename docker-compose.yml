@@ -1,0 +1,34 @@
+# Local SQL Server for development.
+#
+# SQL Server has no native macOS build, so it runs in a container. The image is
+# amd64 only; on Apple Silicon it runs through Rosetta, which colima provides:
+#
+#   colima start --vm-type=vz --vz-rosetta --cpu 2 --memory 4 --disk 20
+#
+# Bring the database up with:   docker compose --env-file keys.env up -d
+# Credentials live in keys.env (untracked). See database/README.md.
+
+services:
+  sql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
+    container_name: vessels-sql
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+      MSSQL_PID: Developer
+    ports:
+      - "${MSSQL_PORT:-1433}:1433"
+    volumes:
+      - vessels-sql-data:/var/opt/mssql
+    healthcheck:
+      # The container reports "started" long before the engine accepts logins;
+      # without this the migration script races it and fails on a cold start.
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+volumes:
+  vessels-sql-data:
