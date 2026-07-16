@@ -321,7 +321,8 @@ npm run dev --prefix client</code></pre>
   <tr><td>Live refresh when another session saves (was SSE)</td><td>✅ Ported to SignalR</td></tr>
   <tr><td>Dark/light theme with matching map tiles</td><td>✅ Ported</td></tr>
   <tr><td>Plans-as-forecast timeline (<code>buildTimelines</code> from plans.json)</td><td>◻ Not ported — dead code path: the original only used it when <i>no</i> daily reports existed, and every plan date has reports. The plans are stored and served; nothing is lost.</td></tr>
-  <tr><td>Vessel detail sheet (tap a card → full-day view)</td><td>◻ Not ported — the Daily Reports tab shows the same full task log</td></tr>
+  <tr><td>Vessel detail sheet (tap a card → full-day view)</td><td>✅ Ported — pauses playback, shows the report bracketing the sim clock, consumables, standby-time-by-location with activity bars, and the task log with the <b>NOW</b> row highlighted and auto-scrolled into view. Deep link: <code>/map?vessel=CA3</code>.</td></tr>
+  <tr><td>Daily Reports browsing at scale (new)</td><td>✅ Day-first navigation: days list with vessel dots, prev/next-day arrows + ←/→ keys, date picker that snaps to the nearest day with reports, one-click vessel chips, "View day on map". Selecting a day opens a report immediately.</td></tr>
   <tr><td>Print-friendly report PDF from the form</td><td>◻ Not ported yet</td></tr>
   <tr><td>Live Datalastic polling ("Live" button)</td><td>◻ Not ported yet — needs the API key; lands as a <code>BackgroundService</code> broadcasting on the existing SignalR hub</td></tr>
 </table>

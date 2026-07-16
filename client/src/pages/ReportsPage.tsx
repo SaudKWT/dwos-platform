@@ -68,8 +68,8 @@ export default function ReportsPage() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLElement && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return
-      if (e.key === 'ArrowLeft') stepDay(-1)
-      if (e.key === 'ArrowRight') stepDay(1)
+      if (e.key === 'ArrowLeft' || e.key === 'Left') stepDay(-1)
+      if (e.key === 'ArrowRight' || e.key === 'Right') stepDay(1)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
