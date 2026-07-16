@@ -12,6 +12,7 @@ import {
 } from '@/features/simulator/engine'
 import { fmtDur, toKuwaitStr } from '@/features/simulator/geo'
 import SimulatorLayer from '@/features/simulator/SimulatorLayer'
+import VesselSheet from '@/features/simulator/VesselSheet'
 import { useTheme } from '@/lib/theme'
 import { cn } from '@/lib/utils'
 
@@ -127,6 +128,9 @@ export default function MapPage() {
   // animation can run every frame without a React render per frame.
   const [displayTime, setDisplayTime] = useState(0)
   const timeRef = useRef(0)
+  // Vessel detail sheet — opened by tapping a side-panel card. Playback pauses
+  // first (like the original) so the sheet's "NOW" row stays put while reading.
+  const [sheetVid, setSheetVid] = useState<string | null>(null)
 
   const ctx: SimContext | null = useMemo(() => {
     if (!vessels.data || !locations.data || !learned.data) return null
@@ -156,6 +160,9 @@ export default function MapPage() {
       : built.timelineStart.getTime()
     setDisplayTime(timeRef.current)
     if (params.get('play') === '1') setPlaying(true)
+    // &vessel=CA3 opens that vessel's detail sheet directly.
+    const vid = params.get('vessel')
+    if (vid) setSheetVid(vid.toUpperCase())
   }, [built])
 
   // Playback: advance sim time by wall-time × speed. The marker layer reads
@@ -225,6 +232,7 @@ export default function MapPage() {
               segments={built.timelines[v.id] ?? []}
               aisTracks={aisTracks.data ?? {}}
               aisOverlay={aisOverlay}
+              onOpen={() => { setPlaying(false); setDisplayTime(timeRef.current); setSheetVid(v.id) }}
             />
           ))}
           {built && vessels.data?.filter(v => !isVesselActive(v, t)).map(v => (
@@ -256,6 +264,19 @@ export default function MapPage() {
           </MapContainer>
         </div>
       </div>
+
+      {(() => {
+        const sheetVessel = sheetVid ? vessels.data?.find(v => v.id === sheetVid) : undefined
+        return sheetVessel && ctx ? (
+          <VesselSheet
+            vessel={sheetVessel}
+            ctx={ctx}
+            reports={reports.data?.[sheetVessel.id] ?? []}
+            t={t}
+            onClose={() => setSheetVid(null)}
+          />
+        ) : null
+      })()}
 
       <footer className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2 border-t px-3 py-2">
         <div className="flex items-center gap-1">
@@ -325,13 +346,14 @@ function ControlButton({ children, onClick, title, primary }: {
 }
 
 /** Sidebar card — a port of the original vesselCardHtml. */
-function VesselCard({ vessel: v, ctx, t, segments, aisTracks, aisOverlay }: {
+function VesselCard({ vessel: v, ctx, t, segments, aisTracks, aisOverlay, onOpen }: {
   vessel: Vessel
   ctx: SimContext
   t: Date
   segments: Segment[]
   aisTracks: Record<string, AisTrackPoint[]>
   aisOverlay: boolean
+  onOpen: () => void
 }) {
   const timelines = useMemo(() => ({ [v.id]: segments }), [v.id, segments])
   const pos = positionAt(ctx, timelines, aisTracks, aisOverlay, v.id, t)
@@ -402,7 +424,15 @@ function VesselCard({ vessel: v, ctx, t, segments, aisTracks, aisOverlay }: {
   }
 
   return (
-    <div className="rounded-lg border p-3 text-sm" style={{ borderLeftColor: v.color ?? undefined, borderLeftWidth: 3 }}>
+    <div
+      role="button"
+      tabIndex={0}
+      title="Click for full daily activities"
+      onClick={onOpen}
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpen() } }}
+      className="cursor-pointer rounded-lg border p-3 text-sm transition-colors hover:bg-accent/50"
+      style={{ borderLeftColor: v.color ?? undefined, borderLeftWidth: 3 }}
+    >
       <div className="font-medium">
         {v.name}{' '}
         <span className="text-xs font-normal text-muted-foreground">
