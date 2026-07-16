@@ -6,7 +6,8 @@ export default defineConfig({
   plugins: [react()],
   resolve: { alias: { '@': path.resolve(__dirname, './src') } },
   server: {
-    port: 5173,
+    // 5173 by default; PORT lets a second checkout run alongside the first.
+    port: Number(process.env.PORT) || 5173,
     // The API runs on 5280. Proxying keeps the browser same-origin in dev, so
     // the client uses plain relative URLs and needs no CORS or base-URL config
     // — the same paths work when the API serves the built app in production.
