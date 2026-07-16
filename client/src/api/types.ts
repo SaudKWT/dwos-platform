@@ -50,16 +50,19 @@ export interface ReportIndexRow {
   source_type: string | null
 }
 
+// All members optional: imported reports carry every field, but a form
+// submission only writes the ones the captain filled in — exactly like the
+// original admin.js payloads.
 export interface ReportTask {
-  from_time: string | null       // '00:00'
-  to_time: string | null         // '24:00' is valid, so these stay strings
-  duration_min: number | null
-  task_code: string | null
-  task_label: string | null
-  description: string | null
-  location_id: string | null
-  from_location_id: string | null
-  to_location_id: string | null
+  from_time?: string | null      // '00:00'
+  to_time?: string | null        // '24:00' is valid, so these stay strings
+  duration_min?: number | null
+  task_code?: string | null
+  task_label?: string | null
+  description?: string | null
+  location_id?: string | null
+  from_location_id?: string | null
+  to_location_id?: string | null
 }
 
 export interface DailyReport {

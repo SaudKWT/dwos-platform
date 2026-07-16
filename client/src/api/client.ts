@@ -3,6 +3,15 @@ import type {
   PlanIndexRow, ReportIndexRow, Vessel,
 } from './types'
 
+export interface ImportResult {
+  name: string
+  vessel_id?: string
+  report_date?: string
+  rows?: number
+  status: 'saved' | 'overwrote' | 'skipped' | 'error'
+  reason?: string
+}
+
 // Relative URLs throughout: Vite proxies /api to the backend in dev, and in
 // production the API serves this app itself. Nothing needs a base URL or an
 // environment switch.
@@ -53,6 +62,11 @@ export const api = {
 
   planIndex: () => get<{ plans: PlanIndexRow[] }>('/api/movement-plans').then(r => r.plans),
   plan: (date: string) => get<Record<string, unknown>>(`/api/movement-plans/${date}`),
+  savePlan: (plan: Record<string, unknown>) =>
+    post<{ ok: boolean; plan_date: string }>('/api/movement-plans', plan),
+
+  importPdfs: (files: { name: string; data_base64: string }[]) =>
+    post<{ results: ImportResult[]; saved: number }>('/api/import', { files }),
 
   aisIndex: () => get<{ tracks: AisTrackRow[] }>('/api/ais-history').then(r => r.tracks),
   aisDay: (vesselId: string, dateUtc: string) =>

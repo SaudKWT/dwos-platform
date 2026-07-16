@@ -41,12 +41,12 @@
 <div class="subtitle">Vessels Movement app → React + shadcn/ui &nbsp;·&nbsp; ASP.NET Core &nbsp;·&nbsp; SQL Server (schema0726.sql) &nbsp;—&nbsp; 16 July 2026</div>
 
 <div class="callout good">
-  <b>✅ Status — Phases 0–2 are built and running; Phase 3 is started.</b>
+  <b>✅ Status — Phases 0–4 are built, running, and verified at parity with the original app.</b>
   Decisions taken: <b>hosting stays local</b> for now, the delivered schema is <b>read-only</b> (we add our own tables only), and <b>access stays open</b> until the auth decision is made.
   <br><br>
-  <b>Working today:</b> SQL Server in a local container with all 43 legacy tables + 12 new marine tables; every JSON file imported and verified (255 reports, 4,835 task rows, 127 AIS fixes); an ASP.NET Core API serving data <i>identical</i> to the old files; a React + shadcn client with a working map and reports browser.
+  <b>Working today:</b> SQL Server in a local container (43 legacy + 12 marine tables); every JSON file imported and verified (255 reports, 4,835 task rows, 127 AIS fixes); an ASP.NET Core API serving data identical to the old files; and a React + shadcn client with <b>the full simulator</b> — the original engine ported line-for-line (vessels sail their routes at real speeds, AIS/GPS override, learned route shapes), the real ship icons, playback (play/pause · 1×–240× · timeline · Kuwait clock), routes + rig zones + occupancy badges, vessel cards with live activity and ETA, dark/light theme, <b>both data-entry forms</b> (daily report + movement plan), <b>PDF bulk import</b> through the proven Python parsers, and live cross-session refresh over SignalR.
   <br><br>
-  <b>Not done yet:</b> the map's transit interpolation, the data-entry forms, PDF import, live AIS, and authentication. See §11.
+  <b>Verified:</b> Juno's 06-May OPH→OD-1 leg replays at a steady 11.6 kt over 1 h 45 m (previously it "teleported" in one slider step); a real Crest Argus captain's PDF imported end-to-end into SQL Server. See §11 for the short list of what deliberately remains.
 </div>
 
 <h2>1 · What we have today</h2>
@@ -303,14 +303,34 @@ npm run dev --prefix client</code></pre>
   Most rows have <b>no <code>to_time</code></b> (a row runs until the next one starts), and only about a third carry a <code>location_id</code> — a captain writes the place when it <i>changes</i>. Reading the schema literally (requiring both a start and an end, skipping unlocated rows) drops most of the log and blinks vessels off the map. The ported engine carries the last known location forward, which was verified row-by-row against Juno's and Crest Argus 3's actual logs.
 </div>
 
-<h2>11 · What is left</h2>
+<h2>11 · Parity review — new client vs the original app</h2>
+<p>Requested review after the first cut shipped with visible downgrades (dots instead of ships, no playback, no forms). Every feature of <code>app.js</code>/<code>admin.js</code> was checked off against the new client:</p>
+<table>
+  <tr><th>Original feature</th><th>Status</th></tr>
+  <tr><td>Timeline engine — implicit end-times, en-route row absorption, captain-typo repair, speed sanity net, aborted-trip repair, cross-day overlap resolution, gap filling, merged stays with sub-events</td><td>✅ Ported line-for-line (original comments kept as the spec); movement verified against Juno's real 06-May log</td></tr>
+  <tr><td>Speed/distance movement — vessels glide along routes at knots derived from the log; learned AIS route shapes; straight-line fallback</td><td>✅ Verified: 20.3 nm OPH→OD-1 at a steady 11.6 kt over the logged 1 h 45 m</td></tr>
+  <tr><td>AIS/GPS override — real fix within ±30 min wins over interpolation; cyan halo; source badge on the card</td><td>✅ Ported (toggle "AIS overlay")</td></tr>
+  <tr><td>Ship silhouettes — PSV / fast-crew SVG hulls, sized by real metres-per-pixel, rotated to heading, speed in the label, underway glow</td><td>✅ Restored (the dots are gone)</td></tr>
+  <tr><td>Rig icons + 500 m safety zones + ⚓n occupancy badges; berth/port pins; B20/B4 merge when zoomed out</td><td>✅ Ported</td></tr>
+  <tr><td>Anti-overlap mooring layout (alongside rig's east face / along the quay / ring fallback)</td><td>✅ Ported</td></tr>
+  <tr><td>Playback — play/pause, 1×–240× speeds, ±hour/±day steps, full-range slider, Kuwait clock; routes toggle; covered-path transit line</td><td>✅ Ported, plus new: deep-link a moment via <code>/map?t=2026-05-06T13:30&amp;play=1</code></td></tr>
+  <tr><td>Vessel cards — Moored/Underway status, progress bar, nm · kt · ETA, activity at the current sim minute, "Next:" line</td><td>✅ Ported</td></tr>
+  <tr><td>Daily Vessel Report form — header, safety, task-log editor with the 15 task codes, fuel/water, lifts, provisions, delays, comments, sign-off</td><td>✅ Ported; payload byte-compatible with admin.js</td></tr>
+  <tr><td>PDF bulk import (drag &amp; drop → Python parser → saved)</td><td>✅ Ported; verified with a real Crest Argus PDF end-to-end into SQL Server</td></tr>
+  <tr><td>Movement Plan form — per-vessel current status / tomorrow / additional, load-existing</td><td>✅ Ported</td></tr>
+  <tr><td>Live refresh when another session saves (was SSE)</td><td>✅ Ported to SignalR</td></tr>
+  <tr><td>Dark/light theme with matching map tiles</td><td>✅ Ported</td></tr>
+  <tr><td>Plans-as-forecast timeline (<code>buildTimelines</code> from plans.json)</td><td>◻ Not ported — dead code path: the original only used it when <i>no</i> daily reports existed, and every plan date has reports. The plans are stored and served; nothing is lost.</td></tr>
+  <tr><td>Vessel detail sheet (tap a card → full-day view)</td><td>◻ Not ported — the Daily Reports tab shows the same full task log</td></tr>
+  <tr><td>Print-friendly report PDF from the form</td><td>◻ Not ported yet</td></tr>
+  <tr><td>Live Datalastic polling ("Live" button)</td><td>◻ Not ported yet — needs the API key; lands as a <code>BackgroundService</code> broadcasting on the existing SignalR hub</td></tr>
+</table>
+
+<h2>11b · Still deferred by decision</h2>
 <table>
   <tr><th>Item</th><th>Notes</th></tr>
-  <tr><td><b>Transit interpolation</b> (map)</td><td>The biggest remaining piece. On a passage row the <code>location_id</code> is the <i>destination</i>, so a vessel currently shows at its destination for the duration of the trip instead of moving along the route. The legacy engine solves this with real accumulated knowledge — including a rule that stops vessels "teleporting at 200 knots" when a captain logs en-route events as separate rows. It must be ported faithfully, not reinvented.</td></tr>
-  <tr><td>Playback, routes, AIS overlay, light theme</td><td>Remaining parts of the map port (plan Phase 3).</td></tr>
-  <tr><td>Data-entry forms + PDF import</td><td>Plan Phase 4. The API's <code>POST</code> endpoints work and are tested; the PDF bridge to the existing Python parsers is not wired yet.</td></tr>
-  <tr><td>Live AIS polling</td><td>Datalastic poller moves into a hosted <code>BackgroundService</code>, broadcasting over SignalR (the hub is in place).</td></tr>
   <tr><td>Authentication</td><td>Deferred by decision. The API is <b>open</b> — safe on a local machine, not beyond it. The legacy <code>User</code>/<code>Role</code>/<code>Privilege</code> tables are ready when you want it.</td></tr>
+  <tr><td>Live AIS polling</td><td>See above — hub is in place, poller pending the key.</td></tr>
 </table>
 
 <h2>12 · Still to decide</h2>
