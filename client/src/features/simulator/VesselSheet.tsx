@@ -7,7 +7,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import type { DailyReport, Vessel } from '@/api/types'
 import type { SimContext } from './engine'
 import { monotonicizeRows } from './engine'
-import { standbyByLocation, tidyText } from './activity'
+import { STANDBY_LABEL, timeByLocation, tidyText } from './activity'
 import { fmtDur } from './geo'
 import { cn } from '@/lib/utils'
 
@@ -39,7 +39,7 @@ export default function VesselSheet({ vessel: v, ctx, reports, t, onClose }: {
 }) {
   const rep = useMemo(() => reportForTime(reports, t), [reports, t])
   const learnedV = ctx.learnedVessels[v.id]
-  const sb = useMemo(() => standbyByLocation(ctx, reports), [ctx, reports])
+  const sb = useMemo(() => timeByLocation(ctx, reports), [ctx, reports])
 
   const cons = (rep?.consumables ?? {}) as Record<string, Record<string, unknown>>
   const fuel = cons.fuel_oil ?? {}
@@ -141,14 +141,16 @@ export default function VesselSheet({ vessel: v, ctx, reports, t, onClose }: {
               {sb.rows.length > 0 && (
                 <section>
                   <h2 className="text-sm font-semibold">
-                    Standby time by location{' '}
+                    Time spent by location{' '}
                     <span className="font-normal text-muted-foreground">
                       all {sb.reportCount} report{sb.reportCount === 1 ? '' : 's'} · total {fmtDur(sb.total)}
                     </span>
                   </h2>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    Activities listed under each location happened <b>during</b> the standby
-                    time — they overlap it, they don't add on top of it.
+                    The big number is the <b>real time at that location</b>. The lines under it
+                    show what the vessel was doing — standby is just one of them, not the total.
+                    Some jobs run at the same time (a hose connected while cargo is worked), so
+                    the lines can add up to more than the stay.
                   </p>
                   <div className="mt-2 overflow-hidden rounded-lg border">
                     <table className="w-full text-sm">
@@ -162,11 +164,11 @@ export default function VesselSheet({ vessel: v, ctx, reports, t, onClose }: {
                       </thead>
                       <tbody>
                         {sb.rows.map(r => {
-                          const pct = sb.total ? Math.round(r.minutes / sb.total * 100) : 0
-                          // Sub-item bars are sized relative to the standby window so you
-                          // can SEE that jobs run in parallel — several can fill most of
-                          // the same block at once (fuel + water + cargo together at a berth).
-                          const denom = r.minutes || r.stayMinutes || 1
+                          const pct = sb.total ? Math.round(r.stayMinutes / sb.total * 100) : 0
+                          // Sub-item bars are sized against the real stay, so a line that
+                          // fills the block means the vessel was doing that job for most of
+                          // its time here — and parallel jobs can each fill a lot of it.
+                          const denom = r.stayMinutes || 1
                           return [
                             <tr key={r.id} className="border-t">
                               <td className="px-3 py-2 font-medium">{r.name}</td>
@@ -174,8 +176,8 @@ export default function VesselSheet({ vessel: v, ctx, reports, t, onClose }: {
                                 <span className="rounded bg-secondary px-1.5 py-0.5 text-[11px] uppercase text-muted-foreground">{r.type}</span>
                               </td>
                               <td className="whitespace-nowrap px-3 py-2 text-right">
-                                <b>{r.minutes ? fmtDur(r.minutes) : '—'}</b>
-                                <span className="ml-1 text-[10px] text-muted-foreground">standby</span>
+                                <b>{r.stayMinutes ? fmtDur(r.stayMinutes) : '—'}</b>
+                                <span className="ml-1 text-[10px] text-muted-foreground">total</span>
                               </td>
                               <td className="px-3 py-2">
                                 <div className="flex items-center gap-2">
@@ -186,29 +188,35 @@ export default function VesselSheet({ vessel: v, ctx, reports, t, onClose }: {
                                 </div>
                               </td>
                             </tr>,
-                            ...(r.activities.length
-                              ? r.activities.map(a => {
-                                  const w = Math.min(100, Math.round(a.minutes / denom * 100))
-                                  return (
-                                    <tr key={`${r.id}-${a.label}`} className="text-xs text-muted-foreground">
-                                      <td className="py-1 pl-7 pr-3">{a.label}</td>
-                                      <td />
-                                      <td className="whitespace-nowrap px-3 py-1 text-right">{fmtDur(a.minutes)}</td>
-                                      <td className="px-3 py-1">
-                                        <div className="mr-10 h-1.5 overflow-hidden rounded bg-secondary">
-                                          <div className="h-full bg-primary/50" style={{ width: `${w}%` }} />
-                                        </div>
-                                      </td>
-                                    </tr>
-                                  )
-                                })
-                              : [
-                                  <tr key={`${r.id}-none`} className="text-xs text-muted-foreground/70">
-                                    <td className="py-1 pl-7 pr-3 italic" colSpan={4}>
-                                      Standby only — no cargo or bunkering activity
+                            ...r.activities.map(a => {
+                              const w = Math.min(100, Math.round(a.minutes / denom * 100))
+                              const idle = a.label === STANDBY_LABEL
+                              return (
+                                <tr key={`${r.id}-${a.label}`} className="text-xs text-muted-foreground">
+                                  <td className={cn('py-1 pl-7 pr-3', idle && 'italic')}>{a.label}</td>
+                                  <td />
+                                  <td className="whitespace-nowrap px-3 py-1 text-right">{fmtDur(a.minutes)}</td>
+                                  <td className="px-3 py-1">
+                                    <div className="mr-10 h-1.5 overflow-hidden rounded bg-secondary">
+                                      <div
+                                        className={cn('h-full', idle ? 'bg-muted-foreground/40' : 'bg-primary/50')}
+                                        style={{ width: `${w}%` }}
+                                      />
+                                    </div>
+                                  </td>
+                                </tr>
+                              )
+                            }),
+                            ...(r.hasOverlap
+                              ? [
+                                  <tr key={`${r.id}-note`} className="text-[10px] text-muted-foreground/70">
+                                    <td className="pb-1.5 pl-7 pr-3 italic" colSpan={4}>
+                                      Some of these jobs ran at the same time, so they add up to
+                                      more than {fmtDur(r.stayMinutes)}.
                                     </td>
                                   </tr>,
-                                ]),
+                                ]
+                              : []),
                           ]
                         })}
                       </tbody>
