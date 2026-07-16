@@ -6,16 +6,22 @@ import type { DailyReport } from '@/api/types'
 import type { SimContext } from './engine'
 import { codeIsStandby, codeIsTransit } from './engine'
 
-// The vessel is at the location but not working. Standby-coded rows (S01-S05,
-// A01) and "FWE" / finished-with-engine rows both land here: FWE is not a job,
-// it is the captain noting the engines were shut down while the vessel sat, and
-// it is logged as a row running ALONGSIDE the standby row for the same hours.
-// Keeping them apart listed the same idle time twice — at Oriental Phoenix
-// every single engines-off minute fell inside a standby row.  The few hours
-// that don't overlap are the ones the captain logged as plain "Other" ("vessel
-// anchored", "a/side jetty") without reaching for a standby code, which is the
-// same idleness by another name.
-export const STANDBY_LABEL = 'Standby / idle at location'
+// The vessel is at the location and NOT working — no cargo, no hose, no crew
+// transfer, nothing.  Standby-coded rows (S01-S05, A01) and "FWE" /
+// finished-with-engine rows both land here: FWE is not a job, it is the captain
+// noting the engines were shut down while the vessel sat, and it is logged as a
+// row running ALONGSIDE the standby row for the same hours.
+//
+// IMPORTANT: what a "standby" row covers differs by place.  At the rigs the
+// captains END the standby row the moment work starts (a DP1/L* row takes
+// over), so standby-coded time really is idle time.  At Shuaiba port they do
+// the opposite — one S04 row covers the ENTIRE alongside stay ("vessel a/side
+// jetty #20, 00:00-10:14") and the fuel/cargo/crew rows are logged INSIDE that
+// window.  Taken at face value that made "standby" at the berth mean "tied up
+// alongside", which is not idleness at all.  So the aggregation below subtracts
+// every worked interval from the standby window first: this line always means
+// "no work was logged during these hours", at every location.
+export const STANDBY_LABEL = 'Idle (no work logged)'
 
 // Classify a NON-standby task-log row into a plain-language activity bucket so
 // the standby table can show WHAT the vessel actually did during its stay at a
@@ -88,17 +94,40 @@ function parseClock(t: string | null | undefined): number | null {
   return min >= 0 && min <= 1440 ? min : null
 }
 
+// Sort intervals and merge the ones that touch or overlap.
+function mergeSpans(iv: [number, number][]): [number, number][] {
+  const sorted = [...iv].sort((a, b) => a[0] - b[0])
+  const out: [number, number][] = []
+  for (const [a, b] of sorted) {
+    const last = out[out.length - 1]
+    if (last && a <= last[1]) { if (b > last[1]) last[1] = b }
+    else out.push([a, b])
+  }
+  return out
+}
+
 // Total length of a set of intervals with overlaps counted once.
 function unionMinutes(iv: [number, number][]): number {
-  if (!iv.length) return 0
-  const sorted = [...iv].sort((a, b) => a[0] - b[0])
+  return mergeSpans(iv).reduce((s, [a, b]) => s + (b - a), 0)
+}
+
+// Minutes of `a` NOT covered by any interval in `b` — used to trim the worked
+// hours out of a standby window so "idle" means genuinely idle.  Row counts
+// per report are tiny, so the simple nested sweep is plenty.
+function minutesOutside(a: [number, number][], b: [number, number][]): number {
+  const cover = mergeSpans(b)
   let total = 0
-  let [start, end] = sorted[0]
-  for (const [a, b] of sorted.slice(1)) {
-    if (a <= end) { if (b > end) end = b }
-    else { total += end - start; start = a; end = b }
+  for (const [s, e] of mergeSpans(a)) {
+    let cur = s
+    for (const [cs, ce] of cover) {
+      if (ce <= cur || cs >= e) continue
+      if (cs > cur) total += cs - cur
+      cur = ce
+      if (cur >= e) break
+    }
+    if (cur < e) total += e - cur
   }
-  return total + (end - start)
+  return total
 }
 
 // Running total plus the current report's intervals. Times are times-of-day, so
@@ -145,9 +174,12 @@ function newAcc(): Acc {
 //
 // Two things the captains' logs make tricky, and how they are handled here:
 //
-//  - Standby and the working tasks are MUTUALLY EXCLUSIVE states — a row
-//    alongside a crane is coded DP1/L*, and standby has already ended.  So
-//    standby is just one more line in the breakdown, never the headline.
+//  - "Standby" rows don't mean the same thing everywhere.  At the rigs they
+//    end when work starts, but at the berth ONE standby row blankets the whole
+//    alongside stay with the jobs logged inside it (see STANDBY_LABEL above).
+//    So the worked intervals are subtracted from the standby window before it
+//    is counted: the idle line is only the hours with no job logged, and it is
+//    just one more line in the breakdown, never the headline.
 //  - Rows DO overlap each other, and often describe ONE event twice: the same
 //    cargo job is logged as "positioned a/side the P/S crane" (DP1, 06:40-08:10)
 //    AND "deck cargo operation" (L2E, 06:55-08:05), and both classify as cargo.
@@ -189,7 +221,21 @@ export function timeByLocation(ctx: SimContext, reports: DailyReport[]): Locatio
     }
     for (const acc of touchedToday) {
       flushSpan(acc.stay)
-      for (const lab of acc.byLabel.values()) flushSpan(lab)
+      // Idle first: trim every worked interval logged today at this location
+      // out of the standby window, so overlap counts as the job, not as idle.
+      const idle = acc.byLabel.get(STANDBY_LABEL)
+      if (idle) {
+        const worked: [number, number][] = []
+        for (const [label, s] of acc.byLabel) {
+          if (label !== STANDBY_LABEL) worked.push(...s.spans)
+        }
+        idle.minutes += minutesOutside(idle.spans, worked) + idle.loose
+        idle.spans = []
+        idle.loose = 0
+      }
+      for (const [label, lab] of acc.byLabel) {
+        if (label !== STANDBY_LABEL) flushSpan(lab)
+      }
     }
   }
 
