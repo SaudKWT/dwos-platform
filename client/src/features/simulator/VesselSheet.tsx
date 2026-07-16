@@ -41,6 +41,11 @@ export default function VesselSheet({ vessel: v, ctx, reports, t, onClose }: {
   const learnedV = ctx.learnedVessels[v.id]
   const sb = useMemo(() => timeByLocation(ctx, reports), [ctx, reports])
 
+  // cruise_speed_kts is only present once we've learned a speed from the
+  // reports; with no learned speed the engine falls back to v.speed_kts, which
+  // the "kt spec" figure beside this already shows — so drop the badge instead.
+  const learnedCruise = typeof learnedV?.cruise_speed_kts === 'number' ? learnedV.cruise_speed_kts : null
+
   const cons = (rep?.consumables ?? {}) as Record<string, Record<string, unknown>>
   const fuel = cons.fuel_oil ?? {}
   const water = cons.fresh_water ?? {}
@@ -102,7 +107,7 @@ export default function VesselSheet({ vessel: v, ctx, reports, t, onClose }: {
             <h1 className="text-xl font-semibold">{v.name}</h1>
             <p className="mt-0.5 text-sm text-muted-foreground">
               {v.type} · {v.length_m}×{v.beam_m} m · {v.speed_kts} kt spec
-              {learnedV && <> · <b className="text-foreground">{learnedV.cruise_speed_kts.toFixed(1)} kt real</b></>}
+              {learnedCruise !== null && <> · <b className="text-foreground">{learnedCruise.toFixed(1)} kt real</b></>}
             </p>
             <p className="mt-0.5 text-sm text-muted-foreground">
               {rep
