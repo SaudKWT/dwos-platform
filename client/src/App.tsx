@@ -17,7 +17,7 @@ function StatusPill() {
     ? ['bg-muted-foreground', 'connecting…']
     : isError || !data?.database
       ? ['bg-destructive', 'API unreachable']
-      : ['bg-emerald-500', `${data.vessels} vessels · ${data.reports} reports`]
+      : ['bg-success', `${data.vessels} vessels · ${data.reports} reports`]
 
   return (
     <span className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -80,7 +80,7 @@ export default function App() {
 
   return (
     <div className="flex h-screen flex-col">
-      <header className="flex shrink-0 items-center gap-4 border-b px-4 py-2.5">
+      <header className="flex shrink-0 items-center gap-4 border-b bg-card px-4 py-2.5">
         <div className="flex items-center gap-2 font-semibold">
           <Ship className="h-5 w-5 text-primary" />
           <span>Vessel Movement</span>

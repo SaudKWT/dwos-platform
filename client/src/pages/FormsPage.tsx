@@ -239,9 +239,9 @@ function ReportForm() {
       <PdfImportCard />
 
       {draftNote && (
-        <div className="flex items-center justify-between rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm">
+        <div className="flex items-center justify-between rounded-lg border border-warning/40 bg-warning/10 px-3 py-2 text-sm">
           <span>Unsubmitted draft restored — keep editing or discard it.</span>
-          <button type="button" onClick={discardDraft} className="rounded border border-amber-500/40 px-2 py-0.5 text-xs hover:bg-amber-500/20">
+          <button type="button" onClick={discardDraft} className="rounded border border-warning/40 px-2 py-0.5 text-xs hover:bg-amber-500/20">
             Discard draft
           </button>
         </div>
@@ -280,7 +280,7 @@ function ReportForm() {
           <button
             type="button"
             onClick={prefillFromLast}
-            className="mt-3 rounded-md border border-blue-500/40 px-2.5 py-1 text-xs text-blue-600 hover:bg-blue-500/10 dark:text-blue-400"
+            className="mt-3 rounded-md border border-primary/40 px-2.5 py-1 text-xs text-primary hover:bg-primary/10"
           >
             ⚡ Start from this vessel's last report
           </button>
@@ -465,7 +465,7 @@ function ReportForm() {
         </Card>
 
         {warnings.length > 0 && (
-          <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm">
+          <div className="rounded-lg border border-warning/40 bg-warning/10 px-3 py-2 text-sm">
             <p className="mb-1 font-medium">Worth checking before you submit — you can still submit as-is:</p>
             <ul className="list-disc space-y-0.5 pl-5 text-[13px]">
               {warnings.map((w, i) => <li key={i}>{w}</li>)}
@@ -511,7 +511,7 @@ function CoverageBar({ tasks }: { tasks: TaskRowState[] }) {
           <LegendDot cls="bg-slate-400" label="Other" />
           <LegendDot cls="bg-destructive/60" label="Gap" />
         </span>
-        <span className={cn('font-mono', fullyCovered ? 'text-emerald-500' : '')}>
+        <span className={cn('font-mono', fullyCovered ? 'text-success' : '')}>
           {fullyCovered ? '✓ full day accounted' : `${fmtMin(cov.coveredMin)} / 24:00 accounted`}
         </span>
       </div>
@@ -617,8 +617,8 @@ function PdfImportCard() {
                 <td className="max-w-48 truncate py-1 pr-2">{r.name}</td>
                 <td className="py-1 pr-2 font-mono">{r.vessel_id && `${r.vessel_id} · ${r.report_date}`}</td>
                 <td className={cn('py-1 pr-2 font-medium',
-                  r.status === 'saved' || r.status === 'overwrote' ? 'text-emerald-400'
-                  : r.status === 'skipped' ? 'text-amber-400' : 'text-destructive')}>
+                  r.status === 'saved' || r.status === 'overwrote' ? 'text-success'
+                  : r.status === 'skipped' ? 'text-warning' : 'text-destructive')}>
                   {r.status}{r.rows != null && ` · ${r.rows} rows`}
                 </td>
                 <td className="py-1 text-muted-foreground">{r.reason}</td>
@@ -835,7 +835,7 @@ function StatusText({ status }: { status: { text: string; tone: 'ok' | 'err' | '
   return (
     <span className={cn(
       'text-sm',
-      status.tone === 'ok' && 'text-emerald-400',
+      status.tone === 'ok' && 'text-success',
       status.tone === 'err' && 'text-destructive',
       status.tone === '' && 'text-muted-foreground',
     )}>

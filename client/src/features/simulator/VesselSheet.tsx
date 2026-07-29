@@ -99,7 +99,7 @@ export default function VesselSheet({ vessel: v, ctx, reports, t, onClose }: {
     <div className="fixed inset-0 z-[1200]" role="dialog" aria-modal="true" aria-label={`${v.name} daily activities`}>
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
       <div
-        className="absolute inset-x-0 top-4 bottom-0 mx-auto flex max-w-4xl flex-col overflow-hidden rounded-t-xl border bg-background shadow-2xl"
+        className="absolute inset-x-0 top-4 bottom-0 mx-auto flex max-w-4xl flex-col overflow-hidden rounded-t-xl border bg-card shadow-2xl"
         style={{ borderTopColor: v.color ?? undefined, borderTopWidth: 3 }}
       >
         <header className="flex shrink-0 items-start justify-between gap-4 border-b px-6 py-4">
@@ -266,7 +266,7 @@ export default function VesselSheet({ vessel: v, ctx, reports, t, onClose }: {
                               {r.from_time}
                               {fixed && (
                                 <span
-                                  className="ml-1 rounded bg-amber-500/15 px-1 text-[10px] text-amber-500"
+                                  className="ml-1 rounded bg-warning/15 px-1 text-[10px] text-warning"
                                   title={`captain wrote ${orig} — adjusted to keep the timeline monotonic`}
                                 >
                                   ~{orig}
