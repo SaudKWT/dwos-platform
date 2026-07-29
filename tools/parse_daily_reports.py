@@ -614,7 +614,19 @@ def _ruled_rows(page) -> list[list[tuple[float, float, str]]]:
                 txt = grid[ri][j]
                 if txt and txt.strip():
                     cells.append((bbox[0], bbox[2], txt.strip()))
-            rows.append(cells)
+            # CA5 draws the log with doubled borders (a box inside a box), and
+            # pdfplumber then emits some rows with every cell twice, a few
+            # points apart: "15:45 | 15:45 | 16:25 | 16:25 | …".  Columnised
+            # that reads "15:45 15:45", which parses as no time at all, and the
+            # whole row folds into the one above it.  Two same-text cells can
+            # only both be real when they sit in different columns, so keep one
+            # of any pair that overlaps horizontally.
+            deduped: list[tuple[float, float, str]] = []
+            for x0, x1, txt in cells:
+                if any(t == txt and x0 < px1 and px0 < x1 for px0, px1, t in deduped):
+                    continue
+                deduped.append((x0, x1, txt))
+            rows.append(deduped)
         tables.append(rows)
     return tables
 

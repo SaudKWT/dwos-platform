@@ -26,4 +26,4 @@ __pycache__/
 *.pyc
 .claude/worktrees/
 .vercel
-.venv/
+.venv
