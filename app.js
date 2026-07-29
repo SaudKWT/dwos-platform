@@ -1423,8 +1423,8 @@ function vesselCardHtml(v, pos) {
   }
   const next = nextTransit(v.id, state.currentTime);
   const nextHtml = next
-    ? `<div class="next">Next: ${state.locsById[next.from].short} → ${state.locsById[next.to].short} @ ${toKuwaitStr(next.t0)}</div>`
-    : '<div class="next">No further planned movements.</div>';
+    ? `<div class="next"><span class="meta-label">Next:</span> ${state.locsById[next.from].short} → ${state.locsById[next.to].short} @ ${toKuwaitStr(next.t0)}</div>`
+    : '<div class="next"><span class="meta-label">Next:</span> No further planned movements.</div>';
 
   // Position source badge — tells the user whether the dot on the map is from
   // real AIS or interpolated from the captain's daily-report timeline.
@@ -1444,9 +1444,8 @@ function vesselCardHtml(v, pos) {
     <div class="name">${v.name} <span class="sub">${v.length_m}×${v.beam_m} m · ${v.speed_kts} kts</span></div>
     <div class="status">${statusHtml}</div>
     ${sourceHtml}
-    <div class="meta">${metaHtml}</div>
+    <div class="meta"><span class="meta-label">Now:</span> ${metaHtml}</div>
     ${nextHtml}
-    ${s && s.raw ? `<div class="raw">${s.raw}</div>` : ''}
   </div>`;
 }
 
