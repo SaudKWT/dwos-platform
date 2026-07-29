@@ -26,7 +26,9 @@
       "replaced_vessel": "JUNO",
       "active_from": "2026-05-20",
       "specs_provisional": true,
-      "$comment": "Charlie 3 took over Allianz Juno's role and berth on 20 May 2026, the date of its first report; Juno is retired on that date (see JUNO.retired_on) so only one of the two is ever on the map. Berth B4 is confirmed by its own logs ('VSL STBY ALS TO B# 4 IN SHUAIBA PORT'). Size and speed are Juno's figures, used as a stand-in until the real particulars arrive — specs_provisional flags that. Its fuel tank is 55 m3 against Juno's 147 m3, so it is likely a smaller boat."
+      "mmsi": "341930000",
+      "imo": "9889928",
+      "$comment": "Charlie 3 took over Allianz Juno's role and berth on 20 May 2026, the date of its first report; Juno is retired on that date (see JUNO.retired_on) so only one of the two is ever on the map. Berth B4 is confirmed by its own logs ('VSL STBY ALS TO B# 4 IN SHUAIBA PORT'). Size and speed are Juno's figures, used as a stand-in until the real particulars arrive — specs_provisional flags that. Its fuel tank is 55 m3 against Juno's 147 m3, so it is likely a smaller boat. MMSI 341930000 / IMO 9889928 found on VesselFinder+MarineTraffic 2026-07-29; public trackers list the hull as an offshore tug/supply vessel built 2020, not a crew boat, so once AIS fixes flow again cross-check them against its daily reports (tools/crosscheck_reports.py) before trusting the identity. The .env AIS_MMSI_CH3 entry is what the pollers actually read; this field is documentation."
     },
     {
       "id": "CA1",
