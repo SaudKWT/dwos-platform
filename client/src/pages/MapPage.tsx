@@ -221,6 +221,7 @@ export default function MapPage() {
   return (
     <div className="flex h-full flex-col">
       <div className="flex min-h-0 flex-1">
+        {/* the rail stays on the page canvas so the vessel cards read as cards */}
         <aside className="flex w-80 shrink-0 flex-col gap-2 overflow-y-auto border-r p-3">
           {loading && <p className="p-1 text-xs text-muted-foreground">Loading fleet, reports and AIS…</p>}
           {built && ctx && vessels.data?.filter(v => isVesselActive(v, t)).map(v => (
@@ -278,7 +279,7 @@ export default function MapPage() {
         ) : null
       })()}
 
-      <footer className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2 border-t px-3 py-2">
+      <footer className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2 border-t bg-card px-3 py-2">
         <div className="flex items-center gap-1">
           <ControlButton title="Back one day" onClick={() => stepTime(-86400)}><SkipBack className="h-4 w-4" /></ControlButton>
           <ControlButton title="Back one hour" onClick={() => stepTime(-3600)}><Rewind className="h-4 w-4" /></ControlButton>
@@ -413,7 +414,7 @@ function VesselCard({ vessel: v, ctx, t, segments, aisTracks, aisOverlay, onOpen
       const nearest = nearestAisPoint(aisTracks, v.id, t)
       const ago = nearest ? Math.round(Math.abs(t.getTime() - nearest.ts.getTime()) / 60000) : null
       source = (
-        <div className="text-[11px] text-cyan-400">
+        <div className="text-[11px] text-info">
           📡 Position: <b>real AIS</b>
           {ago !== null && ` · nearest fix ${ago} min ${nearest!.ts < t ? 'before' : 'after'} now`}
         </div>
@@ -430,7 +431,7 @@ function VesselCard({ vessel: v, ctx, t, segments, aisTracks, aisOverlay, onOpen
       title="Click for full daily activities"
       onClick={onOpen}
       onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpen() } }}
-      className="cursor-pointer rounded-lg border p-3 text-sm transition-colors hover:bg-accent/50"
+      className="cursor-pointer rounded-lg border bg-card p-3 text-sm shadow-sm transition-colors hover:bg-accent/50"
       style={{ borderLeftColor: v.color ?? undefined, borderLeftWidth: 3 }}
     >
       <div className="font-medium">
@@ -442,7 +443,7 @@ function VesselCard({ vessel: v, ctx, t, segments, aisTracks, aisOverlay, onOpen
       <div className="mt-1">{status}</div>
       {source}
       {meta && <div className="mt-1 text-xs text-muted-foreground">{meta}</div>}
-      <div className="mt-1 text-xs text-muted-foreground/80">{next}</div>
+      <div className="mt-1 text-xs text-muted-foreground">{next}</div>
     </div>
   )
 }
@@ -451,8 +452,8 @@ function Tag({ tone, children }: { tone: 'moored' | 'transit' | 'muted'; childre
   return (
     <span className={cn(
       'inline-block rounded px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide',
-      tone === 'moored' && 'bg-emerald-500/15 text-emerald-400',
-      tone === 'transit' && 'bg-sky-500/15 text-sky-400',
+      tone === 'moored' && 'bg-success/15 text-success',
+      tone === 'transit' && 'bg-info/15 text-info',
       tone === 'muted' && 'bg-secondary text-muted-foreground',
     )}>
       {children}

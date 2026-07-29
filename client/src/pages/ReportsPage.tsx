@@ -94,7 +94,7 @@ export default function ReportsPage() {
 
   return (
     <div className="flex h-full">
-      <aside className="flex w-72 shrink-0 flex-col border-r">
+      <aside className="flex w-72 shrink-0 flex-col border-r bg-card">
         <div className="flex items-center gap-1 border-b px-3 py-2">
           <button
             type="button"
@@ -162,7 +162,7 @@ export default function ReportsPage() {
 
       <section className="flex min-w-0 flex-1 flex-col">
         {day && (
-          <div className="flex flex-wrap items-center gap-2 border-b px-6 py-2.5">
+          <div className="flex flex-wrap items-center gap-2 border-b bg-card px-6 py-2.5">
             <span className="text-sm font-medium">
               {day.date} <span className="text-xs font-normal text-muted-foreground">{weekday(day.date)}</span>
             </span>
@@ -211,7 +211,7 @@ export default function ReportsPage() {
           )}
 
           {report.data && (
-            <div className="space-y-5">
+            <div className="space-y-5 rounded-lg border bg-card p-5 shadow-sm">
               <header className="flex items-start justify-between gap-3">
                 <div>
                   <h1 className="text-lg font-semibold">
