@@ -43,7 +43,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 OUT_DIR = PROJECT_ROOT / "data" / "ais-history"
 ENV_PATH = PROJECT_ROOT / ".env"
 
-VESSEL_IDS = ["JUNO", "CA1", "CA3", "CA5"]
+VESSEL_IDS = ["JUNO", "CH3", "CA1", "CA3", "CA5"]
 
 
 # ---------------------------------------------------------------------------
@@ -65,7 +65,7 @@ def load_env() -> dict[str, str]:
 
 
 def mmsi_for(env: dict[str, str], vessel_id: str) -> str | None:
-    """Resolve vessel_id (JUNO/CA1/CA3/CA5) -> MMSI from .env."""
+    """Resolve vessel_id (JUNO/CH3/CA1/CA3/CA5) -> MMSI from .env."""
     return env.get(f"AIS_MMSI_{vessel_id}")
 
 
