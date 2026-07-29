@@ -1,7 +1,13 @@
 {
+  "buildCommand": "cd client && npm install && npm run build",
+  "outputDirectory": "client/dist",
   "cleanUrls": true,
+  "functions": {
+    "api/server.mjs": { "includeFiles": "data/**" }
+  },
   "rewrites": [
     { "source": "/api/auth/:path*", "destination": "/api/auth" },
-    { "source": "/api/:path*",      "destination": "/api/server" }
+    { "source": "/api/:path*",      "destination": "/api/server" },
+    { "source": "/((?!api/).*)",    "destination": "/index.html" }
   ]
 }

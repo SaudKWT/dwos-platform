@@ -220,7 +220,8 @@ async function rebuildIndex() {
     } catch {}
   }
   rows.sort((a, b) => a.report_date.localeCompare(b.report_date) || a.vessel_id.localeCompare(b.vessel_id));
-  await fs.writeFile(path.join(REPORTS_DIR, 'index.json'), JSON.stringify({ reports: rows }, null, 2), 'utf8');
+  // Best-effort cache: Vercel's function filesystem is read-only.
+  try { await fs.writeFile(path.join(REPORTS_DIR, 'index.json'), JSON.stringify({ reports: rows }, null, 2), 'utf8'); } catch {}
   return rows;
 }
 
@@ -240,9 +241,11 @@ async function rebuildPlansIndex() {
     } catch {}
   }
   rows.sort((a, b) => a.plan_date.localeCompare(b.plan_date));
-  const idxPath = path.join(PLANS_DIR, 'index.json');
-  await fs.mkdir(PLANS_DIR, { recursive: true });
-  await fs.writeFile(idxPath, JSON.stringify({ plans: rows }, null, 2), 'utf8');
+  // Best-effort cache: Vercel's function filesystem is read-only.
+  try {
+    await fs.mkdir(PLANS_DIR, { recursive: true });
+    await fs.writeFile(path.join(PLANS_DIR, 'index.json'), JSON.stringify({ plans: rows }, null, 2), 'utf8');
+  } catch {}
   return rows;
 }
 
@@ -283,6 +286,27 @@ export default async function handler(req, res) {
   const url = new URL(req.url, `https://${req.headers.host || 'localhost'}`);
 
   try {
+    // GET /api/health — the React app's status pill. On this read-only deploy
+    // the "database" is the bundled data files; report their counts.
+    if (req.method === 'GET' && url.pathname === '/api/health') {
+      let vessels = 0, reports = 0;
+      try { vessels = JSON.parse(await fs.readFile(path.join(PROJECT_ROOT, 'data', 'vessels.json'), 'utf8')).vessels.length; } catch {}
+      try { reports = JSON.parse(await fs.readFile(path.join(REPORTS_DIR, 'index.json'), 'utf8')).reports.length; } catch {}
+      return send(res, 200, { ok: true, database: vessels > 0, vessels, reports });
+    }
+
+    // GET /api/vessels
+    if (req.method === 'GET' && url.pathname === '/api/vessels') {
+      try { return send(res, 200, await fs.readFile(path.join(PROJECT_ROOT, 'data', 'vessels.json'), 'utf8')); }
+      catch { return send(res, 200, { vessels: [] }); }
+    }
+
+    // GET /api/locations
+    if (req.method === 'GET' && url.pathname === '/api/locations') {
+      try { return send(res, 200, await fs.readFile(path.join(PROJECT_ROOT, 'data', 'locations.json'), 'utf8')); }
+      catch { return send(res, 200, { locations: [], aliases: {} }); }
+    }
+
     // GET /api/reports
     if (req.method === 'GET' && url.pathname === '/api/reports') {
       const idxPath = path.join(REPORTS_DIR, 'index.json');
@@ -299,20 +323,13 @@ export default async function handler(req, res) {
       catch { return send(res, 404, { error: 'not found' }); }
     }
 
-    // POST /api/reports
+    // POST /api/reports — this deploy is a read-only viewer. Vercel's function
+    // filesystem cannot keep writes, so refuse clearly instead of pretending.
     if (req.method === 'POST' && url.pathname === '/api/reports') {
-      let body;
-      try { body = await readJsonBody(req); }
-      catch (e) { return send(res, 400, { error: 'invalid JSON: ' + e.message }); }
-      const err = validateReport(body);
-      if (err) return send(res, 400, { error: err });
-      body.source = { ...(body.source || {}), type: 'dashboard_submission',
-                      submitted_via: 'admin.html', submitted_at: new Date().toISOString() };
-      const out = path.join(REPORTS_DIR, `${body.vessel_id}-${body.report_date}.json`);
-      await fs.writeFile(out, JSON.stringify(body, null, 2), 'utf8');
-      await rebuildIndex();
-      bus.emit('report_saved', { vessel_id: body.vessel_id, report_date: body.report_date });
-      return send(res, 200, { ok: true, vessel_id: body.vessel_id, report_date: body.report_date });
+      return send(res, 501, {
+        error: 'This published site is a read-only viewer. Submit reports in the '
+             + 'app on the office computer — they appear here after the next publish.',
+      });
     }
 
     // GET /api/movement-plans
@@ -329,21 +346,12 @@ export default async function handler(req, res) {
       catch { return send(res, 404, { error: 'no plan for that date' }); }
     }
 
-    // POST /api/movement-plans
+    // POST /api/movement-plans — read-only viewer, same as reports above.
     if (req.method === 'POST' && url.pathname === '/api/movement-plans') {
-      let body;
-      try { body = await readJsonBody(req); }
-      catch (e) { return send(res, 400, { error: 'invalid JSON: ' + e.message }); }
-      const err = validatePlan(body);
-      if (err) return send(res, 400, { error: err });
-      body.source = { ...(body.source || {}), type: 'dashboard_submission',
-                      submitted_via: 'admin.html', submitted_at: new Date().toISOString() };
-      await fs.mkdir(PLANS_DIR, { recursive: true });
-      const out = path.join(PLANS_DIR, `${body.plan_date}.json`);
-      await fs.writeFile(out, JSON.stringify(body, null, 2), 'utf8');
-      await rebuildPlansIndex();
-      bus.emit('plan_saved', { plan_date: body.plan_date });
-      return send(res, 200, { ok: true, plan_date: body.plan_date });
+      return send(res, 501, {
+        error: 'This published site is a read-only viewer. Submit plans in the '
+             + 'app on the office computer — they appear here after the next publish.',
+      });
     }
 
     // GET /api/ais-history
@@ -412,8 +420,9 @@ export default async function handler(req, res) {
     // The live host can't run the PDF reader or permanently save uploads.
     if (req.method === 'POST' && url.pathname === '/api/import') {
       return send(res, 501, {
-        error: 'PDF import runs on your local Mac only for now. Run "node server.mjs" '
-             + 'on your computer, import there, then push to update this site.',
+        error: 'PDF import runs in the app on the office computer only — this '
+             + 'published site is a read-only viewer. Import there, then republish '
+             + 'to update what you see here.',
       });
     }
 
