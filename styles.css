@@ -169,8 +169,9 @@ aside h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; c
 }
 .vessel-card .name { font-weight: 600; font-size: 13px; }
 .vessel-card .status { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
-.vessel-card .meta { font-size: 10px; color: var(--text-faint); margin-top: 2px; }
-.vessel-card .raw { font-size: 10px; color: var(--text-dim); margin-top: 6px; font-style: italic; line-height: 1.35; }
+.vessel-card .meta { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+.vessel-card .meta-label { color: var(--text); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-size: 9px; }
+.vessel-card .raw { font-size: 10px; color: var(--text); margin-top: 6px; font-style: italic; line-height: 1.35; }
 .vessel-card .next { font-size: 10px; color: var(--accent); margin-top: 4px; }
 .vessel-card .sub { color: var(--text-faint); font-weight: 400; font-size: 11px; }
 

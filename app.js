@@ -1845,11 +1845,11 @@ function vesselCardHtml(v, pos) {
   const nextTr  = nextTransit(v.id, state.currentTime);
   let nextHtml;
   if (nextSub && nextSub.purpose) {
-    nextHtml = `<div class="next">Next: ${escapeText(nextSub.purpose.replace(' (gap fill)', ''))}</div>`;
+    nextHtml = `<div class="next"><span class="meta-label">Next:</span> ${escapeText(nextSub.purpose.replace(' (gap fill)', ''))}</div>`;
   } else if (nextTr) {
-    nextHtml = `<div class="next">Next: ${state.locsById[nextTr.from].short} → ${state.locsById[nextTr.to].short}</div>`;
+    nextHtml = `<div class="next"><span class="meta-label">Next:</span> ${state.locsById[nextTr.from].short} → ${state.locsById[nextTr.to].short}</div>`;
   } else {
-    nextHtml = '<div class="next">No further planned movements.</div>';
+    nextHtml = '<div class="next"><span class="meta-label">Next:</span> No further planned movements.</div>';
   }
 
   // Position source badge — tells the user whether the dot on the map is from
@@ -1870,7 +1870,7 @@ function vesselCardHtml(v, pos) {
     <div class="name">${v.name} <span class="sub">${v.length_m}×${v.beam_m} m · ${v.speed_kts} kts</span></div>
     <div class="status">${statusHtml}</div>
     ${sourceHtml}
-    <div class="meta">${metaHtml}</div>
+    <div class="meta"><span class="meta-label">Now:</span> ${metaHtml}</div>
     ${nextHtml}
   </div>`;
 }
