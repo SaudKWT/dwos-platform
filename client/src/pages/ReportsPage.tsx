@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, MapPin } from 'lucide-react'
+import { ChevronLeft, ChevronRight, FileDown, MapPin } from 'lucide-react'
 import { useReport, useReportIndex, useVessels } from '@/api/queries'
+import { openReportPdf } from '@/features/report-form/buildReportHtml'
 import type { ReportIndexRow } from '@/api/types'
 import { cn } from '@/lib/utils'
 
@@ -211,17 +212,27 @@ export default function ReportsPage() {
 
           {report.data && (
             <div className="space-y-5">
-              <header>
-                <h1 className="text-lg font-semibold">
-                  {vesselName(report.data.vessel_id)}
-                  <span className="ml-2 font-mono text-sm font-normal text-muted-foreground">
-                    {report.data.report_date}
-                  </span>
-                </h1>
-                <p className="mt-0.5 text-xs text-muted-foreground">
-                  {report.data.voyage_no && <>Voyage {report.data.voyage_no} · </>}
-                  {report.data.compiled_by?.name ?? 'unknown master'}
-                </p>
+              <header className="flex items-start justify-between gap-3">
+                <div>
+                  <h1 className="text-lg font-semibold">
+                    {vesselName(report.data.vessel_id)}
+                    <span className="ml-2 font-mono text-sm font-normal text-muted-foreground">
+                      {report.data.report_date}
+                    </span>
+                  </h1>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {report.data.voyage_no && <>Voyage {report.data.voyage_no} · </>}
+                    {report.data.compiled_by?.name ?? 'unknown master'}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => openReportPdf(report.data!, vesselName(report.data!.vessel_id))}
+                  title="Open the official printable report — Print / Save as PDF to email it"
+                  className="flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium hover:bg-accent"
+                >
+                  <FileDown className="h-3.5 w-3.5" /> Print / PDF
+                </button>
               </header>
 
               <div className="overflow-hidden rounded-lg border">

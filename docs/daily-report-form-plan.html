@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Daily Vessel Report Form — Perfection Plan</title>
+<style>
+  html, body { background: #ffffff; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1a202c; line-height: 1.6; margin: 0; padding: 0;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 48px 32px 80px; }
+  h1 { font-size: 28px; margin: 0 0 4px; letter-spacing: -0.5px; }
+  .subtitle { color: #64748b; font-size: 15px; margin-bottom: 32px; }
+  h2 { font-size: 20px; margin: 44px 0 12px; padding-bottom: 6px; border-bottom: 2px solid #e2e8f0; letter-spacing: -0.3px; }
+  h2 .tag { font-size: 12px; font-weight: 600; color: #fff; border-radius: 4px; padding: 2px 8px; vertical-align: 3px; margin-right: 8px; }
+  h3 { font-size: 16px; margin: 24px 0 8px; }
+  p { margin: 8px 0; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0 20px; font-size: 14px; }
+  th { background: #f1f5f9; text-align: left; font-weight: 600; }
+  th, td { border: 1px solid #cbd5e1; padding: 7px 10px; vertical-align: top; }
+  code { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 4px; padding: 1px 5px; font-size: 13px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .callout { border-radius: 8px; padding: 14px 18px; margin: 16px 0; font-size: 14.5px; }
+  .callout.blue   { background: #eff6ff; border: 1px solid #bfdbfe; }
+  .callout.green  { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .callout.amber  { background: #fffbeb; border: 1px solid #fde68a; }
+  .callout.red    { background: #fef2f2; border: 1px solid #fecaca; }
+  .callout b:first-child { display: block; margin-bottom: 4px; }
+  ul, ol { margin: 8px 0 8px 4px; padding-left: 22px; }
+  li { margin: 5px 0; }
+  .phase { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px 22px; margin: 14px 0; }
+  .phase h3 { margin-top: 0; }
+  .phase .meta { font-size: 13px; color: #64748b; margin-bottom: 8px; }
+  .muted { color: #64748b; font-size: 13.5px; }
+  .ok  { color: #15803d; font-weight: 600; }
+  .gap { color: #b91c1c; font-weight: 600; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Daily Vessel Report Form — Perfection Plan</h1>
+<div class="subtitle">Make the web form the single trusted way captains file their daily report — same results as today's PDF imports, restored PDF export for email, and a form UI you can actually read. · 29&nbsp;Jul&nbsp;2026</div>
+
+<div class="callout blue">
+<b>The one-sentence goal</b>
+A captain who fills this form produces <i>exactly</i> the same data the PDF importer produces today — same map playback, same hour breakdowns, same idle numbers — plus a one-click official PDF to email, with far fewer chances to make the mistakes the paper form allowed.
+</div>
+
+<h2><span class="tag" style="background:#2563eb">A</span>Field parity — finish the replica</h2>
+
+<p>The form already covers ~90% of what the 256 imported reports contain. Audit of every imported report found these gaps:</p>
+
+<table>
+<tr><th>Field</th><th>Present in imports</th><th>In form today</th><th>Action</th></tr>
+<tr><td><b>Drill water</b> (ROB / consumed / max / loaded / discharged)</td><td class="num">157 / 256 reports</td><td class="gap">Missing</td><td>Add as third liquid in Consumables</td></tr>
+<tr><td><b>Base oil</b> (ROB / max / loaded / discharged)</td><td class="num">88 / 256 reports</td><td class="gap">Missing</td><td>Add as fourth liquid</td></tr>
+<tr><td><b>Loaded / Discharged / Remaining-to-load</b> per liquid</td><td class="num">up to 238 / 256</td><td class="gap">Missing (only ROB, consumed, max)</td><td>Add three columns to each liquid — this is the number that proves a water/fuel delivery happened</td></tr>
+<tr><td><b>Crew on board</b></td><td class="num">11 / 256</td><td class="gap">Missing</td><td>Add one optional number field</td></tr>
+<tr><td>Header, safety, task log, deck cargo, provisions, delays, comments, sign-off</td><td class="num">—</td><td class="ok">Covered</td><td>None</td></tr>
+</table>
+
+<div class="callout green">
+<b>Parity guarantee (how we know results are "the same")</b>
+The form must submit the <i>identical JSON shape</i> the PDF importer writes (<code>data/daily-report.schema.json</code>). Everything downstream — the map, the vessel sheet, the idle math — reads that JSON and never knows whether it came from a PDF or the form. Verified by a round-trip test (Section&nbsp;E).
+</div>
+
+<h2><span class="tag" style="background:#7c3aed">B</span>Data quality — be better than the PDF</h2>
+
+<p>Everything vague in today's analytics traces back to weaknesses of the paper form. The web form is the chance to fix them at the source, without changing the official KOC codes.</p>
+
+<h3>B1. Location on every task row <span class="muted">(the single highest-value change)</span></h3>
+<p>Today the app <i>guesses</i> the location of each log row from the free-text description — and succeeds on only ~35% of 4,835 rows. Add to each row:</p>
+<ul>
+<li>A <b>"Where?" dropdown</b> — the known locations (OPH, OD-1, NSBP, Shuaiba B20/B4…) plus "at sea" and free text. Auto-carried from the previous row so it's one tap, not 25.</li>
+<li>For transit codes (I01/I02): <b>From → To dropdowns</b> instead, which is what actually drives the vessel across the map.</li>
+</ul>
+
+<h3>B2. Activity type next to the code <span class="muted">(kills the "Other" black hole)</span></h3>
+<p>1,268 of 4,835 rows use code O1 "Other"; bunkering has no code at all and hides inside cargo codes. Add one optional <b>"What kind of job?" dropdown</b> per row — Cargo, Water bunkering, Diesel bunkering, Base-oil, Crew transfer, Tank cleaning, Inspection, Maneuvering, Waiting — stored in a new optional field, while the official code stays untouched for compliance. Auto-suggested live from the description using the same classifier the analytics already use, so usually zero extra typing.</p>
+
+<h3>B3. Validation the paper could never do</h3>
+<table>
+<tr><th>Rule</th><th>Behavior</th></tr>
+<tr><td>Day must cover 00:00–24:00, no gaps, no overlaps</td><td>Live coverage bar above the table; gaps shown in red. <b>Warning, not a blocker</b> — captains must always be able to submit.</td></tr>
+<tr><td>Next row starts when the previous ended</td><td>Auto-filled, editable</td></tr>
+<tr><td><code>to_time</code> required</td><td>1,535 imported rows had none; auto-suggested from the next row</td></tr>
+<tr><td>Code typos impossible</td><td>Dropdown only — no more <code>IO1</code>/<code>SO2</code>/"S03 S03"</td></tr>
+<tr><td>Duration auto-computed</td><td>Shown per row + day total = 24:00 check</td></tr>
+<tr><td>Numbers sane</td><td>ROB ≤ max capacity; consumed ≥ 0; date not in the future</td></tr>
+</table>
+
+<h3>B4. Draft safety</h3>
+<p>A captain filling 25 rows on a moving vessel must never lose work: auto-save the draft locally on every keystroke, restore it on reopen, and keep a per-vessel template ("start from yesterday's report") so a typical day is edit-3-rows, not type-25.</p>
+
+<h2><span class="tag" style="background:#059669">C</span>PDF export — restore the lost feature</h2>
+
+<div class="callout amber">
+<b>Where it went</b>
+The feature exists in the <i>legacy</i> pre-React app: <code>admin.js → generatePdf()</code> builds a 4-page print-perfect replica of the official Halliburton "Daily Vessel Report" template (pink headers, tank table, codes legend, sign-off page) and opens the browser's Print&nbsp;→&nbsp;Save-as-PDF. When the app was rebuilt in React, the Forms tab was ported but this button never was. Nothing was deleted — it just lives in a file the new app no longer loads.
+</div>
+
+<p>Plan:</p>
+<ol>
+<li><b>Port <code>buildReportHTML()</code></b> from <code>admin.js</code> into the React client as a standalone module (it's self-contained HTML+CSS generation; near copy-paste).</li>
+<li><b>"🖨 Generate PDF" button in two places:</b> on the form (current entries, even before submitting) and on every saved report in the Daily Reports tab — so old imported reports can be re-printed too.</li>
+<li>Same flow as before: opens a print-ready window → captain hits Print / Save as PDF → attaches to email. No new libraries, works offline.</li>
+<li>Extend the template with the Section-A additions (drill water / base oil rows already exist in its tank table — wire real values in instead of dashes).</li>
+<li>File-name convention matching today's email attachments (e.g. <code>CA3 DVR 06-05-2026.pdf</code>) shown in the window title.</li>
+</ol>
+
+<h2><span class="tag" style="background:#d97706">D</span>UI — make the form readable</h2>
+
+<p>Today the form is a wall of same-looking white fields. Changes, in both light and dark themes:</p>
+
+<ul>
+<li><b>One color per section.</b> Each card gets a colored left border + tinted header strip with an icon: Header&nbsp;(blue), Safety&nbsp;(red), Task&nbsp;log&nbsp;(purple), Consumables&nbsp;(teal), Deck&nbsp;cargo&nbsp;(amber), Provisions&nbsp;(green), Sign-off&nbsp;(slate). You always know where you are.</li>
+<li><b>Inputs that look like inputs.</b> Visible borders, subtle field background distinct from the card, clear focus ring, units ("M³") rendered inside the field edge instead of placeholder text.</li>
+<li><b>Task-log rows carry the code's color</b> — the same palette the map and vessel sheet already use: standby&nbsp;amber, transit&nbsp;blue, cargo&nbsp;green, downtime&nbsp;red. Zebra striping + sticky header for 25-row days.</li>
+<li><b>Coverage bar</b> (from B3) doubles as the visual anchor of the task log: a 24-hour strip filling with each row's color as the day is accounted for.</li>
+<li><b>Required vs optional</b> made obvious: required labels bold with a dot, optional ones muted — instead of everything looking equally important.</li>
+</ul>
+
+<h2><span class="tag" style="background:#0f172a">E</span>How we prove it's right</h2>
+
+<ol>
+<li><b>Round-trip test:</b> load an existing imported report (e.g. CA3&nbsp;2026-05-06), prefill the form with it, submit, and diff the produced JSON against the original — must be identical apart from the <code>source</code> stamp. Automate for all 256 reports.</li>
+<li><b>PDF golden test:</b> generate the PDF from an imported report and compare side-by-side with the captain's original email PDF.</li>
+<li><b>Analytics regression:</b> the vessel-sheet totals (1063h&nbsp;11m at OPH, etc.) must not move at all after the form changes ship.</li>
+<li><b>Browser verification:</b> run the app, fill a report end-to-end including deliberate mistakes (gap in the day, typo attempts), screenshot light + dark.</li>
+</ol>
+
+<h2>Build order</h2>
+
+<div class="phase">
+<h3>Phase 1 — Parity + PDF <span class="muted">(the "reliable replacement" milestone)</span></h3>
+<div class="meta">Sections A + C · the form becomes a complete, printable substitute for the paper form</div>
+Add missing consumables fields and crew count → port <code>generatePdf()</code> → PDF buttons on form + saved reports → round-trip test green.
+</div>
+
+<div class="phase">
+<h3>Phase 2 — Validation + drafts</h3>
+<div class="meta">Section B3 + B4 · captains can't silently file a broken day</div>
+Coverage bar, auto-chained times, required to-time, sanity checks, local draft auto-save, "start from yesterday".
+</div>
+
+<div class="phase">
+<h3>Phase 3 — Location & activity per row</h3>
+<div class="meta">Section B1 + B2 · the analytics stop guessing</div>
+Per-row location dropdown, From→To for transit, activity-type auto-suggest. New optional JSON fields; importer untouched; old reports keep working unchanged.
+</div>
+
+<div class="phase">
+<h3>Phase 4 — UI restyle</h3>
+<div class="meta">Section D · can ship alongside any phase</div>
+Section colors, input styling, task-row color coding, light + dark checks.
+</div>
+
+<div class="callout blue">
+<b>What stays untouched</b>
+The PDF importer, the analytics engine, the map, and all 256 existing reports. New fields are optional additions to the JSON schema — old data never breaks, and a captain's form submission is indistinguishable from a perfect PDF import.
+</div>
+
+</div>
+</body>
+</html>
