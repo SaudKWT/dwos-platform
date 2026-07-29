@@ -7,6 +7,15 @@
       "runtimeArgs": ["run", "dev", "--prefix", "client"],
       "port": 5173,
       "autoPort": true
+    },
+    {
+      "name": "api",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "set -a; . '/Users/yousef/Developer/Vessels movement Claude/keys.env'; set +a; exec dotnet run --project server/Koc.Vessels.Api --launch-profile http"
+      ],
+      "port": 5280
     }
   ]
 }

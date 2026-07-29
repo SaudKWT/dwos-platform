@@ -1,47 +1,35 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { Plus, Trash2, Upload } from 'lucide-react'
+import { FileDown, Plus, Trash2, Upload } from 'lucide-react'
 import { api, type ImportResult } from '@/api/client'
-import { usePlanIndex, useVessels } from '@/api/queries'
+import { useLocations, usePlanIndex, useReportIndex, useVessels } from '@/api/queries'
+import { classifyActivity, STANDBY_LABEL } from '@/features/simulator/activity'
+import { codeIsStandby, codeIsTransit } from '@/features/simulator/engine'
+import {
+  CODE_LABELS, LIQUID_KEYS, LIQUID_TITLES, TASK_CODE_OPTIONS,
+  computeCoverage, emptyFormState, fmtMin, formStateToPayload, leadingNumber,
+  normalizeClock, reportToFormState, rowDurationMin,
+  type LiquidKey, type ReportFormState, type TaskRowState,
+} from '@/features/report-form/model'
+import { openReportPdf } from '@/features/report-form/buildReportHtml'
 import type { DailyReport } from '@/api/types'
 import { cn } from '@/lib/utils'
 
-// The data-entry side of the app, ported from admin.html/admin.js:
+// The data-entry side of the app:
 //   - captain's Daily Vessel Report (one per vessel per day) + PDF bulk import
+//     + print-ready PDF export (the official Halliburton-style template)
 //   - supervisor's 48-hr Movement Plan
-// Payload shapes match the original builders exactly, so the API (and the
-// simulator downstream) sees the same documents it always has.
+// Form state <-> payload conversion lives in features/report-form/model.ts so
+// the round-trip parity test can drive it without a browser. Payload shapes
+// match the PDF importer exactly — the simulator can't tell them apart.
 
-const TASK_CODES: [string, string][] = [
-  ['S01', 'S01 — Standby on location'],
-  ['S02', 'S02 — Standby alongside rig (DP)'],
-  ['S03', 'S03 — Standby (semi DP / base)'],
-  ['S04', 'S04 — Standby Shuaiba port'],
-  ['S05', 'S05 — Standby awaiting instructions'],
-  ['DP1', 'DP1 — DP cargo operations'],
-  ['L1F', 'L1F — Cargo ops Freeport'],
-  ['L2E', 'L2E — Cargo ops'],
-  ['B1', 'B1 — Back-load at rig'],
-  ['O1', 'O1 — Other'],
-  ['I01', 'I01 — In transit'],
-  ['I02', 'I02 — In transit (channel)'],
-  ['D1', 'D1 — Downtime'],
-  ['WOW', 'WOW — Waiting on weather'],
-  ['A01', 'A01 — Standby at anchor'],
-]
-
-interface TaskRow {
-  from_time: string
-  to_time: string
-  task_code: string
-  description: string
-}
+const DRAFT_KEY = 'vm.dvr.draft.v1'
 
 export default function FormsPage() {
   const [tab, setTab] = useState<'report' | 'plan'>('report')
   return (
     <div className="h-full overflow-y-auto">
-      <div className="mx-auto max-w-3xl p-4">
+      <div className="mx-auto max-w-4xl p-4">
         <div className="mb-4 flex gap-1 rounded-lg bg-secondary p-1">
           <TabButton active={tab === 'report'} onClick={() => setTab('report')}>
             📋 Daily Vessel Report <span className="font-normal opacity-60">(captain · one per vessel/day)</span>
@@ -77,101 +65,132 @@ function TabButton({ active, onClick, children }: {
 // Daily Vessel Report
 // ---------------------------------------------------------------------------
 
+const FAMILY_TINT: Record<string, string> = {
+  standby: 'bg-amber-500/[0.06] border-l-amber-400',
+  transit: 'bg-sky-500/[0.06] border-l-sky-400',
+  cargo: 'bg-emerald-500/[0.06] border-l-emerald-400',
+  other: 'bg-muted/40 border-l-slate-400',
+}
+
+const FAMILY_BAR: Record<string, string> = {
+  standby: 'bg-amber-400',
+  transit: 'bg-sky-500',
+  cargo: 'bg-emerald-500',
+  other: 'bg-slate-400',
+  gap: 'bg-destructive/60',
+}
+
+function rowFamily(code: string): string {
+  const c = code.toUpperCase()
+  if (/^I0\d|^IO\d/.test(c)) return 'transit'
+  if (/^(S0\d|SO\d|A01|WOW|D1)/.test(c)) return 'standby'
+  if (/^(DP1|L\d|B1)/.test(c)) return 'cargo'
+  return 'other'
+}
+
+/** Plain-language chip for what the analytics will make of this row. */
+function activityChip(t: TaskRowState): string {
+  if (codeIsTransit(t.task_code)) return 'Transit'
+  if (codeIsStandby(t.task_code, CODE_LABELS[t.task_code] ?? t.raw_label)) return 'Idle / standby'
+  const a = classifyActivity(t.task_code, CODE_LABELS[t.task_code] ?? t.raw_label, t.description)
+  if (a === STANDBY_LABEL) return 'Idle / standby'
+  return a ?? 'Transit'
+}
+
+function loadDraft(): ReportFormState | null {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as ReportFormState
+    return parsed && Array.isArray(parsed.tasks) ? parsed : null
+  } catch { return null }
+}
+
+function nextDay(iso: string): string {
+  const d = new Date(iso + 'T00:00:00Z')
+  d.setUTCDate(d.getUTCDate() + 1)
+  return d.toISOString().slice(0, 10)
+}
+
 function ReportForm() {
   const vessels = useVessels()
+  const locations = useLocations()
+  const reportIndex = useReportIndex()
   const queryClient = useQueryClient()
 
-  const [vesselId, setVesselId] = useState('')
-  const [reportDate, setReportDate] = useState('')
-  const [voyageNo, setVoyageNo] = useState('')
-  const [securityLevel, setSecurityLevel] = useState('')
-  const [daysSincePortCall, setDaysSincePortCall] = useState('')
-  const [nextCrewChange, setNextCrewChange] = useState('')
-  const [periodEnd, setPeriodEnd] = useState('24:00')
-  const [safety, setSafety] = useState({ accidents: 'Nil', incidents: 'Nil', near_miss: 'Nil' })
-  const [fuel, setFuel] = useState({ rob: '', consumed: '', max: '' })
-  const [water, setWater] = useState({ rob: '', consumed: '', max: '' })
-  const [compiledName, setCompiledName] = useState('')
-  const [compiledRole, setCompiledRole] = useState('Master')
-  const [issuesComments, setIssuesComments] = useState('')
-  const [lifts, setLifts] = useState({ on_deck: '', loaded: '', discharged: '', utilization: '' })
-  const [provisions, setProvisions] = useState({ dry: '', fresh: '', water: '', unpumpable: '' })
-  const [delays, setDelays] = useState({ arrival: 'NA', departure: 'NA' })
-  const [requirements, setRequirements] = useState('')
-  const [accidentSummary, setAccidentSummary] = useState('')
-  const [tasks, setTasks] = useState<TaskRow[]>([
-    { from_time: '00:00', to_time: '', task_code: 'S01', description: '' },
-  ])
+  const [restored] = useState(() => loadDraft())
+  const [f, setF] = useState<ReportFormState>(() => restored ?? emptyFormState())
+  const [draftNote, setDraftNote] = useState(Boolean(restored))
   const [status, setStatus] = useState<{ text: string; tone: 'ok' | 'err' | '' }>({ text: '', tone: '' })
   const [busy, setBusy] = useState(false)
 
-  const num = (s: string) => {
-    if (s.trim() === '') return null
-    const x = Number(s)
-    return Number.isFinite(x) ? x : null
+  // Auto-saved draft: a captain filling 25 rows on a moving vessel must never
+  // lose work to a closed tab. Cleared on successful submit.
+  useEffect(() => {
+    const id = setTimeout(() => {
+      try { localStorage.setItem(DRAFT_KEY, JSON.stringify(f)) } catch { /* storage full/blocked — draft is best-effort */ }
+    }, 400)
+    return () => clearTimeout(id)
+  }, [f])
+
+  const patch = (p: Partial<ReportFormState>) => setF(prev => ({ ...prev, ...p }))
+
+  const editTask = (i: number, p: Partial<TaskRowState>) => setF(prev => {
+    const tasks = prev.tasks.map((t, j) => (j === i ? { ...t, ...p } : t))
+    // Chain: when a row's end time changes, pull the next row's start along if
+    // it was empty or still matched the old value.
+    if (p.to_time !== undefined && tasks[i + 1]) {
+      const old = prev.tasks[i].to_time
+      const nxt = tasks[i + 1]
+      if (!nxt.from_time || nxt.from_time === old) tasks[i + 1] = { ...nxt, from_time: p.to_time }
+    }
+    return { ...prev, tasks }
+  })
+
+  const locOptions = locations.data?.locations ?? []
+  const coverage = useMemo(() => computeCoverage(f.tasks), [f.tasks])
+
+  const warnings = useMemo(() => {
+    const out: string[] = []
+    if (coverage.gaps.length) {
+      const list = coverage.gaps.slice(0, 4).map(g => `${fmtMin(g.start)}–${fmtMin(g.end)}`).join(', ')
+      out.push(`The day has unaccounted time: ${list}${coverage.gaps.length > 4 ? '…' : ''}. Captains should log the full 00:00–24:00.`)
+    }
+    if (coverage.rowsMissingTo.length) {
+      out.push(`Row${coverage.rowsMissingTo.length > 1 ? 's' : ''} ${coverage.rowsMissingTo.map(i => i + 1).join(', ')} ha${coverage.rowsMissingTo.length > 1 ? 've' : 's'} no valid end time.`)
+    }
+    for (const k of LIQUID_KEYS) {
+      const l = f.liquids[k]
+      const rob = leadingNumber(l.rob)
+      const max = leadingNumber(l.max)
+      if (rob !== null && max !== null && rob > max) out.push(`${LIQUID_TITLES[k]}: ROB (${l.rob}) is above max capacity (${l.max}).`)
+    }
+    if (f.reportDate && f.reportDate > new Date().toISOString().slice(0, 10)) {
+      out.push('Report date is in the future.')
+    }
+    return out
+  }, [coverage, f.liquids, f.reportDate])
+
+  const vesselName = (id: string) => vessels.data?.find(v => v.id === id)?.name ?? id
+
+  const buildPayload = (): DailyReport | null => {
+    if (!f.vesselId || !f.reportDate) { setStatus({ text: 'Vessel and date are required.', tone: 'err' }); return null }
+    const payload = formStateToPayload(f)
+    if (!payload.task_log.length) { setStatus({ text: 'At least one task row is required.', tone: 'err' }); return null }
+    return payload
   }
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const task_log = tasks
-      .map(t => ({
-        from_time: t.from_time,
-        to_time: t.to_time || null,
-        task_code: t.task_code,
-        description: t.description.trim(),
-      }))
-      .filter(t => t.from_time && t.task_code)
-
-    if (!vesselId || !reportDate) { setStatus({ text: 'Vessel and date are required.', tone: 'err' }); return }
-    if (!task_log.length) { setStatus({ text: 'At least one task row is required.', tone: 'err' }); return }
-
-    // Same shape admin.js built — the simulator reads these fields.
-    const payload: DailyReport = {
-      vessel_id: vesselId,
-      report_date: reportDate,
-      period_end: periodEnd || '24:00',
-      voyage_no: voyageNo || null,
-      security_level: num(securityLevel),
-      days_since_port_call: num(daysSincePortCall),
-      next_crew_change: nextCrewChange || null,
-      safety: {
-        accidents: safety.accidents || 'Nil',
-        incidents: safety.incidents || 'Nil',
-        near_miss: safety.near_miss || 'Nil',
-      },
-      consumables: {
-        fuel_oil: { rob: fuel.rob || null, consumed: fuel.consumed || null, max_capacity: fuel.max || null },
-        fresh_water: { rob: water.rob || null, consumed: water.consumed || null, max_capacity: water.max || null },
-      },
-      lifts: {
-        on_deck: lifts.on_deck,
-        loaded: lifts.loaded,
-        discharged: lifts.discharged,
-        utilization_pct: num(lifts.utilization),
-      },
-      provisions: {
-        dry_store_days: num(provisions.dry),
-        fresh_frozen_days: num(provisions.fresh),
-        drinking_water_days: num(provisions.water),
-        fuel_oil_unpumpable: provisions.unpumpable || null,
-      },
-      delays: {
-        arrival_time: delays.arrival || 'NA',
-        departure_time: delays.departure || 'NA',
-      },
-      requirements_next_port_call: requirements,
-      issues_comments: issuesComments,
-      accident_summary: accidentSummary,
-      compiled_by: { name: compiledName, role: compiledRole || 'Master' },
-      task_log,
-      source: { type: 'dashboard_submission' },
-    }
-
+    const payload = buildPayload()
+    if (!payload) return
     setBusy(true)
     setStatus({ text: 'Saving…', tone: '' })
     try {
       const r = await api.saveReport(payload)
       setStatus({ text: `Saved ${r.vessel_id} · ${r.report_date}. The simulator will pick it up.`, tone: 'ok' })
+      localStorage.removeItem(DRAFT_KEY)
+      setDraftNote(false)
       queryClient.invalidateQueries({ queryKey: ['reports'] })
       queryClient.invalidateQueries({ queryKey: ['all-reports'] })
     } catch (err) {
@@ -181,163 +200,353 @@ function ReportForm() {
     }
   }
 
+  const printPdf = () => {
+    const payload = buildPayload()
+    if (!payload) return
+    if (!openReportPdf(payload, vesselName(f.vesselId))) {
+      setStatus({ text: 'Pop-up blocked — allow pop-ups for this site.', tone: 'err' })
+    }
+  }
+
+  const discardDraft = () => {
+    localStorage.removeItem(DRAFT_KEY)
+    setF(emptyFormState())
+    setDraftNote(false)
+    setStatus({ text: 'Draft discarded.', tone: '' })
+  }
+
+  // "Start from the vessel's last report": copy it wholesale, dated the next
+  // day — a typical day is edit-three-rows, not type-twenty-five.
+  const prefillFromLast = async () => {
+    if (!f.vesselId) { setStatus({ text: 'Pick a vessel first.', tone: 'err' }); return }
+    const latest = (reportIndex.data ?? [])
+      .filter(r => r.vessel_id === f.vesselId)
+      .sort((a, b) => b.report_date.localeCompare(a.report_date))[0]
+    if (!latest) { setStatus({ text: `No stored reports for ${vesselName(f.vesselId)}.`, tone: 'err' }); return }
+    try {
+      const rep = await api.report(latest.vessel_id, latest.report_date)
+      const state = reportToFormState(rep)
+      state.reportDate = nextDay(latest.report_date)
+      setF(state)
+      setStatus({ text: `Prefilled from ${latest.report_date} — dated ${state.reportDate}. Edit and submit.`, tone: 'ok' })
+    } catch (err) {
+      setStatus({ text: `Could not load ${latest.report_date}: ${err instanceof Error ? err.message : err}`, tone: 'err' })
+    }
+  }
+
   return (
     <div className="space-y-4">
       <PdfImportCard />
 
+      {draftNote && (
+        <div className="flex items-center justify-between rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm">
+          <span>Unsubmitted draft restored — keep editing or discard it.</span>
+          <button type="button" onClick={discardDraft} className="rounded border border-amber-500/40 px-2 py-0.5 text-xs hover:bg-amber-500/20">
+            Discard draft
+          </button>
+        </div>
+      )}
+
       <form onSubmit={submit} className="space-y-4">
-        <Card title="Report header">
+        <Card title="Report header" accent="blue">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            <Field label="Vessel *">
-              <select required value={vesselId} onChange={e => setVesselId(e.target.value)} className={inputCls}>
+            <Field label="Vessel" required>
+              <select required value={f.vesselId} onChange={e => patch({ vesselId: e.target.value })} className={inputCls}>
                 <option value="">Select…</option>
                 {(vessels.data ?? []).filter(v => !v.retired_on).map(v => (
                   <option key={v.id} value={v.id}>{v.name}</option>
                 ))}
               </select>
             </Field>
-            <Field label="Report date *">
-              <input required type="date" value={reportDate} onChange={e => setReportDate(e.target.value)} className={inputCls} />
+            <Field label="Report date" required>
+              <input required type="date" value={f.reportDate} onChange={e => patch({ reportDate: e.target.value })} className={inputCls} />
             </Field>
             <Field label="Voyage No">
-              <input value={voyageNo} onChange={e => setVoyageNo(e.target.value)} placeholder="e.g. 041/2026" className={inputCls} />
+              <input value={f.voyageNo} onChange={e => patch({ voyageNo: e.target.value })} placeholder="e.g. 041/2026" className={inputCls} />
             </Field>
             <Field label="Security level">
-              <input type="number" min={1} max={3} value={securityLevel} onChange={e => setSecurityLevel(e.target.value)} className={inputCls} />
+              <input type="number" min={1} max={3} value={f.securityLevel} onChange={e => patch({ securityLevel: e.target.value })} className={inputCls} />
             </Field>
             <Field label="Days since port call">
-              <input type="number" min={0} value={daysSincePortCall} onChange={e => setDaysSincePortCall(e.target.value)} className={inputCls} />
+              <input type="number" min={0} value={f.daysSincePortCall} onChange={e => patch({ daysSincePortCall: e.target.value })} className={inputCls} />
             </Field>
             <Field label="Next crew change">
-              <input type="date" value={nextCrewChange} onChange={e => setNextCrewChange(e.target.value)} className={inputCls} />
+              <input type="date" value={f.nextCrewChange} onChange={e => patch({ nextCrewChange: e.target.value })} className={inputCls} />
             </Field>
             <Field label="Period end">
-              <input value={periodEnd} onChange={e => setPeriodEnd(e.target.value)} className={inputCls} />
+              <input value={f.periodEnd} onChange={e => patch({ periodEnd: e.target.value })} className={inputCls} />
             </Field>
-          </div>
-        </Card>
-
-        <Card title="Safety (24 hrs)">
-          <div className="grid grid-cols-3 gap-3">
-            <Field label="Accidents"><input value={safety.accidents} onChange={e => setSafety({ ...safety, accidents: e.target.value })} className={inputCls} /></Field>
-            <Field label="Incidents"><input value={safety.incidents} onChange={e => setSafety({ ...safety, incidents: e.target.value })} className={inputCls} /></Field>
-            <Field label="Near miss"><input value={safety.near_miss} onChange={e => setSafety({ ...safety, near_miss: e.target.value })} className={inputCls} /></Field>
-          </div>
-        </Card>
-
-        <Card title="Operational task log *" subtitle="Hour-by-hour — this is what moves the vessel on the map">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="text-xs text-muted-foreground">
-                <tr>
-                  <th className="pb-1 pr-2 text-left font-medium">From</th>
-                  <th className="pb-1 pr-2 text-left font-medium">To</th>
-                  <th className="pb-1 pr-2 text-left font-medium">Code</th>
-                  <th className="pb-1 pr-2 text-left font-medium">Description (mention locations — OD-1, OPH, NSBP, Shuaiba…)</th>
-                  <th className="pb-1" />
-                </tr>
-              </thead>
-              <tbody>
-                {tasks.map((row, i) => (
-                  <tr key={i}>
-                    <td className="pr-2 pt-1"><input type="time" value={row.from_time} onChange={e => setTasks(ts => ts.map((t, j) => j === i ? { ...t, from_time: e.target.value } : t))} className={cn(inputCls, 'w-24')} /></td>
-                    <td className="pr-2 pt-1"><input type="time" value={row.to_time} onChange={e => setTasks(ts => ts.map((t, j) => j === i ? { ...t, to_time: e.target.value } : t))} className={cn(inputCls, 'w-24')} /></td>
-                    <td className="pr-2 pt-1">
-                      <select value={row.task_code} onChange={e => setTasks(ts => ts.map((t, j) => j === i ? { ...t, task_code: e.target.value } : t))} className={cn(inputCls, 'w-40')}>
-                        {TASK_CODES.map(([c, label]) => <option key={c} value={c}>{label}</option>)}
-                      </select>
-                    </td>
-                    <td className="pr-2 pt-1"><input value={row.description} onChange={e => setTasks(ts => ts.map((t, j) => j === i ? { ...t, description: e.target.value } : t))} className={inputCls} /></td>
-                    <td className="pt-1">
-                      <button type="button" title="Remove row" onClick={() => setTasks(ts => ts.filter((_, j) => j !== i))} className="rounded p-1.5 text-muted-foreground hover:bg-accent hover:text-destructive">
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
           </div>
           <button
             type="button"
-            onClick={() => setTasks(ts => [...ts, { from_time: ts[ts.length - 1]?.to_time || '', to_time: '', task_code: 'S01', description: '' }])}
+            onClick={prefillFromLast}
+            className="mt-3 rounded-md border border-blue-500/40 px-2.5 py-1 text-xs text-blue-600 hover:bg-blue-500/10 dark:text-blue-400"
+          >
+            ⚡ Start from this vessel's last report
+          </button>
+        </Card>
+
+        <Card title="Safety (24 hrs)" accent="red">
+          <div className="grid grid-cols-3 gap-3">
+            <Field label="Accidents"><input value={f.safety.accidents} onChange={e => patch({ safety: { ...f.safety, accidents: e.target.value } })} className={inputCls} /></Field>
+            <Field label="Incidents"><input value={f.safety.incidents} onChange={e => patch({ safety: { ...f.safety, incidents: e.target.value } })} className={inputCls} /></Field>
+            <Field label="Near miss"><input value={f.safety.near_miss} onChange={e => patch({ safety: { ...f.safety, near_miss: e.target.value } })} className={inputCls} /></Field>
+          </div>
+        </Card>
+
+        <Card title="Operational task log" required accent="violet"
+          subtitle="Hour-by-hour — this is what moves the vessel on the map. Cover the whole day, 00:00 to 24:00.">
+
+          <CoverageBar tasks={f.tasks} />
+
+          <div className="mt-3 space-y-2">
+            {f.tasks.map((row, i) => {
+              const fam = rowFamily(row.task_code)
+              const dur = rowDurationMin(row.from_time, row.to_time)
+              const transit = codeIsTransit(row.task_code)
+              const codeKnown = Boolean(CODE_LABELS[row.task_code])
+              return (
+                <div key={i} className={cn('rounded-md border border-l-4 p-2', FAMILY_TINT[fam])}>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="w-5 text-right font-mono text-[11px] text-muted-foreground">{i + 1}</span>
+                    <input
+                      value={row.from_time}
+                      onChange={e => editTask(i, { from_time: e.target.value })}
+                      onBlur={e => editTask(i, { from_time: normalizeClock(e.target.value) })}
+                      placeholder="00:00" inputMode="numeric"
+                      className={cn(inputCls, 'w-[4.5rem] text-center font-mono')}
+                    />
+                    <span className="text-xs text-muted-foreground">→</span>
+                    <input
+                      value={row.to_time}
+                      onChange={e => editTask(i, { to_time: e.target.value })}
+                      onBlur={e => editTask(i, { to_time: normalizeClock(e.target.value) })}
+                      placeholder="24:00" inputMode="numeric"
+                      className={cn(inputCls, 'w-[4.5rem] text-center font-mono')}
+                    />
+                    <span className="w-12 font-mono text-[11px] text-muted-foreground">
+                      {dur !== null ? `${Math.floor(dur / 60)}h${dur % 60 ? String(dur % 60).padStart(2, '0') : ''}` : '—'}
+                    </span>
+                    <select
+                      value={row.task_code}
+                      onChange={e => editTask(i, { task_code: e.target.value })}
+                      className={cn(inputCls, 'w-56 flex-none')}
+                    >
+                      {!codeKnown && row.task_code && <option value={row.task_code}>{row.task_code} — (as imported)</option>}
+                      {TASK_CODE_OPTIONS.map(([c, label]) => <option key={c} value={c}>{c} — {label}</option>)}
+                    </select>
+                    {transit ? (
+                      <span className="flex items-center gap-1">
+                        <select value={row.from_location_id} onChange={e => editTask(i, { from_location_id: e.target.value })} className={cn(inputCls, 'w-32')}>
+                          <option value="">From…</option>
+                          {locOptions.map(l => <option key={l.id} value={l.id}>{l.short ?? l.name}</option>)}
+                        </select>
+                        <span className="text-xs text-muted-foreground">→</span>
+                        <select value={row.to_location_id} onChange={e => editTask(i, { to_location_id: e.target.value })} className={cn(inputCls, 'w-32')}>
+                          <option value="">To…</option>
+                          {locOptions.map(l => <option key={l.id} value={l.id}>{l.short ?? l.name}</option>)}
+                        </select>
+                      </span>
+                    ) : (
+                      <select value={row.location_id} onChange={e => editTask(i, { location_id: e.target.value })} className={cn(inputCls, 'w-36')}>
+                        <option value="">Where? (auto)</option>
+                        {locOptions.map(l => <option key={l.id} value={l.id}>{l.short ?? l.name}</option>)}
+                      </select>
+                    )}
+                    <button type="button" title="Remove row" onClick={() => setF(prev => ({ ...prev, tasks: prev.tasks.filter((_, j) => j !== i) }))} className="ml-auto rounded p-1.5 text-muted-foreground hover:bg-accent hover:text-destructive">
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                  <div className="mt-1.5 flex items-center gap-2 pl-7">
+                    <input
+                      value={row.description}
+                      onChange={e => editTask(i, { description: e.target.value })}
+                      placeholder="What happened — mention locations (OD-1, OPH, NSBP, Shuaiba…)"
+                      className={cn(inputCls, 'flex-1')}
+                    />
+                    <span className="whitespace-nowrap rounded-full bg-secondary px-2 py-0.5 text-[11px] text-muted-foreground" title="How the analytics will classify this row">
+                      {activityChip(row)}
+                    </span>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+          <button
+            type="button"
+            onClick={() => setF(prev => ({
+              ...prev,
+              tasks: [...prev.tasks, {
+                from_time: prev.tasks[prev.tasks.length - 1]?.to_time || '',
+                to_time: '', task_code: 'S01', description: '',
+                location_id: prev.tasks[prev.tasks.length - 1]?.location_id || '',
+                from_location_id: '', to_location_id: '',
+              }],
+            }))}
             className="mt-2 flex items-center gap-1 rounded-md border px-2 py-1 text-xs hover:bg-accent"
           >
             <Plus className="h-3.5 w-3.5" /> Add row
           </button>
         </Card>
 
-        <Card title="Consumables">
+        <Card title="Consumables" accent="teal" subtitle="Loaded / Discharged are what prove a delivery to the rig happened — fill them whenever a hose was connected.">
           <div className="grid gap-3 sm:grid-cols-2">
-            <fieldset className="rounded-md border p-3">
-              <legend className="px-1 text-xs text-muted-foreground">Fuel oil</legend>
-              <div className="grid grid-cols-3 gap-2">
-                <Field label="ROB"><input value={fuel.rob} onChange={e => setFuel({ ...fuel, rob: e.target.value })} placeholder="417.42 M3" className={inputCls} /></Field>
-                <Field label="Consumed"><input value={fuel.consumed} onChange={e => setFuel({ ...fuel, consumed: e.target.value })} placeholder="1.44 M3" className={inputCls} /></Field>
-                <Field label="Max"><input value={fuel.max} onChange={e => setFuel({ ...fuel, max: e.target.value })} placeholder="950 M3 (80%)" className={inputCls} /></Field>
-              </div>
-            </fieldset>
-            <fieldset className="rounded-md border p-3">
-              <legend className="px-1 text-xs text-muted-foreground">Fresh water</legend>
-              <div className="grid grid-cols-3 gap-2">
-                <Field label="ROB"><input value={water.rob} onChange={e => setWater({ ...water, rob: e.target.value })} placeholder="294 M3" className={inputCls} /></Field>
-                <Field label="Consumed"><input value={water.consumed} onChange={e => setWater({ ...water, consumed: e.target.value })} placeholder="3 M3" className={inputCls} /></Field>
-                <Field label="Max"><input value={water.max} onChange={e => setWater({ ...water, max: e.target.value })} placeholder="673 M3 (100%)" className={inputCls} /></Field>
-              </div>
-            </fieldset>
+            {LIQUID_KEYS.map(k => <LiquidFieldset key={k} k={k} f={f} patch={patch} />)}
           </div>
         </Card>
 
-        <Card title="Deck cargo / lifts">
+        <Card title="Deck cargo / lifts" accent="amber">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <Field label="On deck"><input value={lifts.on_deck} onChange={e => setLifts({ ...lifts, on_deck: e.target.value })} placeholder="1 trash skip, 3 Lamor…" className={inputCls} /></Field>
-            <Field label="Loaded"><input value={lifts.loaded} onChange={e => setLifts({ ...lifts, loaded: e.target.value })} placeholder="10 Lift" className={inputCls} /></Field>
-            <Field label="Discharged"><input value={lifts.discharged} onChange={e => setLifts({ ...lifts, discharged: e.target.value })} placeholder="1 Lift" className={inputCls} /></Field>
-            <Field label="Deck utilization %"><input type="number" min={0} max={100} value={lifts.utilization} onChange={e => setLifts({ ...lifts, utilization: e.target.value })} className={inputCls} /></Field>
+            <Field label="On deck"><input value={f.lifts.on_deck} onChange={e => patch({ lifts: { ...f.lifts, on_deck: e.target.value } })} placeholder="1 trash skip, 3 Lamor…" className={inputCls} /></Field>
+            <Field label="Loaded"><input value={f.lifts.loaded} onChange={e => patch({ lifts: { ...f.lifts, loaded: e.target.value } })} placeholder="10 Lift" className={inputCls} /></Field>
+            <Field label="Discharged"><input value={f.lifts.discharged} onChange={e => patch({ lifts: { ...f.lifts, discharged: e.target.value } })} placeholder="1 Lift" className={inputCls} /></Field>
+            <Field label="Deck utilization %"><input type="number" min={0} max={100} value={f.lifts.utilization} onChange={e => patch({ lifts: { ...f.lifts, utilization: e.target.value } })} className={inputCls} /></Field>
           </div>
         </Card>
 
-        <Card title="Provisions & delays">
+        <Card title="Provisions & delays" accent="green">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            <Field label="Dry store (days)"><input type="number" min={0} value={provisions.dry} onChange={e => setProvisions({ ...provisions, dry: e.target.value })} className={inputCls} /></Field>
-            <Field label="Fresh & frozen (days)"><input type="number" min={0} value={provisions.fresh} onChange={e => setProvisions({ ...provisions, fresh: e.target.value })} className={inputCls} /></Field>
-            <Field label="Drinking water (days)"><input type="number" min={0} value={provisions.water} onChange={e => setProvisions({ ...provisions, water: e.target.value })} className={inputCls} /></Field>
-            <Field label="Fuel oil unpumpable"><input value={provisions.unpumpable} onChange={e => setProvisions({ ...provisions, unpumpable: e.target.value })} placeholder="20 M3" className={inputCls} /></Field>
-            <Field label="Delay — arrival"><input value={delays.arrival} onChange={e => setDelays({ ...delays, arrival: e.target.value })} className={inputCls} /></Field>
-            <Field label="Delay — departure"><input value={delays.departure} onChange={e => setDelays({ ...delays, departure: e.target.value })} className={inputCls} /></Field>
+            <Field label="Dry store (days)"><input type="number" min={0} value={f.provisions.dry} onChange={e => patch({ provisions: { ...f.provisions, dry: e.target.value } })} className={inputCls} /></Field>
+            <Field label="Fresh & frozen (days)"><input type="number" min={0} value={f.provisions.fresh} onChange={e => patch({ provisions: { ...f.provisions, fresh: e.target.value } })} className={inputCls} /></Field>
+            <Field label="Drinking water (days)"><input type="number" min={0} value={f.provisions.water} onChange={e => patch({ provisions: { ...f.provisions, water: e.target.value } })} className={inputCls} /></Field>
+            <Field label="Fuel oil unpumpable"><input value={f.provisions.unpumpable} onChange={e => patch({ provisions: { ...f.provisions, unpumpable: e.target.value } })} placeholder="20 M3" className={inputCls} /></Field>
+            <Field label="Delay — arrival"><input value={f.delays.arrival} onChange={e => patch({ delays: { ...f.delays, arrival: e.target.value } })} className={inputCls} /></Field>
+            <Field label="Delay — departure"><input value={f.delays.departure} onChange={e => patch({ delays: { ...f.delays, departure: e.target.value } })} className={inputCls} /></Field>
           </div>
         </Card>
 
-        <Card title="Comments & sign-off">
+        <Card title="Crew list" accent="cyan" subtitle="Optional — fills the crew table on page 3 of the printed report.">
+          {f.crew.length > 0 && (
+            <div className="mb-2 space-y-1.5">
+              {f.crew.map((c, i) => (
+                <div key={i} className="flex flex-wrap items-center gap-1.5">
+                  <input value={c.first} onChange={e => setF(p => ({ ...p, crew: p.crew.map((x, j) => j === i ? { ...x, first: e.target.value } : x) }))} placeholder="First name" className={cn(inputCls, 'w-28 flex-1')} />
+                  <input value={c.last} onChange={e => setF(p => ({ ...p, crew: p.crew.map((x, j) => j === i ? { ...x, last: e.target.value } : x) }))} placeholder="Last name" className={cn(inputCls, 'w-28 flex-1')} />
+                  <input value={c.position} onChange={e => setF(p => ({ ...p, crew: p.crew.map((x, j) => j === i ? { ...x, position: e.target.value } : x) }))} placeholder="Position" className={cn(inputCls, 'w-24 flex-1')} />
+                  <input value={c.days_onboard} onChange={e => setF(p => ({ ...p, crew: p.crew.map((x, j) => j === i ? { ...x, days_onboard: e.target.value } : x) }))} placeholder="Days" type="number" min={0} className={cn(inputCls, 'w-16')} />
+                  <input value={c.sign_on_date} onChange={e => setF(p => ({ ...p, crew: p.crew.map((x, j) => j === i ? { ...x, sign_on_date: e.target.value } : x) }))} placeholder="Sign-on" className={cn(inputCls, 'w-24')} />
+                  <input value={c.planned_crew_change} onChange={e => setF(p => ({ ...p, crew: p.crew.map((x, j) => j === i ? { ...x, planned_crew_change: e.target.value } : x) }))} placeholder="Change due" className={cn(inputCls, 'w-24')} />
+                  <button type="button" title="Remove crew member" onClick={() => setF(p => ({ ...p, crew: p.crew.filter((_, j) => j !== i) }))} className="rounded p-1.5 text-muted-foreground hover:bg-accent hover:text-destructive">
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={() => setF(p => ({ ...p, crew: [...p.crew, { first: '', last: '', position: '', days_onboard: '', sign_on_date: '', planned_crew_change: '' }] }))}
+            className="flex items-center gap-1 rounded-md border px-2 py-1 text-xs hover:bg-accent"
+          >
+            <Plus className="h-3.5 w-3.5" /> Add crew member
+          </button>
+        </Card>
+
+        <Card title="Comments & sign-off" accent="slate">
           <Field label="Requirements next port call">
-            <textarea rows={2} value={requirements} onChange={e => setRequirements(e.target.value)} className={inputCls} />
+            <textarea rows={2} value={f.requirements} onChange={e => patch({ requirements: e.target.value })} className={inputCls} />
           </Field>
           <div className="mt-3" />
           <Field label="Issues / comments">
-            <textarea rows={3} value={issuesComments} onChange={e => setIssuesComments(e.target.value)} className={inputCls} />
+            <textarea rows={3} value={f.issuesComments} onChange={e => patch({ issuesComments: e.target.value })} className={inputCls} />
           </Field>
           <div className="mt-3" />
           <Field label="Accident / incident summary">
-            <textarea rows={2} value={accidentSummary} onChange={e => setAccidentSummary(e.target.value)} className={inputCls} />
+            <textarea rows={2} value={f.accidentSummary} onChange={e => patch({ accidentSummary: e.target.value })} className={inputCls} />
           </Field>
           <div className="mt-3 grid grid-cols-2 gap-3">
             <Field label="Master's name">
-              <input value={compiledName} onChange={e => setCompiledName(e.target.value)} placeholder="Capt. …" className={inputCls} />
+              <input value={f.compiledName} onChange={e => patch({ compiledName: e.target.value })} placeholder="Capt. …" className={inputCls} />
             </Field>
             <Field label="Role">
-              <input value={compiledRole} onChange={e => setCompiledRole(e.target.value)} className={inputCls} />
+              <input value={f.compiledRole} onChange={e => patch({ compiledRole: e.target.value })} className={inputCls} />
             </Field>
           </div>
         </Card>
+
+        {warnings.length > 0 && (
+          <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm">
+            <p className="mb-1 font-medium">Worth checking before you submit — you can still submit as-is:</p>
+            <ul className="list-disc space-y-0.5 pl-5 text-[13px]">
+              {warnings.map((w, i) => <li key={i}>{w}</li>)}
+            </ul>
+          </div>
+        )}
 
         <div className="flex items-center gap-3">
           <button type="submit" disabled={busy} className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50">
             Submit report
           </button>
+          <button type="button" onClick={printPdf} className="flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium hover:bg-accent">
+            <FileDown className="h-4 w-4" /> Print / PDF
+          </button>
           <StatusText status={status} />
         </div>
       </form>
     </div>
+  )
+}
+
+/** 24-hour strip showing what the task rows account for; gaps glow red. */
+function CoverageBar({ tasks }: { tasks: TaskRowState[] }) {
+  const cov = useMemo(() => computeCoverage(tasks), [tasks])
+  const fullyCovered = cov.coveredMin >= 1440
+  return (
+    <div>
+      <div className="flex h-3 w-full overflow-hidden rounded-full border bg-muted/50">
+        {cov.segments.map((sg, i) => (
+          <div
+            key={i}
+            title={`${fmtMin(sg.start)}–${fmtMin(sg.end)} ${sg.kind === 'gap' ? '— not accounted for' : ''}`}
+            className={cn('h-full', FAMILY_BAR[sg.kind])}
+            style={{ width: `${((sg.end - sg.start) / 1440) * 100}%` }}
+          />
+        ))}
+      </div>
+      <div className="mt-1 flex items-center justify-between text-[11px] text-muted-foreground">
+        <span className="flex items-center gap-3">
+          <LegendDot cls="bg-amber-400" label="Standby" />
+          <LegendDot cls="bg-sky-500" label="Transit" />
+          <LegendDot cls="bg-emerald-500" label="Cargo" />
+          <LegendDot cls="bg-slate-400" label="Other" />
+          <LegendDot cls="bg-destructive/60" label="Gap" />
+        </span>
+        <span className={cn('font-mono', fullyCovered ? 'text-emerald-500' : '')}>
+          {fullyCovered ? '✓ full day accounted' : `${fmtMin(cov.coveredMin)} / 24:00 accounted`}
+        </span>
+      </div>
+    </div>
+  )
+}
+
+function LegendDot({ cls, label }: { cls: string; label: string }) {
+  return (
+    <span className="flex items-center gap-1">
+      <span className={cn('inline-block h-2 w-2 rounded-full', cls)} />
+      {label}
+    </span>
+  )
+}
+
+function LiquidFieldset({ k, f, patch }: {
+  k: LiquidKey
+  f: ReportFormState
+  patch: (p: Partial<ReportFormState>) => void
+}) {
+  const l = f.liquids[k]
+  const set = (p: Partial<typeof l>) => patch({ liquids: { ...f.liquids, [k]: { ...l, ...p } } })
+  return (
+    <fieldset className="rounded-md border bg-background/40 p-3">
+      <legend className="px-1 text-xs font-semibold">{LIQUID_TITLES[k]}</legend>
+      <div className="grid grid-cols-3 gap-2">
+        <Field label="ROB"><input value={l.rob} onChange={e => set({ rob: e.target.value })} placeholder="417.42 M3" className={inputCls} /></Field>
+        <Field label="Consumed"><input value={l.consumed} onChange={e => set({ consumed: e.target.value })} placeholder="1.44 M3" className={inputCls} /></Field>
+        <Field label="Max"><input value={l.max} onChange={e => set({ max: e.target.value })} placeholder="950 M3 (80%)" className={inputCls} /></Field>
+        <Field label="Loaded"><input value={l.loaded} onChange={e => set({ loaded: e.target.value })} className={inputCls} /></Field>
+        <Field label="Discharged"><input value={l.discharged} onChange={e => set({ discharged: e.target.value })} className={inputCls} /></Field>
+        <Field label="Rem. to load"><input value={l.remaining} onChange={e => set({ remaining: e.target.value })} className={inputCls} /></Field>
+      </div>
+    </fieldset>
   )
 }
 
@@ -378,7 +587,7 @@ function PdfImportCard() {
   }, [queryClient])
 
   return (
-    <Card title="Import daily-report PDFs" subtitle="Drop the captains' PDF reports — parsed and saved automatically">
+    <Card title="Import daily-report PDFs" subtitle="Drop the captains' PDF reports — parsed and saved automatically" accent="slate">
       <div
         role="button"
         tabIndex={0}
@@ -505,9 +714,9 @@ function PlanForm() {
 
   return (
     <form onSubmit={submit} className="space-y-4">
-      <Card title="Plan header">
+      <Card title="Plan header" accent="blue">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          <Field label="Plan date *">
+          <Field label="Plan date" required>
             <input required type="date" value={planDate} onChange={e => setPlanDate(e.target.value)} className={inputCls} />
           </Field>
           <Field label="Issued by">
@@ -528,7 +737,7 @@ function PlanForm() {
       </Card>
 
       {activeVessels.map((v, idx) => (
-        <Card key={v.id} title={v.name}>
+        <Card key={v.id} title={v.name} accent="teal">
           <div className="space-y-3">
             <Field label="Current status (today)">
               <textarea
@@ -572,14 +781,32 @@ function PlanForm() {
 
 // ---------------------------------------------------------------------------
 
-const inputCls = 'w-full rounded-md border bg-card px-2 py-1.5 text-sm outline-none focus:ring-1 focus:ring-ring'
+const inputCls = 'w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm shadow-sm outline-none transition-shadow placeholder:text-muted-foreground/50 focus:border-ring focus:ring-2 focus:ring-ring/30'
 
-function Card({ title, subtitle, children }: {
-  title: string; subtitle?: string; children: React.ReactNode
+type Accent = 'blue' | 'red' | 'violet' | 'teal' | 'amber' | 'green' | 'cyan' | 'slate'
+
+const ACCENTS: Record<Accent, { bar: string; dot: string }> = {
+  blue:   { bar: 'border-l-blue-500',    dot: 'bg-blue-500' },
+  red:    { bar: 'border-l-red-500',     dot: 'bg-red-500' },
+  violet: { bar: 'border-l-violet-500',  dot: 'bg-violet-500' },
+  teal:   { bar: 'border-l-teal-500',    dot: 'bg-teal-500' },
+  amber:  { bar: 'border-l-amber-500',   dot: 'bg-amber-500' },
+  green:  { bar: 'border-l-green-500',   dot: 'bg-green-500' },
+  cyan:   { bar: 'border-l-cyan-500',    dot: 'bg-cyan-500' },
+  slate:  { bar: 'border-l-slate-400',   dot: 'bg-slate-400' },
+}
+
+function Card({ title, subtitle, accent = 'slate', required, children }: {
+  title: string; subtitle?: string; accent?: Accent; required?: boolean; children: React.ReactNode
 }) {
+  const a = ACCENTS[accent]
   return (
-    <section className="rounded-lg border p-4">
-      <h2 className="mb-1 text-sm font-semibold">{title}</h2>
+    <section className={cn('rounded-lg border border-l-4 bg-card p-4', a.bar)}>
+      <h2 className="mb-1 flex items-center gap-2 text-sm font-semibold">
+        <span className={cn('inline-block h-2.5 w-2.5 rounded-full', a.dot)} />
+        {title}
+        {required && <span className="text-destructive" title="Required">*</span>}
+      </h2>
       {subtitle && <p className="mb-3 text-xs text-muted-foreground">{subtitle}</p>}
       {!subtitle && <div className="mb-3" />}
       {children}
@@ -587,12 +814,17 @@ function Card({ title, subtitle, children }: {
   )
 }
 
-function Field({ label, children, className }: {
-  label: string; children: React.ReactNode; className?: string
+function Field({ label, children, className, required }: {
+  label: string; children: React.ReactNode; className?: string; required?: boolean
 }) {
   return (
     <label className={cn('block', className)}>
-      <span className="mb-1 block text-xs font-medium text-muted-foreground">{label}</span>
+      <span className={cn(
+        'mb-1 block text-xs',
+        required ? 'font-semibold text-foreground' : 'font-medium text-muted-foreground',
+      )}>
+        {label}{required && <span className="ml-0.5 text-destructive">*</span>}
+      </span>
       {children}
     </label>
   )
