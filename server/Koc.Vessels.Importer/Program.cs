@@ -148,14 +148,20 @@ static async Task ImportVesselsAsync(DwoDbContext db, string dataPath, ImportRep
     var json = JsonNode.Parse(await File.ReadAllTextAsync(Path.Combine(dataPath, "vessels.json")))!;
     var byCode = await db.MarineLocations.ToDictionaryAsync(x => x.LocationCode, x => x.Id);
 
-    // MMSI lives in config.example.js and the AIS files rather than vessels.json.
+    // Fallback MMSIs for the four vessels whose identity predates the AIS work
+    // and lives in config.example.js / the AIS files rather than vessels.json.
     // Kept here so the import is self-contained; it moves to the Admin screen
     // once vessels are editable in the UI.
-    var mmsiByCode = new Dictionary<string, string>
+    //
+    // vessels.json WINS over this table. Charlie 3's MMSI was researched and
+    // written to the file (2026-07-29); had this dictionary kept the last word,
+    // every import would have quietly reset that column to the NULL it used to
+    // hold - the file being the place a human edits, and the importer then
+    // overriding it, is the bug worth naming here.
+    var fallbackMmsiByCode = new Dictionary<string, string>
     {
         ["JUNO"] = "636025030", ["CA1"] = "538010097",
         ["CA3"] = "538010098",  ["CA5"] = "538010099",
-        // CH3 has no MMSI on record yet - left null rather than invented.
     };
 
     var arr = json["vessels"]!.AsArray();
@@ -178,7 +184,10 @@ static async Task ImportVesselsAsync(DwoDbContext db, string dataPath, ImportRep
             BeamM      = node["beam_m"]?.GetValue<decimal>(),
             SpeedKts   = node["speed_kts"]?.GetValue<decimal>(),
             HomeBerthLocationId = homeBerthId,
-            Mmsi       = mmsiByCode.GetValueOrDefault(code),
+            Mmsi       = AsText(node["mmsi"]) ?? fallbackMmsiByCode.GetValueOrDefault(code),
+            Imo        = AsText(node["imo"]),
+            CallSign   = node["call_sign"]?.GetValue<string>(),
+            Flag       = node["flag"]?.GetValue<string>(),
             MapColor   = node["color"]?.GetValue<string>(),
             MapStroke  = node["stroke"]?.GetValue<string>(),
             ActiveFrom = ParseDate(node["active_from"]?.GetValue<string>()),
@@ -649,6 +658,7 @@ static async Task<bool> VerifyAsync(DwoDbContext db, string dataPath, ImportRepo
     // mangled by a type or precision mismatch and the least likely to look wrong
     // in a count, so they are compared exactly against the source.
     ok &= await VerifyCoordinatesAsync(db, dataPath);
+    ok &= await VerifyVesselParticularsAsync(db, dataPath);
 
     if (report.Skipped.Count > 0)
     {
@@ -661,6 +671,58 @@ static async Task<bool> VerifyAsync(DwoDbContext db, string dataPath, ImportRepo
     Console.WriteLine();
     Console.WriteLine(ok ? "==> Import verified." : "==> VERIFICATION FAILED - see above.");
     return ok;
+}
+
+/// <summary>
+/// Compares stored vessel particulars against vessels.json.
+///
+/// The counted check above passes on five rows whatever they contain. That is
+/// how Charlie 3 sat in the database at Allianz Juno's 48 x 11 m with a NULL
+/// MMSI for weeks after the file had been corrected to its real 42 x 7 m and its
+/// researched MMSI: right row count, wrong ship. Dimensions drive the icon drawn
+/// on the map and MMSI is what the AIS pollers match on, so both are compared by
+/// value, like coordinates.
+///
+/// AsNoTracking for the same reason as VerifyCoordinatesAsync: without it EF
+/// returns the objects this process just built in memory and the importer is
+/// checked against itself.
+/// </summary>
+static async Task<bool> VerifyVesselParticularsAsync(DwoDbContext db, string dataPath)
+{
+    var src = JsonNode.Parse(await File.ReadAllTextAsync(Path.Combine(dataPath, "vessels.json")))!
+        ["vessels"]!.AsArray()
+        .ToDictionary(n => n!["id"]!.GetValue<string>(), n => n!);
+
+    var bad = new List<string>();
+    var compared = 0;
+
+    foreach (var v in await db.Vessels.AsNoTracking().ToListAsync())
+    {
+        if (!src.TryGetValue(v.VesselCode, out var n)) continue;
+        compared++;
+
+        // MMSI is only compared when the file states one: four of the five
+        // vessels take theirs from the importer's fallback table, and calling
+        // that a mismatch would fail every run.
+        var fileMmsi = AsText(n["mmsi"]);
+
+        if (AsDecimal(n["length_m"]) != v.LengthM || AsDecimal(n["beam_m"]) != v.BeamM
+            || AsDecimal(n["speed_kts"]) != v.SpeedKts
+            || (n["specs_provisional"]?.GetValue<bool>() ?? false) != v.SpecsProvisional
+            || (fileMmsi is not null && fileMmsi != v.Mmsi))
+        {
+            bad.Add($"{v.VesselCode}: db=({v.LengthM}x{v.BeamM} m, {v.SpeedKts} kts, " +
+                    $"mmsi={v.Mmsi ?? "null"}, provisional={v.SpecsProvisional}) " +
+                    $"file=({AsDecimal(n["length_m"])}x{AsDecimal(n["beam_m"])} m, " +
+                    $"{AsDecimal(n["speed_kts"])} kts, mmsi={fileMmsi ?? "null"}, " +
+                    $"provisional={n["specs_provisional"]?.GetValue<bool>() ?? false})");
+        }
+    }
+
+    var vOk = bad.Count == 0 && compared == src.Count;
+    Console.WriteLine($"    [{(vOk ? "OK" : "FAIL")}] vessel specs     {compared}/{src.Count} compared, {bad.Count} mismatched");
+    foreach (var b in bad) Console.WriteLine($"           {b}");
+    return vOk;
 }
 
 /// <summary>
