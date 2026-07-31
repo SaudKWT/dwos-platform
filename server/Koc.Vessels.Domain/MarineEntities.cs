@@ -56,6 +56,15 @@ public class Vessel
     public decimal? SpeedKts { get; set; }
     public int? HomeBerthLocationId { get; set; }
     public string? Mmsi { get; set; }
+
+    /// <summary>
+    /// IMO number. Outlives <see cref="Mmsi"/>, which is reassigned when a ship
+    /// changes flag — so this is what identifies the hull across a re-flag.
+    /// </summary>
+    public string? Imo { get; set; }
+
+    public string? CallSign { get; set; }
+    public string? Flag { get; set; }
     public string? MapColor { get; set; }
     public string? MapStroke { get; set; }
     public int? ContractorId { get; set; }

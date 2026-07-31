@@ -86,6 +86,7 @@ public class DwoDbContext(DbContextOptions<DwoDbContext> options) : DbContext(op
             e.ToTable("Vessel");
             e.Property(x => x.Id).HasColumnName("ID");
             e.Property(x => x.Mmsi).HasColumnName("MMSI");
+            e.Property(x => x.Imo).HasColumnName("IMO");
             e.Property(x => x.HomeBerthLocationId).HasColumnName("HomeBerthLocationID");
             e.Property(x => x.ContractorId).HasColumnName("ContractorID");
             e.Property(x => x.ReplacedVesselId).HasColumnName("ReplacedVesselID");
