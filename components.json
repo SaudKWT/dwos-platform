@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "src/styles.css",
+    "baseColor": "slate",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "iconLibrary": "lucide",
+  "aliases": {
+    "components": "@/components",
+    "ui": "@/components/ui",
+    "lib": "@/lib",
+    "utils": "@/lib/utils",
+    "hooks": "@/hooks"
+  },
+  "registries": {
+    "@koc": {
+      "url": "https://api.github.com/repos/SaudKWT/koc-design-system/contents/apps/docs/public/r/{name}.json?ref=v0.1.0",
+      "headers": {
+        "Authorization": "Bearer ${KOC_REGISTRY_TOKEN}",
+        "Accept": "application/vnd.github.raw"
+      }
+    }
+  }
+}
