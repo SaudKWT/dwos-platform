@@ -1,0 +1,202 @@
+{
+  "consumables": {
+    "fuel_oil": {
+      "loaded": "- M3",
+      "discharged": "- M3",
+      "consumed": "1,680 M3",
+      "rob": "371,005 M3",
+      "max_capacity": "950 M3 (85%)",
+      "remaining_to_load": "578,995 M3",
+      "remarks": ""
+    },
+    "fresh_water": {
+      "loaded": "75 M3",
+      "discharged": "- M3",
+      "consumed": "4 M3",
+      "rob": "372 M3",
+      "max_capacity": "673 M3 (100%)",
+      "remaining_to_load": "301 M3",
+      "remarks": ""
+    },
+    "drill_water": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": null,
+      "rob": "1000 M3",
+      "max_capacity": "1180 M3 (80%)",
+      "remaining_to_load": "180 M3",
+      "remarks": ""
+    },
+    "base_oil": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": null,
+      "rob": "0 Bbls",
+      "max_capacity": "1000 Bbls (80%)",
+      "remaining_to_load": "1000 Bbls",
+      "remarks": ""
+    }
+  },
+  "task_log": [
+    {
+      "from_time": "00:01",
+      "to_time": "00:20",
+      "duration_min": 20,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "Vsl remain alongside at berth 20,continue discharge well fluid from Mud Tank no 2 by Hetco team,",
+      "location_id": "B20",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "00:20",
+      "to_time": "01:00",
+      "duration_min": 40,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "Continue Start Rx FW",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "01:10",
+      "to_time": "08:25",
+      "duration_min": 435,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "Stop discharge well fluid from Mud Tank no 2, Hetco team disembarked",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:25",
+      "to_time": "09:02",
+      "duration_min": 37,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "Continue Rx FW",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:55",
+      "to_time": "23:00",
+      "duration_min": 845,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "continue discharge well fluid from Mud Tank no 2 by Hetco team,",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:30",
+      "to_time": "09:50",
+      "duration_min": 20,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "Barite hose connected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:50",
+      "to_time": "21:47",
+      "duration_min": 717,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "Start Rx Barite from trucks = 195 MT",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "11:05",
+      "to_time": "13:24",
+      "duration_min": 139,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "4 person contractor from ATS and Safety enginering onboard for LSA and H2s Callibration",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:24",
+      "to_time": "14:15",
+      "duration_min": 51,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "2 offsigneer disembarked",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "14:15",
+      "to_time": "23:59",
+      "duration_min": 585,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "1marine crew onboard for CA3",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "23:59",
+      "to_time": "24:00",
+      "duration_min": 1,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Vsl remain alongside at berth 20",
+      "location_id": "B20",
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {
+    "accidents": "Nil",
+    "incidents": "Nil",
+    "near_miss": "Nil"
+  },
+  "provisions": {
+    "dry_store_days": 19,
+    "fresh_frozen_days": 19,
+    "drinking_water_days": 19,
+    "fuel_oil_unpumpable": "20 M3"
+  },
+  "delays": {
+    "arrival_time": "NA",
+    "departure_time": "NA"
+  },
+  "lifts": {},
+  "report_date": "2026-07-09",
+  "voyage_no": "78",
+  "days_since_port_call": 1,
+  "next_crew_change": "TBA",
+  "security_level": 3,
+  "issues_comments": "Remaining Provisions Store On-board\n   Dry Store             : 19 Days\n   Fresh & Frozen Store: 19 Days\n   Drinking Water        : 19 Days\n   FO Unpumpable : 20 M3\n   Durability for safe operation :\n   Delay Arrival Time  : NA\n   Delay Departure Time : NA",
+  "accident_summary": "Nil",
+  "compiled_by": {
+    "name": "Ahmad Sakour",
+    "role": "Master"
+  },
+  "vessel_id": "CA5",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CREST ARGUS 5 - Daily Midnight Report - 09.07.2026 ",
+    "email_from": "Crest Argus5 | OFCO <crestargus5@ofco-int.com>",
+    "email_date": "2026-07-10 00:38:45+03:00",
+    "attachment_name": "Crest Argus 5_Daily vessel report _09.07.2026.pdf",
+    "submitted_via": "msg_batch_import"
+  }
+}

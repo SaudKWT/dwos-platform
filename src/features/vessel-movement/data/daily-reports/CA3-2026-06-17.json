@@ -1,0 +1,245 @@
+{
+  "consumables": {
+    "fuel_oil": {
+      "loaded": "0.008 M3",
+      "discharged": null,
+      "consumed": "5.109 M3",
+      "rob": "576.363 M3",
+      "max_capacity": "950 M3 (80%)",
+      "remaining_to_load": "373.637M3",
+      "remarks": ""
+    },
+    "fresh_water": {
+      "loaded": "144 M3",
+      "discharged": null,
+      "consumed": "6 M3",
+      "rob": "421 M3",
+      "max_capacity": "673 M3 (100%)",
+      "remaining_to_load": "252 M3",
+      "remarks": ""
+    },
+    "drill_water": {
+      "loaded": "36 M3",
+      "discharged": null,
+      "consumed": null,
+      "rob": "1042 M3",
+      "max_capacity": "1476 M3 (100%)",
+      "remaining_to_load": "434 M3",
+      "remarks": ""
+    },
+    "base_oil": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": null,
+      "rob": "900 Bbls",
+      "max_capacity": "1094 Bbls (80%)",
+      "remaining_to_load": "194 Bbls",
+      "remarks": ""
+    }
+  },
+  "task_log": [
+    {
+      "from_time": "00:00",
+      "to_time": "05:55",
+      "duration_min": 355,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "Rx 4 trucks fresh water.",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "01:15",
+      "to_time": "01:40",
+      "duration_min": 25,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "Deck cargo ops",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "02:10",
+      "to_time": "02:46",
+      "duration_min": 36,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "Rx 1 trucks drill water.",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "05:55",
+      "to_time": "08:10",
+      "duration_min": 135,
+      "task_code": "S04",
+      "task_label": "Standby Shuaiba port",
+      "description": "Standby at berth no.20,Shuaiba Port.",
+      "location_id": "B20",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:10",
+      "to_time": "08:20",
+      "duration_min": 10,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "Rx 26 pax for OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:12",
+      "to_time": "08:20",
+      "duration_min": 8,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "SBE",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:30",
+      "to_time": "08:42",
+      "duration_min": 12,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Cast off",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:42",
+      "to_time": "11:42",
+      "duration_min": 180,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "Transit to OPH with normal Speed",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "11:42",
+      "to_time": "12:10",
+      "duration_min": 28,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Arrived outside 500m zone of OPH, Pre DP Setup & DP MODE ON",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:10",
+      "to_time": "12:40",
+      "duration_min": 30,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Enter 500M zone, in position on stbd side of OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:40",
+      "to_time": "13:10",
+      "duration_min": 30,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Tx 26 pax to OPH.",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:10",
+      "to_time": "14:52",
+      "duration_min": 102,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Pull out 20m from OPH & stand by.",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "14:52",
+      "to_time": "15:40",
+      "duration_min": 48,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Back in position, deck cargo ops.",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:40",
+      "to_time": "16:40",
+      "duration_min": 60,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Shifting to the port side of OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "16:40",
+      "to_time": "24:00",
+      "duration_min": 440,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Deck cargo ops",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {
+    "accidents": "Nil",
+    "incidents": "Nil",
+    "near_miss": "Nil"
+  },
+  "provisions": {
+    "dry_store_days": 19,
+    "fresh_frozen_days": 17,
+    "drinking_water_days": 17,
+    "fuel_oil_unpumpable": "20 M3"
+  },
+  "delays": {
+    "arrival_time": "NA",
+    "departure_time": "NA"
+  },
+  "lifts": {},
+  "report_date": "2026-06-17",
+  "voyage_no": "067/2026",
+  "next_crew_change": "T.B.A",
+  "security_level": 3,
+  "issues_comments": "Remaining provision store On-board:\nDry Store              : 19 Days\nFresh & Frozen Store : 17 Days\nDrinking Water         : 17 Days\nFO Unpumpable        : 20 M3\nDelay Arrival Time   : NA\nDelay Departure Time : NA",
+  "accident_summary": "NIL",
+  "compiled_by": {
+    "name": "Capt. Sergei Shcherbakov",
+    "role": "Master"
+  },
+  "vessel_id": "CA3",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CREST ARGUS 3 - Daily Midnight Report - 17 June 2026",
+    "email_from": "Crest Argus3 | OFCO <crestargus3@ofco-int.com>",
+    "email_date": "2026-06-18 01:19:55+03:00",
+    "attachment_name": "Crest Argus 3_Daily vessel report_ 17 JUNE 2026.pdf",
+    "submitted_via": "msg_batch_import"
+  }
+}

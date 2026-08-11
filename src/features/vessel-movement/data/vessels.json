@@ -1,0 +1,73 @@
+{
+  "vessels": [
+    {
+      "id": "JUNO",
+      "name": "Allianz Juno",
+      "type": "SV — Fast Crew Boat",
+      "length_m": 48,
+      "beam_m": 11,
+      "speed_kts": 14,
+      "home_berth": "B4",
+      "color": "#f5b400",
+      "stroke": "#7a5500",
+      "retired_on": "2026-05-20",
+      "$comment": "Replaced by Charlie 3, whose first report is 20 May 2026; Juno's last is 16 May. Without retired_on the app would carry Juno's final position forward for ever and draw it alongside Charlie 3 at the same berth, showing two vessels where there is one."
+    },
+    {
+      "id": "CH3",
+      "name": "Charlie 3",
+      "type": "SV — Fast Crew Boat",
+      "length_m": 42,
+      "beam_m": 7,
+      "speed_kts": 14,
+      "home_berth": "B4",
+      "color": "#8b5cf6",
+      "stroke": "#4c2889",
+      "replaced_vessel": "JUNO",
+      "active_from": "2026-05-20",
+      "specs_provisional": true,
+      "mmsi": "341930000",
+      "imo": "9889928",
+      "call_sign": "V4DX4",
+      "flag": "St Kitts & Nevis",
+      "$comment": "Charlie 3 took over Allianz Juno's role and berth on 20 May 2026, the date of its first report; Juno is retired on that date (see JUNO.retired_on) so only one of the two is ever on the map. Berth B4 is confirmed by its own logs ('VSL STBY ALS TO B# 4 IN SHUAIBA PORT'). IDENTITY CONFIRMED 2026-07-29 against public trackers: MyShipTracking lists MMSI 341930000 as 'High speed craft', 42 x 7 m, call sign V4DX4, flag St Kitts & Nevis, with 144 arrivals at Shuaiba in the past year on a Shuaiba<->Dubai pattern, and its last recorded position (29.04054, 48.15859) is 12 m from our own Berth 4 coordinates — i.e. the same mooring. That settles the earlier worry that this was the wrong hull: VesselFinder's 'Offshore Tug/Supply' label is just a coarser classification of the same ship. Length and beam above are now those real 42 x 7 m figures, replacing Juno's 48 x 11 m stand-in; speed_kts 14 is still Juno's number and remains unverified, which is why specs_provisional stays true. Its fuel tank is 55 m3 against Juno's 147 m3, consistent with the smaller hull. The .env AIS_MMSI_CH3 entry is what the pollers actually read; these fields are documentation."
+    },
+    {
+      "id": "CA1",
+      "name": "Crest Argus 1",
+      "type": "PSV",
+      "length_m": 80,
+      "beam_m": 20,
+      "speed_kts": 10,
+      "home_berth": "B20",
+      "color": "#e0413f",
+      "stroke": "#7a1614"
+    },
+    {
+      "id": "CA3",
+      "name": "Crest Argus 3",
+      "type": "PSV",
+      "length_m": 80,
+      "beam_m": 20,
+      "speed_kts": 10,
+      "home_berth": "B20",
+      "color": "#2870c4",
+      "stroke": "#143b6b"
+    },
+    {
+      "id": "CA5",
+      "name": "Crest Argus 5",
+      "type": "PSV",
+      "length_m": 80,
+      "beam_m": 20,
+      "speed_kts": 10,
+      "home_berth": "B20",
+      "color": "#2aa84a",
+      "stroke": "#125724"
+    }
+  ],
+  "defaults": {
+    "rig_turnaround_min": 60,
+    "port_turnaround_min": 60
+  }
+}

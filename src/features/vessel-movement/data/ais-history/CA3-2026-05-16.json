@@ -1,0 +1,105 @@
+{
+  "vessel_id": "CA3",
+  "mmsi": "538010098",
+  "date_utc": "2026-05-16",
+  "positions": [
+    {
+      "ts": "2026-05-16T10:26:57Z",
+      "lat": 29.238159,
+      "lon": 48.347973,
+      "sog": 5.1,
+      "cog": 356.0,
+      "heading": 350.0,
+      "nav_status": "Underway Using Engine"
+    },
+    {
+      "ts": "2026-05-16T10:59:00Z",
+      "lat": 29.237053,
+      "lon": 48.34557,
+      "sog": 2.2,
+      "cog": 182.0,
+      "heading": 40.0,
+      "nav_status": "Under way using engine"
+    },
+    {
+      "ts": "2026-05-16T11:03:00Z",
+      "lat": 29.237053,
+      "lon": 48.34557,
+      "sog": 2.2,
+      "cog": 182.0,
+      "heading": 40.0,
+      "nav_status": "Under way using engine"
+    },
+    {
+      "ts": "2026-05-16T12:52:00Z",
+      "lat": 29.232014,
+      "lon": 48.341045,
+      "sog": 3.7,
+      "cog": 224.0,
+      "heading": 237.0,
+      "nav_status": "Under way using engine"
+    },
+    {
+      "ts": "2026-05-16T13:20:00Z",
+      "lat": 29.207533,
+      "lon": 48.294079,
+      "sog": 7.8,
+      "cog": 237.0,
+      "heading": 237.0,
+      "nav_status": "Under way using engine"
+    },
+    {
+      "ts": "2026-05-16T13:29:41Z",
+      "lat": 29.19401,
+      "lon": 48.269665,
+      "sog": 7.9,
+      "cog": 237.0,
+      "heading": 238.0,
+      "nav_status": "Underway Using Engine"
+    },
+    {
+      "ts": "2026-05-16T13:31:00Z",
+      "lat": 29.19401,
+      "lon": 48.269665,
+      "sog": 7.9,
+      "cog": 237.0,
+      "heading": 238.0,
+      "nav_status": "Under way using engine"
+    },
+    {
+      "ts": "2026-05-16T13:39:00Z",
+      "lat": 29.19401,
+      "lon": 48.269665,
+      "sog": 7.9,
+      "cog": 237.0,
+      "heading": 238.0,
+      "nav_status": "Under way using engine"
+    },
+    {
+      "ts": "2026-05-16T13:40:00Z",
+      "lat": 29.19401,
+      "lon": 48.269665,
+      "sog": 7.9,
+      "cog": 237.0,
+      "heading": 238.0,
+      "nav_status": "Under way using engine"
+    }
+  ],
+  "source": {
+    "provider": "datalastic",
+    "imported_at": "2026-05-16T20:09:35.056606Z",
+    "raw_query": "datalastic /vessel_pro polled"
+  },
+  "stats": {
+    "count": 9,
+    "first_ts": "2026-05-16T10:26:57Z",
+    "last_ts": "2026-05-16T13:40:00Z",
+    "bbox": [
+      29.19401,
+      48.269665,
+      29.238159,
+      48.347973
+    ],
+    "max_sog": 7.9
+  }
+}

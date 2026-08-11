@@ -1,0 +1,334 @@
+{
+  "consumables": {
+    "fuel_oil": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": "6.000 M3",
+      "rob": "529.452 M3",
+      "max_capacity": "950 M3 (85%)",
+      "remaining_to_load": "420.548 M3",
+      "remarks": ""
+    },
+    "fresh_water": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": "5 M3",
+      "rob": "258 M3",
+      "max_capacity": "673 M3 (100%)",
+      "remaining_to_load": "415 M3",
+      "remarks": ""
+    },
+    "drill_water": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": null,
+      "rob": "1020 M3",
+      "max_capacity": "1180 M3 (80%)",
+      "remaining_to_load": "160 M3",
+      "remarks": ""
+    },
+    "base_oil": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": null,
+      "rob": "0 Bbls",
+      "max_capacity": "1000 Bbls (80%)",
+      "remaining_to_load": "1000 Bbls",
+      "remarks": ""
+    }
+  },
+  "task_log": [
+    {
+      "from_time": "00:01",
+      "to_time": "00:50",
+      "duration_min": 50,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Start received well fluid in mud tank no 2, Vsl at OD 1 p/s crane",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "00:50",
+      "to_time": "01:05",
+      "duration_min": 15,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Completed received well fluid",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "01:05",
+      "to_time": "01:10",
+      "duration_min": 5,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Well fluid hose disconnected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "01:10",
+      "to_time": "01:40",
+      "duration_min": 30,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Move shifting to S/S crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "01:40",
+      "to_time": "01:55",
+      "duration_min": 15,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Vsl in post S/S crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "01:55",
+      "to_time": "02:00",
+      "duration_min": 5,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Well fluid hose connected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "02:00",
+      "to_time": "04:36",
+      "duration_min": 156,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Start received well fluid",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "04:50",
+      "to_time": "05:00",
+      "duration_min": 10,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Well fluid hose disconnected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "05:00",
+      "to_time": "05:15",
+      "duration_min": 15,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Pull out stby 400 mtrs",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "05:15",
+      "to_time": "12:05",
+      "duration_min": 410,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Vsl stby 400 mtrs w/ instruction",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:05",
+      "to_time": "12:35",
+      "duration_min": 30,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Move to stbd OD 1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:35",
+      "to_time": "13:05",
+      "duration_min": 30,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "In post at stbd crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:05",
+      "to_time": "13:15",
+      "duration_min": 10,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Well fluid hose connected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:15",
+      "to_time": "15:22",
+      "duration_min": 127,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Start rx well fluid",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:25",
+      "to_time": "15:28",
+      "duration_min": 3,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Well fluid hose disconnected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:28",
+      "to_time": "16:15",
+      "duration_min": 47,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Pull out stby 400 mtrs",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "16:15",
+      "to_time": "20:10",
+      "duration_min": 235,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Vsl stby 400 mtrs w/ instruction",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "20:10",
+      "to_time": "20:40",
+      "duration_min": 30,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Move to P/S",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "20:40",
+      "to_time": "21:35",
+      "duration_min": 55,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Stby 400 Mtrs at P/S OD 1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "21:35",
+      "to_time": "22:00",
+      "duration_min": 25,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Approach P/S crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "22:00",
+      "to_time": "22:20",
+      "duration_min": 20,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "In post at P/S crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "22:20",
+      "to_time": "22:38",
+      "duration_min": 18,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Well fluid hose connected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "22:38",
+      "to_time": "24:00",
+      "duration_min": 82,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Start rx well fluid, Vsl at P/S crane OD 1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {
+    "accidents": "Nil",
+    "incidents": "Nil",
+    "near_miss": "Nil"
+  },
+  "provisions": {
+    "dry_store_days": 17,
+    "fresh_frozen_days": 17,
+    "drinking_water_days": 17,
+    "fuel_oil_unpumpable": "20 M3"
+  },
+  "delays": {
+    "arrival_time": "NA",
+    "departure_time": "NA"
+  },
+  "lifts": {},
+  "report_date": "2026-06-26",
+  "voyage_no": "77",
+  "days_since_port_call": 3,
+  "next_crew_change": "TBA",
+  "security_level": 3,
+  "issues_comments": "3\n                                                   Crest Argus 5\n                                                 Daily Vessel Report\n                                                Remaining Provisions Store On-board\nDry Store             : 17 Days\nFresh & Frozen Store: 17 Days\nDrinking Water        : 17 Days\nFO Unpumpable : 20 M3\nDurability for safe operation :\nDelay Arrival Time  : NA\nDelay Departure Time : NA",
+  "accident_summary": "Nil",
+  "compiled_by": {
+    "name": "Ahmad Sakour",
+    "role": "Master"
+  },
+  "vessel_id": "CA5",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CREST ARGUS 5 - Daily Midnight Report - 26.06.2026 ",
+    "email_from": "Crest Argus5 | OFCO <crestargus5@ofco-int.com>",
+    "email_date": "2026-06-27 00:22:43+03:00",
+    "attachment_name": "Crest Argus 5_Daily vessel report _26.06.2026.pdf",
+    "submitted_via": "msg_batch_import"
+  }
+}

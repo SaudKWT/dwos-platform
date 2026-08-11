@@ -1,0 +1,202 @@
+{
+  "consumables": {
+    "fuel_oil": {
+      "max_capacity": "950 M3 (80%)",
+      "consumed": "2.021 M3",
+      "discharged": "-",
+      "rob": "564.646 M3",
+      "remaining_to_load": "385.354 M3",
+      "loaded": "-",
+      "remarks": ""
+    }
+  },
+  "task_log": [
+    {
+      "from_time": "00:00",
+      "to_time": "18:10",
+      "duration_min": 1090,
+      "task_code": "S04",
+      "task_label": "Standby Shuaiba port",
+      "description": "Vsl standby at Shuaiba port, waiting for further instructions",
+      "location_id": "B20",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "06:15",
+      "to_time": "17:00",
+      "duration_min": 645,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Hetco team (9 psn) o/b for continue tank cleaning mud tk #2",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "06:58",
+      "to_time": "07:00",
+      "duration_min": 2,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "FW & DW hose connected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:05",
+      "to_time": "12:30",
+      "duration_min": 325,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "Rx FW =108 m3",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:08",
+      "to_time": "14:10",
+      "duration_min": 422,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "Rx DW =97 m3",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:10",
+      "to_time": "16:30",
+      "duration_min": 560,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Completed tank cleaning mud tk #2",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:25",
+      "to_time": "17:55",
+      "duration_min": 630,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "Deck cargo ops",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "10:12",
+      "to_time": "11:32",
+      "duration_min": 80,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "3 MOI Officer o/b to conduct a regular inspections",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "14:20",
+      "to_time": "14:30",
+      "duration_min": 10,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "FW, DW hose disconnected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "18:00",
+      "to_time": "18:10",
+      "duration_min": 10,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "S.B.E",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "18:10",
+      "to_time": "18:18",
+      "duration_min": 8,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Vsl Cast off",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "18:18",
+      "to_time": "22:18",
+      "duration_min": 240,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "Passing tower outbound & Departed to OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "22:18",
+      "to_time": "22:24",
+      "duration_min": 6,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "Arrived at OPH Loc. & Drop anchor 3Ø i/w – F.W.E",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "22:24",
+      "to_time": "24:00",
+      "duration_min": 96,
+      "task_code": "S01",
+      "task_label": "Standby on location",
+      "description": "Vsl standby anchored at OPH Location, waiting for further instructions",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {},
+  "provisions": {
+    "dry_store_days": 15,
+    "fresh_frozen_days": 15,
+    "drinking_water_days": 15,
+    "fuel_oil_unpumpable": "20 M3"
+  },
+  "delays": {
+    "arrival_time": "NA",
+    "departure_time": "NA"
+  },
+  "lifts": {},
+  "report_date": "2026-05-08",
+  "voyage_no": "057/2026",
+  "next_crew_change": "T.B.A",
+  "issues_comments": "Remaining provision store On-board:\nDry Store              : 15 Days\nFresh & Frozen Store : 15 Days\nDrinking Water         : 15 Days\nFO Unpumpable        : 20 M3\nDelay Arrival Time   : NA\nDelay Departure Time : NA",
+  "accident_summary": "NIL",
+  "compiled_by": {
+    "name": "Capt. Maguta Rochman Hidayat",
+    "role": "Master"
+  },
+  "vessel_id": "CA3",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CREST ARGUS 3 - Daily Midnight Report - 08 May 2026",
+    "email_from": "Crest Argus3 | OFCO <crestargus3@ofco-int.com>",
+    "email_date": "2026-05-08T22:27:42+00:00",
+    "attachment_name": "Crest Argus 3_Daily vessel report_ 08 MAY 2026.pdf",
+    "submitted_via": "historical_import"
+  }
+}

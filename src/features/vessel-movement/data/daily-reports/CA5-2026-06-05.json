@@ -1,0 +1,235 @@
+{
+  "consumables": {
+    "fuel_oil": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": "2.736 M3",
+      "rob": "451.682 M3",
+      "max_capacity": "950 M3 (85%)",
+      "remaining_to_load": "498.318 M3",
+      "remarks": ""
+    },
+    "fresh_water": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": "5 M3",
+      "rob": "167 M3",
+      "max_capacity": "673 M3 (100%)",
+      "remaining_to_load": "506 M3",
+      "remarks": ""
+    },
+    "drill_water": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": null,
+      "rob": "1160 M3",
+      "max_capacity": "1180 M3 (80%)",
+      "remaining_to_load": "20 M3",
+      "remarks": ""
+    },
+    "base_oil": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": null,
+      "rob": "0 Bbls",
+      "max_capacity": "1000 Bbls (80%)",
+      "remaining_to_load": "1000 Bbls",
+      "remarks": ""
+    }
+  },
+  "task_log": [
+    {
+      "from_time": "00:01",
+      "to_time": "07:36",
+      "duration_min": 456,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "Vsl remain anchor at OD1 clear area stby waiting instruction",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:36",
+      "to_time": "07:40",
+      "duration_min": 4,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "SBE",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:40",
+      "to_time": "07:50",
+      "duration_min": 10,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Heave up anchor",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:50",
+      "to_time": "07:58",
+      "duration_min": 8,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "Anchor aweigh proceed to OD 1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:58",
+      "to_time": "08:15",
+      "duration_min": 17,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "DP mode on",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:15",
+      "to_time": "08:30",
+      "duration_min": 15,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "DP set up completed, permission granted entering 500m zone",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:30",
+      "to_time": "11:00",
+      "duration_min": 150,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "In post P/S OD 1 stby 300 mtrs for safety watch",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "11:00",
+      "to_time": "11:30",
+      "duration_min": 30,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Completed safety watch move to stbd crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "11:30",
+      "to_time": "15:00",
+      "duration_min": 210,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Vsl in post at S/S OD 1 stby for safety watch",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:00",
+      "to_time": "15:07",
+      "duration_min": 7,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Completed safety watch",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:07",
+      "to_time": "15:12",
+      "duration_min": 5,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Pull out 500m zone",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:12",
+      "to_time": "15:22",
+      "duration_min": 10,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Exit 500m zone DP off, proceed to anchor area",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:22",
+      "to_time": "15:30",
+      "duration_min": 8,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Drop anchor at OD 1 clear area",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:30",
+      "to_time": "24:00",
+      "duration_min": 510,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "Anchor brough up, Finish ME, Vsl remain anchor at OD1 clear area stby waiting instruction",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {
+    "accidents": "Nil",
+    "incidents": "Nil",
+    "near_miss": "Nil"
+  },
+  "provisions": {
+    "dry_store_days": 18,
+    "fresh_frozen_days": 18,
+    "drinking_water_days": 18,
+    "fuel_oil_unpumpable": "20 M3"
+  },
+  "delays": {
+    "arrival_time": "NA",
+    "departure_time": "NA"
+  },
+  "lifts": {},
+  "report_date": "2026-06-05",
+  "voyage_no": "74",
+  "days_since_port_call": 3,
+  "next_crew_change": "TBA",
+  "security_level": 3,
+  "issues_comments": "Remaining Provisions Store On-board\nDry Store             : 18 Days\nFresh & Frozen Store: 18 Days\nDrinking Water        : 18 Days\nFO Unpumpable : 20 M3\nDurability for safe operation :\nDelay Arrival Time  : NA\nDelay Departure Time : NA",
+  "accident_summary": "Nil",
+  "compiled_by": {
+    "name": "Ahmad Sakour",
+    "role": "Master"
+  },
+  "vessel_id": "CA5",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CREST ARGUS 5 - Daily Midnight Report - 05.06.2026",
+    "email_from": "Crest Argus5 | OFCO <crestargus5@ofco-int.com>",
+    "email_date": "2026-06-06 00:10:16+03:00",
+    "attachment_name": "Crest Argus 5_Daily vessel report _05.06.2026 - Copy.pdf",
+    "submitted_via": "msg_batch_import"
+  }
+}

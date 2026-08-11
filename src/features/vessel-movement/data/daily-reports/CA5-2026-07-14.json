@@ -1,0 +1,92 @@
+{
+  "consumables": {
+    "fuel_oil": {
+      "loaded": "- M3",
+      "discharged": "- M3",
+      "consumed": "1.680 M3",
+      "rob": "350.964 M3",
+      "max_capacity": "950 M3 (85%)",
+      "remaining_to_load": "599.036 M3",
+      "remarks": ""
+    },
+    "fresh_water": {
+      "loaded": "- M3",
+      "discharged": "- M3",
+      "consumed": "4 M3",
+      "rob": "352 M3",
+      "max_capacity": "673 M3 (100%)",
+      "remaining_to_load": "321 M3",
+      "remarks": ""
+    },
+    "drill_water": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": null,
+      "rob": "1000 M3",
+      "max_capacity": "1180 M3 (80%)",
+      "remaining_to_load": "180 M3",
+      "remarks": ""
+    },
+    "base_oil": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": null,
+      "rob": "0 Bbls",
+      "max_capacity": "1000 Bbls (80%)",
+      "remaining_to_load": "1000 Bbls",
+      "remarks": ""
+    }
+  },
+  "task_log": [
+    {
+      "from_time": "00:01",
+      "to_time": "24:00",
+      "duration_min": 1440,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "Vsl remain anchor at oriental dragon 1 clear area, stby keep watch and monitoring Oriental Dragon 1 and all vessel crossing that area",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {
+    "accidents": "Nil",
+    "incidents": "Nil",
+    "near_miss": "Nil"
+  },
+  "provisions": {
+    "dry_store_days": 14,
+    "fresh_frozen_days": 14,
+    "drinking_water_days": 14,
+    "fuel_oil_unpumpable": "20 M3"
+  },
+  "delays": {
+    "arrival_time": "NA",
+    "departure_time": "NA"
+  },
+  "lifts": {},
+  "report_date": "2026-07-14",
+  "voyage_no": "79",
+  "days_since_port_call": 4,
+  "next_crew_change": "TBA",
+  "security_level": 3,
+  "issues_comments": "Remaining Provisions Store On-board\n   Dry Store             : 14 Days\n   Fresh & Frozen Store: 14 Days\n   Drinking Water        : 14 Days\n   FO Unpumpable : 20 M3\n   Durability for safe operation :\n   Delay Arrival Time  : NA\n   Delay Departure Time : NA",
+  "accident_summary": "Nil",
+  "compiled_by": {
+    "name": "Ahmad Sakour",
+    "role": "Master"
+  },
+  "vessel_id": "CA5",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CREST ARGUS 5 - Daily Midnight Report - 14.07.2026 ",
+    "email_from": "Crest Argus5 | OFCO <crestargus5@ofco-int.com>",
+    "email_date": "2026-07-15 00:28:35+03:00",
+    "attachment_name": "Crest Argus 5_Daily vessel report _14.07.2026.pdf",
+    "submitted_via": "msg_batch_import"
+  }
+}

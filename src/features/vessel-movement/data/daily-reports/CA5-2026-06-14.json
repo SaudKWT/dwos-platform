@@ -1,0 +1,191 @@
+{
+  "consumables": {
+    "fuel_oil": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": "1.524 M3",
+      "rob": "513.337 M3",
+      "max_capacity": "950 M3 (85%)",
+      "remaining_to_load": "436.663 M3",
+      "remarks": ""
+    },
+    "fresh_water": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": "4 M3",
+      "rob": "350 M3",
+      "max_capacity": "673 M3 (100%)",
+      "remaining_to_load": "323 M3",
+      "remarks": ""
+    },
+    "drill_water": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": null,
+      "rob": "1160 M3",
+      "max_capacity": "1180 M3 (80%)",
+      "remaining_to_load": "20 M3",
+      "remarks": ""
+    },
+    "base_oil": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": null,
+      "rob": "0 Bbls",
+      "max_capacity": "1000 Bbls (80%)",
+      "remaining_to_load": "1000 Bbls",
+      "remarks": ""
+    }
+  },
+  "task_log": [
+    {
+      "from_time": "00:01",
+      "to_time": "14:45",
+      "duration_min": 885,
+      "task_code": "S04",
+      "task_label": "Standby Shuaiba port",
+      "description": "Vsl remain alongside at berth 20, Shuaiba Port",
+      "location_id": "B20",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "11:30",
+      "to_time": "12:30",
+      "duration_min": 60,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Oil Spill Familiarization & Demonstration from LAMOR personel.",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "14:45",
+      "to_time": "18:58",
+      "duration_min": 253,
+      "task_code": "L1F",
+      "task_label": "Cargo ops Freeport",
+      "description": "Deck cargo operation",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "19:00",
+      "to_time": "19:15",
+      "duration_min": 15,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "SBE",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "19:15",
+      "to_time": "19:24",
+      "duration_min": 9,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "Cast off from berth 20",
+      "location_id": "B20",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "19:24",
+      "to_time": "22:24",
+      "duration_min": 180,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "Clear from break water deprature to OD1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "22:24",
+      "to_time": "22:35",
+      "duration_min": 11,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "Arrival at OD 1 location, proceed to anchorage area",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "22:35",
+      "to_time": "22:40",
+      "duration_min": 5,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "Drop anchor at OD1 clear area",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "22:40",
+      "to_time": "22:48",
+      "duration_min": 8,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "Anchor brought up",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "22:48",
+      "to_time": "24:00",
+      "duration_min": 72,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "Finish ME, Vsl remain anchor at OD1 clear area stby w/ instruction",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {
+    "accidents": "Nil",
+    "incidents": "Nil",
+    "near_miss": "Nil"
+  },
+  "provisions": {
+    "dry_store_days": 9,
+    "fresh_frozen_days": 9,
+    "drinking_water_days": 9,
+    "fuel_oil_unpumpable": "20 M3"
+  },
+  "delays": {
+    "arrival_time": "NA",
+    "departure_time": "NA"
+  },
+  "lifts": {},
+  "report_date": "2026-06-14",
+  "voyage_no": "76",
+  "days_since_port_call": 1,
+  "next_crew_change": "TBA",
+  "security_level": 3,
+  "issues_comments": "3\n                                                   Crest Argus 5\n                                                 Daily Vessel Report\n                                                Remaining Provisions Store On-board\nDry Store             : 09 Days\nFresh & Frozen Store: 09 Days\nDrinking Water        : 09 Days\nFO Unpumpable : 20 M3\nDurability for safe operation :\nDelay Arrival Time  : NA\nDelay Departure Time : NA",
+  "accident_summary": "Nil",
+  "compiled_by": {
+    "name": "Ahmad Sakour",
+    "role": "Master"
+  },
+  "vessel_id": "CA5",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CREST ARGUS 5 - Daily Midnight Report - 14.06.2026",
+    "email_from": "Crest Argus5 | OFCO <crestargus5@ofco-int.com>",
+    "email_date": "2026-06-15 00:17:29+03:00",
+    "attachment_name": "Crest Argus 5_Daily vessel report _14.06.2026.pdf",
+    "submitted_via": "msg_batch_import"
+  }
+}
