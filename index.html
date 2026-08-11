@@ -5,6 +5,12 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>dwos-dashboard</title>
+    <!-- Inter. --font-sans names it first and falls through to the system stack
+         without it, which silently makes the app a different typeface — the KOC
+         base layer also asks for Inter's contextual alternates (cv02/03/04/11),
+         which only exist in this font. -->
+    <link rel="preconnect" href="https://rsms.me/" />
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
   </head>
   <body>
     <div id="root"></div>
