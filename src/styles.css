@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+/* Entrance/exit keyframes (animate-in, fade-in-0, zoom-in-95, slide-in-from-*).
+ * @koc components ship these classes and assume the plugin is present. Nothing
+ * errors when it is missing — the classes are simply inert, so every dropdown,
+ * tooltip and sheet just pops. */
+@import "tw-animate-css";
+
+/* Tailwind v4 binds `dark:` to prefers-color-scheme. Rebound to a `.dark` class
+ * so the theme can be chosen explicitly: an operator on night shift needs dark
+ * mode regardless of what the OS thinks. */
+@custom-variant dark (&:is(.dark *));
+
+/* ── @koc/theme writes the KOC token layer below ────────────────────────────
+ *
+ * DO NOT ADD TOKEN DEFINITIONS AFTER IT.
+ *
+ * `npx shadcn add sidebar` (and several third-party registry items) append
+ * their own `:root` / `.dark` blocks with stock Zinc defaults. They land after
+ * the KOC block, carry identical specificity, and therefore win — KOC's
+ * sidebar becomes near-white grey and nothing errors.
+ *
+ * After any `shadcn add`, run `git diff` on this file. If a stock block has
+ * appeared, delete it. */
