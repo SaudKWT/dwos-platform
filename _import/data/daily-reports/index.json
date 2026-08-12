@@ -1,0 +1,1789 @@
+{
+  "reports": [
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-06",
+      "file": "daily-reports/CA3-2026-05-06.json",
+      "task_log_rows": 25,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "JUNO",
+      "report_date": "2026-05-06",
+      "file": "daily-reports/JUNO-2026-05-06.json",
+      "task_log_rows": 31,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-07",
+      "file": "daily-reports/CA1-2026-05-07.json",
+      "task_log_rows": 1,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-07",
+      "file": "daily-reports/CA3-2026-05-07.json",
+      "task_log_rows": 24,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-05-07",
+      "file": "daily-reports/CA5-2026-05-07.json",
+      "task_log_rows": 15,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "JUNO",
+      "report_date": "2026-05-07",
+      "file": "daily-reports/JUNO-2026-05-07.json",
+      "task_log_rows": 22,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-08",
+      "file": "daily-reports/CA1-2026-05-08.json",
+      "task_log_rows": 1,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-08",
+      "file": "daily-reports/CA3-2026-05-08.json",
+      "task_log_rows": 14,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "JUNO",
+      "report_date": "2026-05-08",
+      "file": "daily-reports/JUNO-2026-05-08.json",
+      "task_log_rows": 24,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-09",
+      "file": "daily-reports/CA1-2026-05-09.json",
+      "task_log_rows": 2,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-09",
+      "file": "daily-reports/CA3-2026-05-09.json",
+      "task_log_rows": 13,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-05-09",
+      "file": "daily-reports/CA5-2026-05-09.json",
+      "task_log_rows": 17,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "JUNO",
+      "report_date": "2026-05-09",
+      "file": "daily-reports/JUNO-2026-05-09.json",
+      "task_log_rows": 29,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-10",
+      "file": "daily-reports/CA1-2026-05-10.json",
+      "task_log_rows": 10,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-10",
+      "file": "daily-reports/CA3-2026-05-10.json",
+      "task_log_rows": 20,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-05-10",
+      "file": "daily-reports/CA5-2026-05-10.json",
+      "task_log_rows": 22,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "JUNO",
+      "report_date": "2026-05-10",
+      "file": "daily-reports/JUNO-2026-05-10.json",
+      "task_log_rows": 34,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-11",
+      "file": "daily-reports/CA1-2026-05-11.json",
+      "task_log_rows": 10,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-11",
+      "file": "daily-reports/CA3-2026-05-11.json",
+      "task_log_rows": 17,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-05-11",
+      "file": "daily-reports/CA5-2026-05-11.json",
+      "task_log_rows": 29,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "JUNO",
+      "report_date": "2026-05-11",
+      "file": "daily-reports/JUNO-2026-05-11.json",
+      "task_log_rows": 31,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-12",
+      "file": "daily-reports/CA1-2026-05-12.json",
+      "task_log_rows": 19,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-12",
+      "file": "daily-reports/CA3-2026-05-12.json",
+      "task_log_rows": 18,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-05-12",
+      "file": "daily-reports/CA5-2026-05-12.json",
+      "task_log_rows": 24,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "JUNO",
+      "report_date": "2026-05-12",
+      "file": "daily-reports/JUNO-2026-05-12.json",
+      "task_log_rows": 33,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-13",
+      "file": "daily-reports/CA1-2026-05-13.json",
+      "task_log_rows": 10,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-13",
+      "file": "daily-reports/CA3-2026-05-13.json",
+      "task_log_rows": 19,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-05-13",
+      "file": "daily-reports/CA5-2026-05-13.json",
+      "task_log_rows": 1,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "JUNO",
+      "report_date": "2026-05-13",
+      "file": "daily-reports/JUNO-2026-05-13.json",
+      "task_log_rows": 43,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-14",
+      "file": "daily-reports/CA1-2026-05-14.json",
+      "task_log_rows": 7,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-14",
+      "file": "daily-reports/CA3-2026-05-14.json",
+      "task_log_rows": 17,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-05-14",
+      "file": "daily-reports/CA5-2026-05-14.json",
+      "task_log_rows": 5,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "JUNO",
+      "report_date": "2026-05-14",
+      "file": "daily-reports/JUNO-2026-05-14.json",
+      "task_log_rows": 34,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-15",
+      "file": "daily-reports/CA1-2026-05-15.json",
+      "task_log_rows": 8,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-15",
+      "file": "daily-reports/CA3-2026-05-15.json",
+      "task_log_rows": 17,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-05-15",
+      "file": "daily-reports/CA5-2026-05-15.json",
+      "task_log_rows": 22,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "JUNO",
+      "report_date": "2026-05-15",
+      "file": "daily-reports/JUNO-2026-05-15.json",
+      "task_log_rows": 30,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-16",
+      "file": "daily-reports/CA1-2026-05-16.json",
+      "task_log_rows": 18,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-16",
+      "file": "daily-reports/CA3-2026-05-16.json",
+      "task_log_rows": 28,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-05-16",
+      "file": "daily-reports/CA5-2026-05-16.json",
+      "task_log_rows": 9,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "JUNO",
+      "report_date": "2026-05-16",
+      "file": "daily-reports/JUNO-2026-05-16.json",
+      "task_log_rows": 27,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-20",
+      "file": "daily-reports/CA1-2026-05-20.json",
+      "task_log_rows": 24,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-20",
+      "file": "daily-reports/CA3-2026-05-20.json",
+      "task_log_rows": 15,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-05-20",
+      "file": "daily-reports/CA5-2026-05-20.json",
+      "task_log_rows": 16,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-05-20",
+      "file": "daily-reports/CH3-2026-05-20.json",
+      "task_log_rows": 29,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-21",
+      "file": "daily-reports/CA1-2026-05-21.json",
+      "task_log_rows": 31,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-21",
+      "file": "daily-reports/CA3-2026-05-21.json",
+      "task_log_rows": 22,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-05-21",
+      "file": "daily-reports/CA5-2026-05-21.json",
+      "task_log_rows": 11,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-05-21",
+      "file": "daily-reports/CH3-2026-05-21.json",
+      "task_log_rows": 35,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-22",
+      "file": "daily-reports/CA1-2026-05-22.json",
+      "task_log_rows": 28,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-22",
+      "file": "daily-reports/CA3-2026-05-22.json",
+      "task_log_rows": 12,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-05-22",
+      "file": "daily-reports/CA5-2026-05-22.json",
+      "task_log_rows": 1,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-05-22",
+      "file": "daily-reports/CH3-2026-05-22.json",
+      "task_log_rows": 30,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-23",
+      "file": "daily-reports/CA1-2026-05-23.json",
+      "task_log_rows": 18,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-23",
+      "file": "daily-reports/CA3-2026-05-23.json",
+      "task_log_rows": 16,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-05-23",
+      "file": "daily-reports/CA5-2026-05-23.json",
+      "task_log_rows": 11,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-05-23",
+      "file": "daily-reports/CH3-2026-05-23.json",
+      "task_log_rows": 30,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-24",
+      "file": "daily-reports/CA3-2026-05-24.json",
+      "task_log_rows": 17,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-05-24",
+      "file": "daily-reports/CH3-2026-05-24.json",
+      "task_log_rows": 24,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-25",
+      "file": "daily-reports/CA3-2026-05-25.json",
+      "task_log_rows": 13,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-26",
+      "file": "daily-reports/CA1-2026-05-26.json",
+      "task_log_rows": 17,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-27",
+      "file": "daily-reports/CA1-2026-05-27.json",
+      "task_log_rows": 21,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-05-27",
+      "file": "daily-reports/CA5-2026-05-27.json",
+      "task_log_rows": 27,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-05-27",
+      "file": "daily-reports/CH3-2026-05-27.json",
+      "task_log_rows": 28,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-28",
+      "file": "daily-reports/CA1-2026-05-28.json",
+      "task_log_rows": 13,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-05-28",
+      "file": "daily-reports/CA5-2026-05-28.json",
+      "task_log_rows": 25,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-05-28",
+      "file": "daily-reports/CH3-2026-05-28.json",
+      "task_log_rows": 19,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-29",
+      "file": "daily-reports/CA1-2026-05-29.json",
+      "task_log_rows": 26,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-29",
+      "file": "daily-reports/CA3-2026-05-29.json",
+      "task_log_rows": 16,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-05-29",
+      "file": "daily-reports/CA5-2026-05-29.json",
+      "task_log_rows": 1,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-05-29",
+      "file": "daily-reports/CH3-2026-05-29.json",
+      "task_log_rows": 19,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-30",
+      "file": "daily-reports/CA1-2026-05-30.json",
+      "task_log_rows": 22,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-30",
+      "file": "daily-reports/CA3-2026-05-30.json",
+      "task_log_rows": 15,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-05-30",
+      "file": "daily-reports/CA5-2026-05-30.json",
+      "task_log_rows": 1,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-05-30",
+      "file": "daily-reports/CH3-2026-05-30.json",
+      "task_log_rows": 11,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-05-31",
+      "file": "daily-reports/CA1-2026-05-31.json",
+      "task_log_rows": 11,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-05-31",
+      "file": "daily-reports/CA3-2026-05-31.json",
+      "task_log_rows": 15,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-05-31",
+      "file": "daily-reports/CA5-2026-05-31.json",
+      "task_log_rows": 1,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-05-31",
+      "file": "daily-reports/CH3-2026-05-31.json",
+      "task_log_rows": 34,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-01",
+      "file": "daily-reports/CA1-2026-06-01.json",
+      "task_log_rows": 18,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-01",
+      "file": "daily-reports/CA3-2026-06-01.json",
+      "task_log_rows": 15,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-01",
+      "file": "daily-reports/CA5-2026-06-01.json",
+      "task_log_rows": 24,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-01",
+      "file": "daily-reports/CH3-2026-06-01.json",
+      "task_log_rows": 19,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-02",
+      "file": "daily-reports/CA1-2026-06-02.json",
+      "task_log_rows": 25,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-02",
+      "file": "daily-reports/CA3-2026-06-02.json",
+      "task_log_rows": 22,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-02",
+      "file": "daily-reports/CA5-2026-06-02.json",
+      "task_log_rows": 26,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-02",
+      "file": "daily-reports/CH3-2026-06-02.json",
+      "task_log_rows": 25,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-03",
+      "file": "daily-reports/CA1-2026-06-03.json",
+      "task_log_rows": 17,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-03",
+      "file": "daily-reports/CA3-2026-06-03.json",
+      "task_log_rows": 24,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-03",
+      "file": "daily-reports/CA5-2026-06-03.json",
+      "task_log_rows": 30,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-03",
+      "file": "daily-reports/CH3-2026-06-03.json",
+      "task_log_rows": 41,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-04",
+      "file": "daily-reports/CA1-2026-06-04.json",
+      "task_log_rows": 13,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-04",
+      "file": "daily-reports/CA3-2026-06-04.json",
+      "task_log_rows": 12,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-04",
+      "file": "daily-reports/CA5-2026-06-04.json",
+      "task_log_rows": 19,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-04",
+      "file": "daily-reports/CH3-2026-06-04.json",
+      "task_log_rows": 26,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-05",
+      "file": "daily-reports/CA1-2026-06-05.json",
+      "task_log_rows": 27,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-05",
+      "file": "daily-reports/CA3-2026-06-05.json",
+      "task_log_rows": 33,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-05",
+      "file": "daily-reports/CA5-2026-06-05.json",
+      "task_log_rows": 14,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-05",
+      "file": "daily-reports/CH3-2026-06-05.json",
+      "task_log_rows": 11,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-06",
+      "file": "daily-reports/CA1-2026-06-06.json",
+      "task_log_rows": 19,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-06",
+      "file": "daily-reports/CA3-2026-06-06.json",
+      "task_log_rows": 1,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-06",
+      "file": "daily-reports/CA5-2026-06-06.json",
+      "task_log_rows": 28,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-06",
+      "file": "daily-reports/CH3-2026-06-06.json",
+      "task_log_rows": 10,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-07",
+      "file": "daily-reports/CA1-2026-06-07.json",
+      "task_log_rows": 22,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-07",
+      "file": "daily-reports/CA3-2026-06-07.json",
+      "task_log_rows": 1,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-07",
+      "file": "daily-reports/CA5-2026-06-07.json",
+      "task_log_rows": 12,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-07",
+      "file": "daily-reports/CH3-2026-06-07.json",
+      "task_log_rows": 25,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-08",
+      "file": "daily-reports/CA1-2026-06-08.json",
+      "task_log_rows": 29,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-08",
+      "file": "daily-reports/CA3-2026-06-08.json",
+      "task_log_rows": 22,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-08",
+      "file": "daily-reports/CA5-2026-06-08.json",
+      "task_log_rows": 19,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-08",
+      "file": "daily-reports/CH3-2026-06-08.json",
+      "task_log_rows": 40,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-09",
+      "file": "daily-reports/CA1-2026-06-09.json",
+      "task_log_rows": 25,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-09",
+      "file": "daily-reports/CA3-2026-06-09.json",
+      "task_log_rows": 5,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-09",
+      "file": "daily-reports/CA5-2026-06-09.json",
+      "task_log_rows": 25,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-09",
+      "file": "daily-reports/CH3-2026-06-09.json",
+      "task_log_rows": 37,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-10",
+      "file": "daily-reports/CA1-2026-06-10.json",
+      "task_log_rows": 7,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-10",
+      "file": "daily-reports/CA3-2026-06-10.json",
+      "task_log_rows": 1,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-10",
+      "file": "daily-reports/CA5-2026-06-10.json",
+      "task_log_rows": 13,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-10",
+      "file": "daily-reports/CH3-2026-06-10.json",
+      "task_log_rows": 35,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-11",
+      "file": "daily-reports/CA1-2026-06-11.json",
+      "task_log_rows": 12,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-11",
+      "file": "daily-reports/CA3-2026-06-11.json",
+      "task_log_rows": 13,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-11",
+      "file": "daily-reports/CA5-2026-06-11.json",
+      "task_log_rows": 20,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-11",
+      "file": "daily-reports/CH3-2026-06-11.json",
+      "task_log_rows": 34,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-12",
+      "file": "daily-reports/CA1-2026-06-12.json",
+      "task_log_rows": 16,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-12",
+      "file": "daily-reports/CA3-2026-06-12.json",
+      "task_log_rows": 7,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-12",
+      "file": "daily-reports/CA5-2026-06-12.json",
+      "task_log_rows": 9,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-12",
+      "file": "daily-reports/CH3-2026-06-12.json",
+      "task_log_rows": 11,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-13",
+      "file": "daily-reports/CA1-2026-06-13.json",
+      "task_log_rows": 1,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-13",
+      "file": "daily-reports/CA3-2026-06-13.json",
+      "task_log_rows": 27,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-13",
+      "file": "daily-reports/CA5-2026-06-13.json",
+      "task_log_rows": 5,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-13",
+      "file": "daily-reports/CH3-2026-06-13.json",
+      "task_log_rows": 40,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-14",
+      "file": "daily-reports/CA1-2026-06-14.json",
+      "task_log_rows": 14,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-14",
+      "file": "daily-reports/CA3-2026-06-14.json",
+      "task_log_rows": 27,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-14",
+      "file": "daily-reports/CA5-2026-06-14.json",
+      "task_log_rows": 10,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-14",
+      "file": "daily-reports/CH3-2026-06-14.json",
+      "task_log_rows": 28,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-15",
+      "file": "daily-reports/CA1-2026-06-15.json",
+      "task_log_rows": 17,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-15",
+      "file": "daily-reports/CA3-2026-06-15.json",
+      "task_log_rows": 12,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-15",
+      "file": "daily-reports/CA5-2026-06-15.json",
+      "task_log_rows": 23,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-15",
+      "file": "daily-reports/CH3-2026-06-15.json",
+      "task_log_rows": 25,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-16",
+      "file": "daily-reports/CA1-2026-06-16.json",
+      "task_log_rows": 15,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-16",
+      "file": "daily-reports/CA3-2026-06-16.json",
+      "task_log_rows": 21,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-16",
+      "file": "daily-reports/CA5-2026-06-16.json",
+      "task_log_rows": 29,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-16",
+      "file": "daily-reports/CH3-2026-06-16.json",
+      "task_log_rows": 17,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-17",
+      "file": "daily-reports/CA1-2026-06-17.json",
+      "task_log_rows": 24,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-17",
+      "file": "daily-reports/CA3-2026-06-17.json",
+      "task_log_rows": 15,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-17",
+      "file": "daily-reports/CA5-2026-06-17.json",
+      "task_log_rows": 26,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-17",
+      "file": "daily-reports/CH3-2026-06-17.json",
+      "task_log_rows": 26,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-18",
+      "file": "daily-reports/CA1-2026-06-18.json",
+      "task_log_rows": 9,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-18",
+      "file": "daily-reports/CA3-2026-06-18.json",
+      "task_log_rows": 14,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-18",
+      "file": "daily-reports/CA5-2026-06-18.json",
+      "task_log_rows": 22,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-18",
+      "file": "daily-reports/CH3-2026-06-18.json",
+      "task_log_rows": 36,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-19",
+      "file": "daily-reports/CA1-2026-06-19.json",
+      "task_log_rows": 10,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-19",
+      "file": "daily-reports/CA3-2026-06-19.json",
+      "task_log_rows": 15,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-19",
+      "file": "daily-reports/CA5-2026-06-19.json",
+      "task_log_rows": 20,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-19",
+      "file": "daily-reports/CH3-2026-06-19.json",
+      "task_log_rows": 28,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-20",
+      "file": "daily-reports/CA1-2026-06-20.json",
+      "task_log_rows": 22,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-20",
+      "file": "daily-reports/CA3-2026-06-20.json",
+      "task_log_rows": 17,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-20",
+      "file": "daily-reports/CA5-2026-06-20.json",
+      "task_log_rows": 11,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-20",
+      "file": "daily-reports/CH3-2026-06-20.json",
+      "task_log_rows": 20,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-21",
+      "file": "daily-reports/CA1-2026-06-21.json",
+      "task_log_rows": 7,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-21",
+      "file": "daily-reports/CA3-2026-06-21.json",
+      "task_log_rows": 15,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-21",
+      "file": "daily-reports/CA5-2026-06-21.json",
+      "task_log_rows": 16,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-21",
+      "file": "daily-reports/CH3-2026-06-21.json",
+      "task_log_rows": 35,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-22",
+      "file": "daily-reports/CA1-2026-06-22.json",
+      "task_log_rows": 29,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-22",
+      "file": "daily-reports/CA3-2026-06-22.json",
+      "task_log_rows": 13,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-22",
+      "file": "daily-reports/CA5-2026-06-22.json",
+      "task_log_rows": 15,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-22",
+      "file": "daily-reports/CH3-2026-06-22.json",
+      "task_log_rows": 35,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-23",
+      "file": "daily-reports/CA1-2026-06-23.json",
+      "task_log_rows": 19,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-23",
+      "file": "daily-reports/CA3-2026-06-23.json",
+      "task_log_rows": 16,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-23",
+      "file": "daily-reports/CA5-2026-06-23.json",
+      "task_log_rows": 17,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-23",
+      "file": "daily-reports/CH3-2026-06-23.json",
+      "task_log_rows": 30,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-24",
+      "file": "daily-reports/CA1-2026-06-24.json",
+      "task_log_rows": 33,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-24",
+      "file": "daily-reports/CA3-2026-06-24.json",
+      "task_log_rows": 14,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-24",
+      "file": "daily-reports/CA5-2026-06-24.json",
+      "task_log_rows": 7,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-24",
+      "file": "daily-reports/CH3-2026-06-24.json",
+      "task_log_rows": 26,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-25",
+      "file": "daily-reports/CA1-2026-06-25.json",
+      "task_log_rows": 26,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-25",
+      "file": "daily-reports/CA3-2026-06-25.json",
+      "task_log_rows": 19,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-25",
+      "file": "daily-reports/CA5-2026-06-25.json",
+      "task_log_rows": 24,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-25",
+      "file": "daily-reports/CH3-2026-06-25.json",
+      "task_log_rows": 20,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-26",
+      "file": "daily-reports/CA1-2026-06-26.json",
+      "task_log_rows": 6,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-26",
+      "file": "daily-reports/CA3-2026-06-26.json",
+      "task_log_rows": 13,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-26",
+      "file": "daily-reports/CA5-2026-06-26.json",
+      "task_log_rows": 23,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-26",
+      "file": "daily-reports/CH3-2026-06-26.json",
+      "task_log_rows": 20,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-27",
+      "file": "daily-reports/CA1-2026-06-27.json",
+      "task_log_rows": 11,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-27",
+      "file": "daily-reports/CA3-2026-06-27.json",
+      "task_log_rows": 18,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-27",
+      "file": "daily-reports/CA5-2026-06-27.json",
+      "task_log_rows": 22,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-27",
+      "file": "daily-reports/CH3-2026-06-27.json",
+      "task_log_rows": 27,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-28",
+      "file": "daily-reports/CA1-2026-06-28.json",
+      "task_log_rows": 2,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-28",
+      "file": "daily-reports/CA3-2026-06-28.json",
+      "task_log_rows": 21,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-28",
+      "file": "daily-reports/CA5-2026-06-28.json",
+      "task_log_rows": 19,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-28",
+      "file": "daily-reports/CH3-2026-06-28.json",
+      "task_log_rows": 25,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-29",
+      "file": "daily-reports/CA1-2026-06-29.json",
+      "task_log_rows": 34,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-29",
+      "file": "daily-reports/CA3-2026-06-29.json",
+      "task_log_rows": 11,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-29",
+      "file": "daily-reports/CA5-2026-06-29.json",
+      "task_log_rows": 20,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-29",
+      "file": "daily-reports/CH3-2026-06-29.json",
+      "task_log_rows": 32,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-06-30",
+      "file": "daily-reports/CA1-2026-06-30.json",
+      "task_log_rows": 27,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-06-30",
+      "file": "daily-reports/CA3-2026-06-30.json",
+      "task_log_rows": 19,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-06-30",
+      "file": "daily-reports/CA5-2026-06-30.json",
+      "task_log_rows": 22,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-06-30",
+      "file": "daily-reports/CH3-2026-06-30.json",
+      "task_log_rows": 27,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-07-01",
+      "file": "daily-reports/CA1-2026-07-01.json",
+      "task_log_rows": 26,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-07-01",
+      "file": "daily-reports/CA3-2026-07-01.json",
+      "task_log_rows": 19,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-07-01",
+      "file": "daily-reports/CA5-2026-07-01.json",
+      "task_log_rows": 14,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-07-01",
+      "file": "daily-reports/CH3-2026-07-01.json",
+      "task_log_rows": 29,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-07-02",
+      "file": "daily-reports/CA1-2026-07-02.json",
+      "task_log_rows": 15,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-07-02",
+      "file": "daily-reports/CA3-2026-07-02.json",
+      "task_log_rows": 17,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-07-02",
+      "file": "daily-reports/CA5-2026-07-02.json",
+      "task_log_rows": 16,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-07-02",
+      "file": "daily-reports/CH3-2026-07-02.json",
+      "task_log_rows": 32,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-07-03",
+      "file": "daily-reports/CA1-2026-07-03.json",
+      "task_log_rows": 18,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-07-03",
+      "file": "daily-reports/CA3-2026-07-03.json",
+      "task_log_rows": 10,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-07-03",
+      "file": "daily-reports/CA5-2026-07-03.json",
+      "task_log_rows": 29,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-07-03",
+      "file": "daily-reports/CH3-2026-07-03.json",
+      "task_log_rows": 10,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-07-04",
+      "file": "daily-reports/CA1-2026-07-04.json",
+      "task_log_rows": 27,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-07-04",
+      "file": "daily-reports/CA3-2026-07-04.json",
+      "task_log_rows": 18,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-07-04",
+      "file": "daily-reports/CA5-2026-07-04.json",
+      "task_log_rows": 11,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-07-04",
+      "file": "daily-reports/CH3-2026-07-04.json",
+      "task_log_rows": 21,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-07-05",
+      "file": "daily-reports/CA1-2026-07-05.json",
+      "task_log_rows": 25,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-07-05",
+      "file": "daily-reports/CA3-2026-07-05.json",
+      "task_log_rows": 18,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-07-05",
+      "file": "daily-reports/CA5-2026-07-05.json",
+      "task_log_rows": 6,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-07-05",
+      "file": "daily-reports/CH3-2026-07-05.json",
+      "task_log_rows": 20,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-07-06",
+      "file": "daily-reports/CA1-2026-07-06.json",
+      "task_log_rows": 28,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-07-06",
+      "file": "daily-reports/CA3-2026-07-06.json",
+      "task_log_rows": 17,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-07-06",
+      "file": "daily-reports/CA5-2026-07-06.json",
+      "task_log_rows": 15,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-07-06",
+      "file": "daily-reports/CH3-2026-07-06.json",
+      "task_log_rows": 23,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-07-07",
+      "file": "daily-reports/CA1-2026-07-07.json",
+      "task_log_rows": 19,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-07-07",
+      "file": "daily-reports/CA3-2026-07-07.json",
+      "task_log_rows": 18,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-07-07",
+      "file": "daily-reports/CA5-2026-07-07.json",
+      "task_log_rows": 20,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-07-07",
+      "file": "daily-reports/CH3-2026-07-07.json",
+      "task_log_rows": 33,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-07-08",
+      "file": "daily-reports/CA1-2026-07-08.json",
+      "task_log_rows": 13,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-07-08",
+      "file": "daily-reports/CA3-2026-07-08.json",
+      "task_log_rows": 29,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-07-08",
+      "file": "daily-reports/CA5-2026-07-08.json",
+      "task_log_rows": 14,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-07-08",
+      "file": "daily-reports/CH3-2026-07-08.json",
+      "task_log_rows": 31,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-07-09",
+      "file": "daily-reports/CA1-2026-07-09.json",
+      "task_log_rows": 31,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-07-09",
+      "file": "daily-reports/CA3-2026-07-09.json",
+      "task_log_rows": 18,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-07-09",
+      "file": "daily-reports/CA5-2026-07-09.json",
+      "task_log_rows": 11,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-07-09",
+      "file": "daily-reports/CH3-2026-07-09.json",
+      "task_log_rows": 24,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-07-10",
+      "file": "daily-reports/CA1-2026-07-10.json",
+      "task_log_rows": 11,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-07-10",
+      "file": "daily-reports/CA3-2026-07-10.json",
+      "task_log_rows": 15,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-07-10",
+      "file": "daily-reports/CA5-2026-07-10.json",
+      "task_log_rows": 6,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-07-10",
+      "file": "daily-reports/CH3-2026-07-10.json",
+      "task_log_rows": 20,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-07-11",
+      "file": "daily-reports/CA1-2026-07-11.json",
+      "task_log_rows": 1,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-07-11",
+      "file": "daily-reports/CA3-2026-07-11.json",
+      "task_log_rows": 8,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-07-11",
+      "file": "daily-reports/CA5-2026-07-11.json",
+      "task_log_rows": 13,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-07-11",
+      "file": "daily-reports/CH3-2026-07-11.json",
+      "task_log_rows": 21,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-07-12",
+      "file": "daily-reports/CA1-2026-07-12.json",
+      "task_log_rows": 24,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-07-12",
+      "file": "daily-reports/CA3-2026-07-12.json",
+      "task_log_rows": 16,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-07-12",
+      "file": "daily-reports/CA5-2026-07-12.json",
+      "task_log_rows": 28,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-07-12",
+      "file": "daily-reports/CH3-2026-07-12.json",
+      "task_log_rows": 9,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-07-13",
+      "file": "daily-reports/CA1-2026-07-13.json",
+      "task_log_rows": 22,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-07-13",
+      "file": "daily-reports/CA3-2026-07-13.json",
+      "task_log_rows": 4,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-07-13",
+      "file": "daily-reports/CA5-2026-07-13.json",
+      "task_log_rows": 20,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-07-13",
+      "file": "daily-reports/CH3-2026-07-13.json",
+      "task_log_rows": 10,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA1",
+      "report_date": "2026-07-14",
+      "file": "daily-reports/CA1-2026-07-14.json",
+      "task_log_rows": 3,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA3",
+      "report_date": "2026-07-14",
+      "file": "daily-reports/CA3-2026-07-14.json",
+      "task_log_rows": 3,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CA5",
+      "report_date": "2026-07-14",
+      "file": "daily-reports/CA5-2026-07-14.json",
+      "task_log_rows": 1,
+      "source_type": "imported_email"
+    },
+    {
+      "vessel_id": "CH3",
+      "report_date": "2026-07-14",
+      "file": "daily-reports/CH3-2026-07-14.json",
+      "task_log_rows": 10,
+      "source_type": "imported_email"
+    }
+  ]
+}

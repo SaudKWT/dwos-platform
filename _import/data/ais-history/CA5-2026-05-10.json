@@ -1,0 +1,69 @@
+{
+  "vessel_id": "CA5",
+  "mmsi": "538010099",
+  "date_utc": "2026-05-10",
+  "positions": [
+    {
+      "ts": "2026-05-10T11:58:00Z",
+      "lat": 29.111706,
+      "lon": 48.223248,
+      "sog": 4.4,
+      "cog": 355.0,
+      "heading": 0.0,
+      "nav_status": null
+    },
+    {
+      "ts": "2026-05-10T13:12:06Z",
+      "lat": 29.209993,
+      "lon": 48.230507,
+      "sog": 4.1,
+      "cog": 27.0,
+      "heading": 21.0,
+      "nav_status": null
+    },
+    {
+      "ts": "2026-05-10T13:22:00Z",
+      "lat": 29.209993,
+      "lon": 48.230507,
+      "sog": 4.1,
+      "cog": 27.0,
+      "heading": 28.0,
+      "nav_status": null
+    },
+    {
+      "ts": "2026-05-10T13:23:44Z",
+      "lat": 29.221657,
+      "lon": 48.237362,
+      "sog": 4.0,
+      "cog": 27.0,
+      "heading": 124.0,
+      "nav_status": "Underway Using Engine"
+    },
+    {
+      "ts": "2026-05-10T13:33:00Z",
+      "lat": 29.221657,
+      "lon": 48.237362,
+      "sog": 4.0,
+      "cog": 27.0,
+      "heading": 27.0,
+      "nav_status": "Under way using engine"
+    }
+  ],
+  "stats": {
+    "count": 5,
+    "first_ts": "2026-05-10T11:58:00Z",
+    "last_ts": "2026-05-10T13:33:00Z",
+    "bbox": [
+      29.111706,
+      48.223248,
+      29.221657,
+      48.237362
+    ],
+    "max_sog": 4.4
+  },
+  "source": {
+    "provider": "datalastic",
+    "imported_at": "2026-05-16T04:36:54.005560Z",
+    "raw_query": "datalastic: mmsi=538010099 days=7"
+  }
+}

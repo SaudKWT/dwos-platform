@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan — Import DDR PDFs in the Form tab</title>
+<style>
+  html, body { background: #ffffff; color: #1a1f24; }
+  body { font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 40px 32px 80px; }
+  .wrap { max-width: 860px; margin: 0 auto; }
+  h1 { font-size: 30px; margin: 0 0 4px; letter-spacing: -0.02em; }
+  .sub { color: #5b6570; margin: 0 0 28px; font-size: 15px; }
+  h2 { font-size: 21px; margin: 38px 0 10px; padding-bottom: 6px; border-bottom: 2px solid #e6e9ec; }
+  h3 { font-size: 16px; margin: 22px 0 6px; }
+  p { margin: 8px 0; }
+  ul, ol { margin: 8px 0; padding-left: 22px; }
+  li { margin: 5px 0; }
+  code { background: #f2f4f6; border: 1px solid #e2e6ea; border-radius: 4px; padding: 1px 5px; font: 13.5px/1.4 "SF Mono", ui-monospace, Menlo, monospace; }
+  .callout { background: #f4f9ff; border: 1px solid #cfe4fb; border-left: 4px solid #3b82f6; border-radius: 6px; padding: 12px 16px; margin: 16px 0; }
+  .callout.warn { background: #fff8f0; border-color: #f5d9b0; border-left-color: #e08a2b; }
+  .callout.ok { background: #f2fbf4; border-color: #c6ecce; border-left-color: #2fa34a; }
+  .callout b { display: block; margin-bottom: 2px; }
+  table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 14.5px; }
+  th, td { border: 1px solid #dfe3e7; padding: 8px 11px; text-align: left; vertical-align: top; }
+  th { background: #f6f8fa; font-weight: 600; }
+  .tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 20px; }
+  .tag.p1 { background: #e3f0ff; color: #1d4ed8; }
+  .tag.p2 { background: #efe7fb; color: #7c3aed; }
+  .flow { background: #fafbfc; border: 1px solid #e6e9ec; border-radius: 8px; padding: 6px 20px; margin: 14px 0; }
+  .muted { color: #6b7480; }
+  .filepath { font: 13px "SF Mono", ui-monospace, Menlo, monospace; color: #7a2f8f; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Import DDR PDFs in the Form tab</h1>
+<p class="sub">Drop 10–20 daily report PDFs into the admin dashboard and have them read, saved, and added to the system automatically.</p>
+
+<div class="callout ok">
+  <b>Good news: the hard part already exists.</b>
+  Your <code>tools/parse_daily_reports.py</code> already reads Crest Argus DDR PDFs (via <code>pdftotext</code>) into your report format. This plan wraps a screen and a button around that proven reader — we are not reinventing the parsing.
+</div>
+
+<h2>What you'll see and do</h2>
+<ol>
+  <li>Open the <b>Daily Vessel Report</b> tab in the admin dashboard.</li>
+  <li>At the top, a new <b>“Import daily reports (PDF)”</b> drop area.</li>
+  <li>Drag in a batch of PDFs (or click to pick them). Works for 1 or 50.</li>
+  <li>The app reads each one and <b>saves it automatically</b> (your choice — no confirm step).</li>
+  <li>A results table shows, per file: detected vessel, date, number of log rows, and status — <b>Saved</b>, <b>Overwrote</b>, <b>Skipped</b>, or <b>Error</b> with the reason.</li>
+  <li>To import more later, just drop more PDFs in the same spot. A PDF for a vessel+date you already have overwrites the old one.</li>
+</ol>
+
+<h2>How it works under the hood</h2>
+<div class="flow">
+  <p><b>Browser (Form tab)</b> → reads each PDF, sends the batch to → <b>local server</b> → runs the existing Python reader on each PDF → writes one <span class="filepath">data/daily-reports/&lt;vessel&gt;-&lt;date&gt;.json</span> → rebuilds the index → tells the map to refresh → sends results back to the browser.</p>
+</div>
+<p class="muted">The map/simulator already reads those JSON files, so imported reports light up everywhere with no extra wiring.</p>
+
+<h2>Build steps <span class="tag p1">Phase 1 · your Mac</span></h2>
+<table>
+  <tr><th>File</th><th>Change</th></tr>
+  <tr>
+    <td class="filepath">admin.html</td>
+    <td>Add the import panel (drop zone + file picker + results table) at the top of the Daily Vessel Report tab.</td>
+  </tr>
+  <tr>
+    <td class="filepath">admin.css</td>
+    <td>Styles for the drop zone (drag-over highlight) and the results table.</td>
+  </tr>
+  <tr>
+    <td class="filepath">admin.js</td>
+    <td>Handle picked/dropped files, send them to the server, render the results table, refresh the report list when done.</td>
+  </tr>
+  <tr>
+    <td class="filepath">server.mjs</td>
+    <td>New <code>POST /api/import</code> route: for each PDF, run the reader, save the JSON, rebuild <code>index.json</code>, fire the existing “report saved” refresh signal, and return a per-file result.</td>
+  </tr>
+  <tr>
+    <td class="filepath">tools/parse_daily_reports.py</td>
+    <td>Add a single-PDF mode (<code>--pdf &lt;path&gt;</code>) that detects the vessel from the PDF's own header text, reads it, and prints the report as JSON. (Today it only reads the email inbox in bulk.)</td>
+  </tr>
+</table>
+
+<div class="callout">
+  <b>How the files travel to the server.</b>
+  The browser turns each PDF into text-safe data and sends the batch as one normal request — so we don't need to add any file-upload framework to your small server. Fine for the 10–20 PDFs you described.
+</div>
+
+<h2>Cases we handle cleanly</h2>
+<table>
+  <tr><th>Situation</th><th>What happens</th></tr>
+  <tr><td>A PDF that isn't a Crest DDR (e.g. a movement-plan PDF, or the Allianz Juno report which is a Word doc, not PDF)</td><td>Skipped, with a clear reason. It never blocks the rest of the batch.</td></tr>
+  <tr><td>Two PDFs in the same batch for the same vessel + date</td><td>Keeps one, notes the duplicate.</td></tr>
+  <tr><td>The date can't be read from inside the PDF</td><td>Falls back to the date in the filename; if still none, that file shows an Error and the others still import.</td></tr>
+  <tr><td>A report for a vessel+date you already saved</td><td>Overwrites it (status “Overwrote”), since you chose auto-save.</td></tr>
+  <tr><td>One garbled/corrupt PDF</td><td>That one row shows Error; every other PDF still imports.</td></tr>
+</table>
+
+<h2>Testing</h2>
+<ul>
+  <li>Real Crest DDR PDFs are available inside the email files in <span class="filepath">Vessels daily report/</span> — we pull a few out to test the drop-and-save flow end to end.</li>
+  <li>Confirm each imported report opens correctly in the form and appears on the map.</li>
+</ul>
+
+<h2>Later: move it to the website <span class="tag p2">Phase 2 · any computer</span></h2>
+<p>When you want the captains (or you, from any computer) to import through the live site with no Mac needed, only the <b>server side swaps</b> — the screen, the button, and the results table stay exactly the same. Two things get added then:</p>
+<ul>
+  <li>A PDF reader written in the website's own language (the live site can't run the current Python one).</li>
+  <li>An online database so uploads are saved permanently (the live site has no permanent storage of its own today).</li>
+</ul>
+<div class="callout warn">
+  <b>Why it's a Phase 2, not now.</b>
+  Both of those are real projects on their own. Building Phase 1 first gets you importing your PDF backlog this week, and nothing in Phase 1 gets thrown away when we do Phase 2 — the front end is identical.
+</div>
+
+<p class="muted" style="margin-top:40px; font-size:13px;">Plan doc · Vessels Movement · Import DDR PDFs</p>
+
+</div>
+</body>
+</html>

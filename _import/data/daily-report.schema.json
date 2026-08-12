@@ -1,0 +1,154 @@
+{
+  "$comment": "Canonical schema for one vessel's daily report. Used by both the historical importer (tools/parse-daily-reports.py) and the captain's dashboard (admin.html). All times are Kuwait local (UTC+3).",
+  "$id": "https://koc.local/schemas/daily-report.json",
+  "type": "object",
+  "required": ["vessel_id", "report_date", "task_log", "source"],
+  "properties": {
+    "vessel_id": { "type": "string", "enum": ["JUNO", "CH3", "CA1", "CA3", "CA5"] },
+    "report_date": { "type": "string", "format": "date", "$comment": "YYYY-MM-DD, the 24-hr period the report covers" },
+    "period_end": { "type": "string", "default": "24:00" },
+    "voyage_no": { "type": ["string", "null"] },
+
+    "compiled_by": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "role": { "type": "string", "default": "Master" },
+        "submitted_at": { "type": "string", "format": "date-time" }
+      }
+    },
+
+    "safety": {
+      "type": "object",
+      "properties": {
+        "accidents": { "type": "string", "default": "Nil" },
+        "incidents": { "type": "string", "default": "Nil" },
+        "near_miss": { "type": "string", "default": "Nil" }
+      }
+    },
+
+    "days_since_port_call": { "type": ["integer", "null"] },
+    "next_crew_change":     { "type": ["string", "null"] },
+    "security_level":       { "type": ["integer", "null"] },
+
+    "consumables": {
+      "type": "object",
+      "$comment": "Optional. Allianz Juno only has fuel + water. Crest vessels have additional tanks (mud, barite, cement, etc.). Each entry mirrors the PDF columns.",
+      "properties": {
+        "fuel_oil":     { "$ref": "#/$defs/consumableRow" },
+        "fresh_water":  { "$ref": "#/$defs/consumableRow" },
+        "drill_water":  { "$ref": "#/$defs/consumableRow" },
+        "base_oil":     { "$ref": "#/$defs/consumableRow" },
+        "tanks":        { "type": "array", "items": { "$ref": "#/$defs/labelledRow" } },
+        "mud":          { "type": "array", "items": { "$ref": "#/$defs/labelledRow" } }
+      }
+    },
+
+    "task_log": {
+      "type": "array",
+      "$comment": "The 24-hour operational log. Each entry has a start time and a task code. Either to_time or duration_min may be null (Allianz Juno often logs single-timestamp events).",
+      "items": {
+        "type": "object",
+        "required": ["from_time", "task_code", "description"],
+        "properties": {
+          "from_time":       { "type": "string", "pattern": "^[0-2][0-9]:[0-5][0-9]$" },
+          "to_time":         { "type": ["string", "null"], "pattern": "^[0-2][0-9]:[0-5][0-9]$" },
+          "duration_min":    { "type": ["integer", "null"] },
+          "task_code":       { "type": "string", "$comment": "S01..S05, DP1, L1F, L2E, B1, O1, I01, I02, D1, WOW, A01, or a slash-combination like S01/A01" },
+          "activity":        { "type": ["string", "null"], "$comment": "Optional. What kind of job it was, when the captain said so on the form — 'Cargo loading / unloading', 'Water bunkering', 'Crew / passenger transfer'… Absent from every imported report; where it is missing the analytics classify the row from its code and description as before. Never written by the importer." },
+          "description":     { "type": "string" },
+          "location_id":     { "type": ["string", "null"], "$comment": "Normalised location at the END of this row (where the vessel is during the segment). One of B4, B20, NP, OPH, OD, or null if at sea / transit." },
+          "from_location_id":{ "type": ["string", "null"] },
+          "to_location_id":  { "type": ["string", "null"] }
+        }
+      }
+    },
+
+    "lifts": {
+      "type": "object",
+      "properties": {
+        "on_deck":         { "type": "string" },
+        "loaded":          { "type": ["string", "integer"] },
+        "discharged":      { "type": ["string", "integer"] },
+        "utilization_pct": { "type": ["number", "null"] }
+      }
+    },
+
+    "crew":       { "type": "array", "items": { "$ref": "#/$defs/crewMember" } },
+    "passengers": { "type": "array", "items": { "type": "object" } },
+
+    "provisions": {
+      "type": "object",
+      "properties": {
+        "dry_store_days":      { "type": ["integer", "null"] },
+        "fresh_frozen_days":   { "type": ["integer", "null"] },
+        "drinking_water_days": { "type": ["integer", "null"] },
+        "fuel_oil_unpumpable": { "type": ["string", "null"] }
+      }
+    },
+
+    "delays": {
+      "type": "object",
+      "properties": {
+        "arrival_time":   { "type": ["string", "null"] },
+        "departure_time": { "type": ["string", "null"] }
+      }
+    },
+
+    "requirements_next_port_call": { "type": "string" },
+    "issues_comments":             { "type": "string" },
+    "accident_summary":            { "type": "string" },
+
+    "source": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type":            { "type": "string", "enum": ["imported_email", "imported_pdf", "dashboard_submission"] },
+        "email_subject":   { "type": "string" },
+        "email_from":      { "type": "string" },
+        "email_date":      { "type": "string", "format": "date-time" },
+        "attachment_name": { "type": "string" },
+        "submitted_via":   { "type": "string" }
+      }
+    }
+  },
+
+  "$defs": {
+    "consumableRow": {
+      "type": "object",
+      "properties": {
+        "max_capacity":  { "type": ["string", "null"] },
+        "consumed":      { "type": ["string", "null"] },
+        "discharged":    { "type": ["string", "null"] },
+        "rob":           { "type": ["string", "null"], "$comment": "Remaining on board" },
+        "remaining_to_load": { "type": ["string", "null"] },
+        "loaded":        { "type": ["string", "null"] },
+        "remarks":       { "type": "string" }
+      }
+    },
+    "labelledRow": {
+      "allOf": [
+        { "$ref": "#/$defs/consumableRow" },
+        {
+          "type": "object",
+          "required": ["label"],
+          "properties": {
+            "label":   { "type": "string", "$comment": "e.g. 'Tank 1 — Barite', 'Mud 3 (SOBM 22 ppg)'" },
+            "product": { "type": ["string", "null"] }
+          }
+        }
+      ]
+    },
+    "crewMember": {
+      "type": "object",
+      "properties": {
+        "first":    { "type": "string" },
+        "last":     { "type": "string" },
+        "position": { "type": "string" },
+        "days_onboard": { "type": ["integer", "null"] },
+        "sign_on_date": { "type": ["string", "null"] },
+        "planned_crew_change": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

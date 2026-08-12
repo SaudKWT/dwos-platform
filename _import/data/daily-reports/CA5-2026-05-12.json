@@ -1,0 +1,305 @@
+{
+  "consumables": {},
+  "task_log": [
+    {
+      "from_time": "00:01",
+      "to_time": "07:00",
+      "duration_min": 420,
+      "task_code": "S04",
+      "task_label": "Standby Shuaiba port",
+      "description": "Vsl alongside at berth 20, Shuaiba Port",
+      "location_id": "B20",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:00",
+      "to_time": "07:05",
+      "duration_min": 5,
+      "task_code": "L1F",
+      "task_label": "Cargo ops Freeport",
+      "description": "FW hose connected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:05",
+      "to_time": "07:07",
+      "duration_min": 2,
+      "task_code": "L1F",
+      "task_label": "Cargo ops Freeport",
+      "description": "FO Hose connected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:07",
+      "to_time": "09:22",
+      "duration_min": 135,
+      "task_code": "L1F",
+      "task_label": "Cargo ops Freeport",
+      "description": "Rx FW from 3 trucks",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:11",
+      "to_time": "09:10",
+      "duration_min": 119,
+      "task_code": "L1F",
+      "task_label": "Cargo ops Freeport",
+      "description": "Rx FO from 2 trucks",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:21",
+      "to_time": "07:50",
+      "duration_min": 29,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "Deck cargo operation",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:15",
+      "to_time": "09:20",
+      "duration_min": 5,
+      "task_code": "L1F",
+      "task_label": "Cargo ops Freeport",
+      "description": "FW hose disconnected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:20",
+      "to_time": "09:24",
+      "duration_min": 4,
+      "task_code": "L1F",
+      "task_label": "Cargo ops Freeport",
+      "description": "FO Hose disconnected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:24",
+      "to_time": "09:28",
+      "duration_min": 4,
+      "task_code": "S04",
+      "task_label": "Standby Shuaiba port",
+      "description": "SBE",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:28",
+      "to_time": "09:30",
+      "duration_min": 2,
+      "task_code": "S04",
+      "task_label": "Standby Shuaiba port",
+      "description": "1 Pax disembarked",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:30",
+      "to_time": "09:42",
+      "duration_min": 12,
+      "task_code": "I02",
+      "task_label": "In transit (channel)",
+      "description": "Vsl cast off",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:42",
+      "to_time": "12:12",
+      "duration_min": 150,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "Departure to ODH with full speed",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:12",
+      "to_time": "12:18",
+      "duration_min": 6,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "Arrived at ODH location",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:18",
+      "to_time": "12:32",
+      "duration_min": 14,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "DP Mode On",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:32",
+      "to_time": "13:20",
+      "duration_min": 48,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Granted to entering 500m and shiftmove to port side",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:20",
+      "to_time": "13:40",
+      "duration_min": 20,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Vsl in position at P/S Crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:40",
+      "to_time": "15:50",
+      "duration_min": 10,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "FW hose connected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:50",
+      "to_time": "15:45",
+      "duration_min": 115,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Commenced deck cargo ops",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "14:15",
+      "to_time": "15:20",
+      "duration_min": 65,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Start TX FW to OD1 = 100 M3",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:54",
+      "to_time": "16:12",
+      "duration_min": 18,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Pull out 500m zone",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "16:12",
+      "to_time": "16:20",
+      "duration_min": 8,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "Exit 500m zone, , move to anchorage area",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "16:20",
+      "to_time": "16:26",
+      "duration_min": 6,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Drop anchor at anchorage area",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "16:26",
+      "to_time": "16:30",
+      "duration_min": 4,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Anchor secured",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "16:30",
+      "to_time": "24:00",
+      "duration_min": 450,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "FWE, Vsl anchorage safe area, Rig ODH , waiting instruction",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {
+    "accidents": "Nil",
+    "incidents": "Nil",
+    "near_miss": "Nil"
+  },
+  "provisions": {
+    "dry_store_days": 11,
+    "fresh_frozen_days": 11,
+    "drinking_water_days": 11,
+    "fuel_oil_unpumpable": "20 M3"
+  },
+  "delays": {
+    "arrival_time": "NA",
+    "departure_time": "NA"
+  },
+  "lifts": {},
+  "report_date": "2026-05-12",
+  "voyage_no": "64",
+  "issues_comments": "3\n                                                   Crest Argus 5\n                                                 Daily Vessel Report\n                                                Remaining Provisions Store On-board\nDry Store             : 11 Days\nFresh & Frozen Store: 11 Days\nDrinking Water        : 11 Days\nFO Unpumpable : 20 M3\nDurability for safe operation :\nDelay Arrival Time  : NA\nDelay Departure Time : NA",
+  "accident_summary": "Nil",
+  "compiled_by": {
+    "name": "Aprio Karya",
+    "role": "Master"
+  },
+  "vessel_id": "CA5",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CREST ARGUS 5 - Daily Midnight Report - 12.05.2026",
+    "email_from": "Crest Argus5 | OFCO <crestargus5@ofco-int.com>",
+    "email_date": "2026-05-12T22:02:06+00:00",
+    "attachment_name": "Crest Argus 5_Daily vessel report _12.05.2026.pdf",
+    "submitted_via": "historical_import"
+  }
+}

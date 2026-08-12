@@ -1,0 +1,721 @@
+* { box-sizing: border-box; }
+
+:root[data-theme="dark"] {
+  --bg: #0f1720;
+  --bg-elev: #111c28;
+  --bg-card: #15212e;
+  --bg-control: #1a2734;
+  --bg-control-hover: #233a52;
+  --map-bg: #0a0f17;
+  --border: #233140;
+  --border-strong: #2c3e52;
+  --text: #e6edf3;
+  --text-muted: #b6c2d0;
+  --text-dim: #8da3b8;
+  --text-faint: #7a8a9b;
+  --text-fainter: #5e6c7d;
+  --accent: #ffd166;
+  --primary: #2c8eff;
+  --tag-moored-bg: #233a52;
+  --tag-moored-fg: #b6d4ff;
+  --tag-transit-bg: #4a3a14;
+  --tag-transit-fg: #ffd166;
+  --tag-unknown-bg: #2a1c2c;
+  --tag-unknown-fg: #ff9bc4;
+  --loc-bg: rgba(255,255,255,0.85);
+  --loc-fg: #0f1720;
+  --loc-rig-bg: rgba(255,148,80,0.95);
+  --loc-rig-fg: #2a1006;
+  --loc-berth-bg: rgba(180,200,255,0.95);
+  --error: #ff6b6b;
+  --tile-filter: brightness(0.8) contrast(1.05);
+}
+
+:root[data-theme="light"] {
+  --bg: #f4f6fa;
+  --bg-elev: #ffffff;
+  --bg-card: #ffffff;
+  --bg-control: #eef2f7;
+  --bg-control-hover: #dde6f0;
+  --map-bg: #d8e3ee;
+  --border: #d8e0e8;
+  --border-strong: #b5c1cf;
+  --text: #1a2330;
+  --text-muted: #3e4a59;
+  --text-dim: #5a6a7c;
+  --text-faint: #7d8a99;
+  --text-fainter: #9aa6b3;
+  --accent: #b8860b;
+  --primary: #2c6dd6;
+  --tag-moored-bg: #dce8f9;
+  --tag-moored-fg: #1c3f74;
+  --tag-transit-bg: #fff1c2;
+  --tag-transit-fg: #7a5a00;
+  --tag-unknown-bg: #f8e0e8;
+  --tag-unknown-fg: #8a1f48;
+  --loc-bg: rgba(255,255,255,0.95);
+  --loc-fg: #1a2330;
+  --loc-rig-bg: rgba(255,148,80,0.95);
+  --loc-rig-fg: #2a1006;
+  --loc-berth-bg: rgba(120,148,210,0.92);
+  --error: #c0392b;
+  --tile-filter: none;
+}
+
+html, body {
+  margin: 0; padding: 0; height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg); color: var(--text);
+}
+#app { display: grid; grid-template-columns: 1fr 380px; grid-template-rows: 56px 1fr; height: 100vh; }
+header {
+  grid-column: 1 / 3;
+  display: flex; align-items: center; gap: 12px; padding: 0 16px;
+  background: var(--bg-elev); border-bottom: 1px solid var(--border);
+}
+header h1 { font-size: 16px; margin: 0; font-weight: 600; }
+header .clock { font-family: "SF Mono", Menlo, monospace; font-size: 18px; color: var(--accent); }
+header .pill { padding: 2px 8px; border-radius: 99px; background: var(--bg-control); font-size: 11px; color: var(--text-muted); }
+header .theme-btn {
+  background: var(--bg-control); color: var(--text); border: 1px solid var(--border-strong);
+  padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 12px;
+}
+header .theme-btn:hover { background: var(--bg-control-hover); }
+header .admin-btn {
+  background: var(--bg-control); color: var(--text); border: 1px solid var(--border-strong);
+  padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 12px;
+  text-decoration: none; display: inline-flex; align-items: center;
+}
+header .admin-btn:hover { background: var(--bg-control-hover); }
+
+#map { width: 100%; height: 100%; background: var(--map-bg); }
+
+aside {
+  background: var(--bg); border-left: 1px solid var(--border);
+  overflow-y: auto; padding: 12px 14px;
+}
+aside h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-faint); margin: 8px 0 6px; }
+
+.controls .row { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+.controls input[type=range] { flex: 1; }
+.controls button {
+  background: var(--bg-control); color: var(--text); border: 1px solid var(--border-strong);
+  padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 12px;
+}
+.controls button:hover { background: var(--bg-control-hover); }
+.controls button.primary { background: var(--primary); border-color: var(--primary); color: white; }
+.controls button.live-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-color: #2bb673; color: #2bb673;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 6px 14px;
+  white-space: nowrap;          /* keep "Live" on one line */
+  line-height: 1.1;
+}
+.controls button.live-btn::before {
+  /* Status dot inside the button — outline when off, solid when on */
+  content: "";
+  width: 9px; height: 9px; border-radius: 50%;
+  background: transparent;
+  box-shadow: inset 0 0 0 2px #2bb673;
+  transition: background 120ms ease;
+}
+.controls button.live-btn:hover { background: rgba(43,182,115,0.12); }
+.controls button.live-btn.active {
+  background: #2bb673; color: white; border-color: #2bb673;
+  box-shadow: 0 0 0 2px rgba(43,182,115,0.25);
+  text-transform: uppercase;
+}
+.controls button.live-btn.active::before {
+  background: #fff;
+  box-shadow: inset 0 0 0 2px #fff, 0 0 0 0 rgba(255,255,255,0.7);
+  animation: livePulse 1.4s ease-in-out infinite;
+}
+.controls .live-status { font-size: 11px; color: var(--text-faint); }
+
+.live-indicator {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 2px 10px; border-radius: 99px;
+  background: rgba(43,182,115,0.15); color: #2bb673;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+}
+.live-indicator[hidden] { display: none !important; }
+.live-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #2bb673;
+  box-shadow: 0 0 0 0 rgba(43,182,115,0.6);
+  animation: livePulse 1.4s ease-in-out infinite;
+}
+@keyframes livePulse {
+  0%   { box-shadow: 0 0 0 0 rgba(43,182,115,0.6); }
+  70%  { box-shadow: 0 0 0 8px rgba(43,182,115,0); }
+  100% { box-shadow: 0 0 0 0 rgba(43,182,115,0); }
+}
+
+.vessel-card .live-line { font-size: 10px; color: #2bb673; margin-top: 4px; font-weight: 600; }
+.vessel-card .live-line.stale { color: var(--text-faint); font-weight: 400; }
+.controls select { background: var(--bg-control); color: var(--text); border: 1px solid var(--border-strong); padding: 4px 6px; border-radius: 4px; }
+.controls label.cb { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+
+.vessel-card {
+  background: var(--bg-card); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;
+  border-left: 4px solid var(--vc, #888);
+  border-top: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.vessel-card .name { font-weight: 600; font-size: 13px; }
+.vessel-card .status { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+.vessel-card .meta { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+.vessel-card .meta-label { color: var(--text); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-size: 9px; }
+.vessel-card .raw { font-size: 10px; color: var(--text); margin-top: 6px; font-style: italic; line-height: 1.35; }
+.vessel-card .next { font-size: 10px; color: var(--accent); margin-top: 4px; }
+.vessel-card .sub { color: var(--text-faint); font-weight: 400; font-size: 11px; }
+
+/* Transit progress bar inside a vessel card */
+.vessel-card .tbar {
+  height: 4px;
+  background: var(--tag-unknown-bg, rgba(128,128,128,0.25));
+  border-radius: 2px;
+  margin-top: 5px;
+  overflow: hidden;
+}
+.vessel-card .tbar-fill {
+  height: 100%;
+  background: var(--vc, #999);
+  border-radius: 2px;
+}
+
+.tag { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 10px; margin-right: 4px; }
+.tag.moored { background: var(--tag-moored-bg); color: var(--tag-moored-fg); }
+.tag.transit { background: var(--tag-transit-bg); color: var(--tag-transit-fg); }
+.tag.unknown { background: var(--tag-unknown-bg); color: var(--tag-unknown-fg); }
+
+/* Vessel card click affordance */
+.vessel-card { cursor: pointer; transition: transform 0.08s ease, box-shadow 0.08s ease; }
+.vessel-card:hover { transform: translateX(2px); }
+.vessel-card:focus-visible {
+  outline: 2px solid var(--vc, #fff);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   Vessel detail sheet — full-page big-font view, opened by tap
+   on a side-panel card.  Closed by ✕, backdrop click, or Escape.
+   ============================================================ */
+.vsheet[hidden] { display: none !important; }
+.vsheet {
+  position: fixed; inset: 0;
+  z-index: 9000;
+  display: flex; align-items: center; justify-content: center;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+body.vsheet-open { overflow: hidden; }
+.vsheet-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(8, 16, 26, 0.78);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.vsheet-panel {
+  position: relative;
+  width: min(1200px, 95vw);
+  max-height: 92vh;
+  overflow-y: auto;
+  background: #f4f6f8;
+  color: #1d2733;
+  border-radius: 14px;
+  border-top: 8px solid var(--vc, #f5b400);
+  box-shadow: 0 24px 48px rgba(0,0,0,0.55);
+  padding: 26px 32px 32px;
+}
+[data-theme="dark"] .vsheet-panel {
+  background: #0e1924;
+  color: #e7eef5;
+}
+
+.vsheet-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  padding-bottom: 16px;
+  margin-bottom: 22px;
+}
+[data-theme="dark"] .vsheet-header { border-bottom-color: rgba(255,255,255,0.08); }
+.vsheet-header h1 { margin: 0; font-size: 30px; letter-spacing: 0.2px; }
+.vsheet-header .sub { margin: 4px 0 0; font-size: 15px; color: #5b6b7c; }
+[data-theme="dark"] .vsheet-header .sub { color: #a8b8c9; }
+.vsheet-header .when { margin: 8px 0 0; font-size: 16px; font-weight: 500; }
+.vsheet-close {
+  background: transparent; color: inherit; border: 1px solid currentColor;
+  width: 38px; height: 38px; border-radius: 50%;
+  font-size: 18px; cursor: pointer; line-height: 1;
+}
+.vsheet-close:hover { background: rgba(0,0,0,0.06); }
+[data-theme="dark"] .vsheet-close:hover { background: rgba(255,255,255,0.08); }
+
+.vsheet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+  margin-bottom: 26px;
+}
+.vsheet-grid .card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+[data-theme="dark"] .vsheet-grid .card { background: #18242f; box-shadow: none; }
+.vsheet-grid .card h2 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--vc, #0d2540);
+}
+[data-theme="dark"] .vsheet-grid .card h2 { color: var(--vc); }
+.vsheet-grid .card ul { list-style: none; margin: 0; padding: 0; }
+.vsheet-grid .card li {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 6px 0;
+  border-bottom: 1px dotted rgba(0,0,0,0.07);
+  font-size: 17px;
+}
+.vsheet-grid .card li:last-child { border-bottom: 0; }
+[data-theme="dark"] .vsheet-grid .card li { border-bottom-color: rgba(255,255,255,0.07); }
+.vsheet-grid .card li span { color: #5b6b7c; font-size: 14px; }
+[data-theme="dark"] .vsheet-grid .card li span { color: #94a4b5; }
+.vsheet-grid .card li b { font-weight: 700; font-size: 17px; }
+.vsheet-grid .card li b.long { font-weight: 500; font-size: 15px; text-align: right; max-width: 60%; }
+
+/* Standby-by-location summary (how long the vessel sat on standby at each
+   rig / berth across every report on file). */
+.vsheet-standby { margin-bottom: 22px; }
+.vsheet-standby h2 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  color: var(--vc, #0d2540);
+}
+.vsheet-standby h2 .muted { color: #94a4b5; font-weight: 400; font-size: 14px; margin-left: 6px; }
+.standby-hint { margin: 0 0 10px; font-size: 13px; color: #7b8a99; line-height: 1.45; }
+.standby-hint b { color: #5b6b7c; font-weight: 600; }
+[data-theme="dark"] .standby-hint { color: #8fa0b0; }
+[data-theme="dark"] .standby-hint b { color: #c2ccd6; }
+.standby-tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+[data-theme="dark"] .standby-tbl { background: #18242f; box-shadow: none; }
+.standby-tbl th {
+  background: rgba(0,0,0,0.04);
+  text-align: left;
+  padding: 10px 14px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #5b6b7c;
+}
+[data-theme="dark"] .standby-tbl th { background: rgba(255,255,255,0.04); color: #94a4b5; }
+.standby-tbl td {
+  padding: 11px 14px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  vertical-align: middle;
+}
+[data-theme="dark"] .standby-tbl td { border-top-color: rgba(255,255,255,0.05); }
+.standby-tbl td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; width: 96px; }
+.standby-tbl td.num b { font-size: 17px; }
+.standby-tbl td.num .num-cap { display: block; font-size: 10px; font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; color: #94a4b5; margin-top: 1px; }
+
+/* Activity sub-rows: the cargo / bunkering / etc. done during a location stay. */
+.standby-tbl tr.loc-row td { border-top: 1px solid rgba(0,0,0,0.10); }
+[data-theme="dark"] .standby-tbl tr.loc-row td { border-top-color: rgba(255,255,255,0.09); }
+.standby-tbl tr.act-row td { border-top: none; padding-top: 3px; padding-bottom: 3px; }
+.standby-tbl tr.act-row td.act-name {
+  padding-left: 30px;
+  position: relative;
+  font-size: 14px;
+  color: #5b6b7c;
+}
+[data-theme="dark"] .standby-tbl tr.act-row td.act-name { color: #aab6c2; }
+.standby-tbl tr.act-row td.act-name::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  border-radius: 50%;
+  background: var(--vc, #2870c4);
+  opacity: 0.5;
+}
+.standby-tbl tr.act-row td.num { font-size: 14px; color: #5b6b7c; }
+[data-theme="dark"] .standby-tbl tr.act-row td.num { color: #aab6c2; }
+.standby-tbl tr.act-none td.act-name { font-style: italic; color: #94a4b5; }
+.standby-tbl tr.act-none td.act-name::before { background: #c2ccd6; }
+.standby-tbl tr.act-row:last-child td { padding-bottom: 10px; }
+.standby-tbl td.share { width: 38%; }
+.standby-tbl .bar {
+  display: inline-block;
+  width: calc(100% - 46px);
+  height: 8px;
+  border-radius: 5px;
+  background: rgba(0,0,0,0.08);
+  vertical-align: middle;
+  overflow: hidden;
+}
+[data-theme="dark"] .standby-tbl .bar { background: rgba(255,255,255,0.10); }
+.standby-tbl .bar-fill { height: 100%; border-radius: 5px; background: var(--vc, #2870c4); }
+/* Sub-item bars: full width (no % label beside them), thinner & translucent so
+   they read as activities happening INSIDE the standby block, not on top of it. */
+.standby-tbl tr.act-row .bar { width: 100%; height: 5px; }
+.standby-tbl tr.act-row .bar-fill.act-fill { background: var(--vc, #2870c4); opacity: 0.42; }
+.standby-tbl .pct { font-size: 13px; color: #5b6b7c; margin-left: 8px; font-variant-numeric: tabular-nums; }
+[data-theme="dark"] .standby-tbl .pct { color: #94a4b5; }
+.loc-badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.loc-badge.rig   { background: rgba(245, 180, 0, 0.18);  color: #946b00; }
+.loc-badge.berth { background: rgba(40, 112, 196, 0.16); color: #1d5aa0; }
+.loc-badge.port  { background: rgba(45, 168, 74, 0.16);  color: #1d7a37; }
+.loc-badge.sea   { background: rgba(120, 132, 145, 0.18); color: #5b6b7c; }
+[data-theme="dark"] .loc-badge.rig   { color: #ffce5e; }
+[data-theme="dark"] .loc-badge.berth { color: #7fb2ec; }
+[data-theme="dark"] .loc-badge.port  { color: #6fd189; }
+[data-theme="dark"] .loc-badge.sea   { color: #aab6c2; }
+
+.vsheet-tasks { margin-bottom: 22px; }
+.vsheet-tasks h2 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  color: var(--vc, #0d2540);
+}
+.vsheet-tasks h2 .muted { color: #94a4b5; font-weight: 400; font-size: 14px; margin-left: 6px; }
+.vsheet-tasks-wrap { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+[data-theme="dark"] .vsheet-tasks-wrap { background: #18242f; box-shadow: none; }
+.vsheet-tasks table { width: 100%; border-collapse: collapse; font-size: 16px; }
+.vsheet-tasks th {
+  background: rgba(0,0,0,0.04);
+  text-align: left;
+  padding: 10px 14px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #5b6b7c;
+}
+[data-theme="dark"] .vsheet-tasks th { background: rgba(255,255,255,0.04); color: #94a4b5; }
+.vsheet-tasks td {
+  padding: 9px 14px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  vertical-align: top;
+}
+[data-theme="dark"] .vsheet-tasks td { border-top-color: rgba(255,255,255,0.05); }
+.vsheet-tasks td.t { font-variant-numeric: tabular-nums; font-weight: 600; width: 72px; }
+.vsheet-tasks td.c { width: 80px; }
+.vsheet-tasks td.loc { width: 60px; text-align: center; font-weight: 600; color: var(--vc); }
+.vsheet-tasks td.empty { text-align: center; color: #94a4b5; padding: 18px; }
+
+/* The row corresponding to the activity happening right now (relative
+   to the simulator's clock) gets a green highlight + a "NOW" badge. */
+.vsheet-tasks tr.active td {
+  background: rgba(45, 195, 95, 0.13);
+  font-weight: 600;
+  box-shadow: inset 4px 0 0 #2dc35f;
+}
+[data-theme="dark"] .vsheet-tasks tr.active td {
+  background: rgba(45, 195, 95, 0.18);
+}
+.vsheet-tasks .now-tag {
+  display: inline-block;
+  background: #2dc35f;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.vsheet-tasks .code {
+  background: rgba(0,0,0,0.06);
+  padding: 2px 7px; border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+}
+[data-theme="dark"] .vsheet-tasks .code { background: rgba(255,255,255,0.08); }
+.vsheet-tasks .fix-tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(245, 180, 0, 0.18);
+  color: #b07b00;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: help;
+}
+[data-theme="dark"] .vsheet-tasks .fix-tag { color: #ffce5e; background: rgba(245, 180, 0, 0.18); }
+
+.vsheet-note {
+  background: #fff;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+[data-theme="dark"] .vsheet-note { background: #18242f; box-shadow: none; }
+.vsheet-note h2 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--vc);
+}
+.vsheet-note p { margin: 0; font-size: 16px; white-space: pre-line; text-align: left; }
+
+.vsheet-footer {
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  font-size: 13px;
+  color: #5b6b7c;
+}
+[data-theme="dark"] .vsheet-footer { color: #94a4b5; border-top-color: rgba(255,255,255,0.08); }
+
+.vsheet-empty {
+  background: #fff; border-radius: 10px; padding: 32px;
+  text-align: center; font-size: 16px;
+}
+[data-theme="dark"] .vsheet-empty { background: #18242f; }
+.vsheet-empty a { color: var(--vc); font-weight: 600; }
+
+.leaflet-tile-pane { filter: var(--tile-filter); }
+
+/* Berth markers (Shuaiba B20 / B4 / merged) */
+.berth-icon {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.berth-icon .berth-pin {
+  width: 10px; height: 10px;
+  background: var(--loc-berth-bg);
+  border: 2px solid #6e84ff;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.25);
+}
+.berth-icon .berth-label {
+  background: var(--loc-bg);
+  color: var(--loc-fg);
+  border: 1px solid #6e84ff;
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 10px; font-weight: 700;
+  margin-top: 2px;
+  white-space: nowrap;
+}
+.berth-icon .berth-sub {
+  font-size: 9px; color: var(--text-muted);
+  background: var(--loc-bg); border-radius: 0 0 4px 4px;
+  padding: 0 5px 1px;
+  margin-top: -1px;
+}
+.berth-icon.merged .berth-pin { width: 14px; height: 14px; }
+
+/* Port marker (North Port) */
+.port-icon {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.port-icon .port-pin {
+  width: 12px; height: 12px;
+  background: #6e84ff;
+  border: 2px solid #2a3a8a;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.3);
+}
+.port-icon .port-label {
+  background: var(--loc-bg);
+  color: var(--loc-fg);
+  border: 1px solid #6e84ff;
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 10px; font-weight: 700;
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+/* Jack-up rig marker */
+.rig-marker {
+  position: relative;
+}
+.rig-marker .rig-body {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.6));
+}
+.rig-marker .rig-body svg { width: 100%; height: 100%; display: block; }
+.rig-marker .rig-label {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translate(-50%, 2px);
+  background: var(--loc-rig-bg);
+  color: var(--loc-rig-fg);
+  border: 1px solid #7a3a14;
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 10px; font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Occupancy badge on a rig: how many vessels are alongside right now */
+.rig-occ {
+  position: absolute;
+  top: -7px;
+  right: -10px;
+  background: #1c8a4b;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.7);
+  border-radius: 999px;
+  padding: 1px 5px;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.3;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.45);
+}
+
+/* Vessel markers (SVG bodies, rotate with heading) */
+.vessel-marker {
+  position: relative;
+}
+.vessel-marker .vessel-body {
+  width: 100%; height: 100%;
+  transform-origin: center;
+  will-change: transform;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.5));
+  transition: transform 0.45s ease;
+}
+/* Underway: soft glow in the vessel's own colour so moving boats pop out
+   from moored ones at a glance. */
+.vessel-marker.is-underway .vessel-body {
+  filter: drop-shadow(0 0 5px var(--vc, #fff)) drop-shadow(0 1px 1px rgba(0,0,0,0.5));
+}
+.vessel-marker.is-underway .vessel-label {
+  font-weight: 800;
+}
+.vessel-marker .vessel-body svg { width: 100%; height: 100%; display: block; }
+.vessel-marker .vessel-label {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translate(-50%, 2px);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--vc, #fff);
+  text-shadow: 0 0 3px var(--bg), 0 0 3px var(--bg), 0 0 6px var(--bg);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* When the vessel's position is snapped to a real AIS keyframe, draw a
+   permanent cyan ring around the marker PLUS a pulsing outer halo, so
+   the eye catches both the static state and the animation.  Two layers
+   are used: ::before for the always-on ring (unmissable on either theme),
+   ::after for the radar-pulse ripple.
+
+   Leaflet would otherwise clip the rings — overflow:visible on the
+   marker container is essential. */
+.vessel-marker.is-ais-source { overflow: visible !important; }
+.vessel-marker.is-ais-source::before,
+.vessel-marker.is-ais-source::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  left: 50%; top: 50%;
+}
+.vessel-marker.is-ais-source::before {
+  /* always-on ring */
+  width: 64px; height: 64px;
+  margin: -32px 0 0 -32px;
+  border: 3px solid #00d0ff;
+  box-shadow: 0 0 14px rgba(0, 208, 255, 0.9),
+              inset 0 0 10px rgba(0, 208, 255, 0.45);
+  background: radial-gradient(circle, rgba(0,208,255,0.10) 0%, transparent 70%);
+}
+.vessel-marker.is-ais-source::after {
+  /* outer pulse */
+  width: 64px; height: 64px;
+  margin: -32px 0 0 -32px;
+  border: 2px solid #00e5ff;
+  animation: ais-pulse 1.8s ease-out infinite;
+}
+@keyframes ais-pulse {
+  0%   { transform: scale(0.75); opacity: 0.95; }
+  70%  { transform: scale(1.7);  opacity: 0.0; }
+  100% { transform: scale(1.7);  opacity: 0.0; }
+}
+
+/* Also make the leaflet outer wrapper not clip the halo (Leaflet wraps
+   our .vessel-marker in a .leaflet-marker-icon with its own size). */
+.leaflet-marker-icon:has(> .vessel-marker.is-ais-source) {
+  overflow: visible !important;
+}
+
+/* Source badge on the vessel card */
+.vessel-card .source {
+  font-size: 10px;
+  margin-top: 4px;
+  padding: 3px 7px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+.vessel-card .source.ais {
+  background: rgba(0, 229, 255, 0.12);
+  color: #00aac9;
+  border: 1px solid rgba(0, 229, 255, 0.35);
+}
+.vessel-card .source.report {
+  background: rgba(255, 200, 0, 0.10);
+  color: #b08800;
+  border: 1px solid rgba(255, 200, 0, 0.30);
+}
+[data-theme="dark"] .vessel-card .source.ais    { color: #5cd6ff; }
+[data-theme="dark"] .vessel-card .source.report { color: #f5cf6a; }
+
+/* AIS trail polyline: solid, glowing — visually distinct from the dashed
+   planning routes drawn by drawRoutes(). */
+.leaflet-overlay-pane path.ais-track-line {
+  filter: drop-shadow(0 0 4px rgba(0, 229, 255, 0.6));
+}
+
+.legend { font-size: 11px; color: var(--text-dim); line-height: 1.55; }
+.legend .sw { display: inline-block; width: 14px; height: 6px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
+
+footer.note {
+  font-size: 10px; color: var(--text-fainter); margin-top: 10px; line-height: 1.4;
+}

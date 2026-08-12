@@ -1,0 +1,161 @@
+{
+  "consumables": {
+    "fuel_oil": {
+      "max_capacity": "950 M3 (80%)",
+      "consumed": "1.44 M3",
+      "discharged": "-",
+      "rob": "521.816 M3",
+      "remaining_to_load": "428.184 M3",
+      "loaded": "144 M3",
+      "remarks": ""
+    }
+  },
+  "task_log": [
+    {
+      "from_time": "00:00",
+      "to_time": "24:00",
+      "duration_min": 1440,
+      "task_code": "S04",
+      "task_label": "Standby Shuaiba port",
+      "description": "Vessel a/side at Shuaiba Jetty#20",
+      "location_id": "B20",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:46",
+      "to_time": "08:42",
+      "duration_min": 56,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "FO received via 1st road tanker",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:10",
+      "to_time": "09:35",
+      "duration_min": 85,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "FW received via 1st truck",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:10",
+      "to_time": "10:05",
+      "duration_min": 55,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "FO received via 2nd road tanker",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:37",
+      "to_time": "11:08",
+      "duration_min": 91,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Slop discharged to shore via 1st vacuum tanker",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:38",
+      "to_time": "11:08",
+      "duration_min": 90,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Slop discharged to shore via 2nd vacuum tanker",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "10:14",
+      "to_time": "11:34",
+      "duration_min": 80,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "FW received via 2nd truck",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:25",
+      "to_time": "13:22",
+      "duration_min": 57,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "FO received via 3rd road tanker",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:18",
+      "to_time": "14:21",
+      "duration_min": 63,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "FW received via 3rd truck",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:41",
+      "to_time": "14:45",
+      "duration_min": 64,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "FO received via 4th road tanker",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {
+    "accidents": "Nil",
+    "incidents": "Nil",
+    "near_miss": "Nil"
+  },
+  "provisions": {
+    "dry_store_days": 17,
+    "fresh_frozen_days": 17,
+    "drinking_water_days": 17,
+    "fuel_oil_unpumpable": "20KL Delay"
+  },
+  "delays": {
+    "arrival_time": "NA Delay",
+    "departure_time": "NA"
+  },
+  "lifts": {},
+  "report_date": "2026-05-13",
+  "voyage_no": "042/2026",
+  "issues_comments": "3\n                                                    Crest Argus 1\n                                                  Daily Vessel Report\nRemaining provision stores On-board: PLEASE ADD FOOD SUPPLIES ONBOARD VESSEL\nDry Store               : 17 Days                INTO THIS SECTION\nFresh & Frozen Store : 17 Days\nDrinking Water          : 17 Days\nFuel Oil unpumpable : 20KL Delay\nArrival Time            : NA Delay\nDeparture Time: NA",
+  "accident_summary": "Report Compiled By:           Master: Capt. Ehab Elsayed Elmelegy Shehab                 Date: 13/05/2026     Time: 24:00\nThe Daily Report shall be communicated by 06:00 each day regardless of the Vessel’s location or employment. A distribution list shall\nbe provided. Any occurrence which impacts the safety or operational capabilities of the Vessel shall be reported immediately and noted\nin the applicable section above. The e-mail title and document file name shall state “Daily Report” and include the name and date of the\nvessel,\nThe report shall be completed in sufficient detail so as to provide a clear and concise illustration of all operational activities\nand events for the period.\n                                                                    4",
+  "compiled_by": {
+    "name": "Capt. Ehab Elsayed Elmelegy Shehab",
+    "role": "Master"
+  },
+  "vessel_id": "CA1",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CREST ARGUS 1 - Daily Midnight Report - 13 May 2026",
+    "email_from": "Crest Argus1 | OFCO <crestargus1@ofco-int.com>",
+    "email_date": "2026-05-13T21:05:00+00:00",
+    "attachment_name": "13. Crest Argus 1_Daily vessel report _13 May 2026.pdf",
+    "submitted_via": "historical_import"
+  }
+}

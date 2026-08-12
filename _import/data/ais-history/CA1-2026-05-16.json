@@ -1,0 +1,258 @@
+{
+  "vessel_id": "CA1",
+  "mmsi": "538010097",
+  "date_utc": "2026-05-16",
+  "positions": [
+    {
+      "ts": "2026-05-16T05:12:06Z",
+      "lat": 28.914213,
+      "lon": 48.454498,
+      "sog": 0.2,
+      "cog": 0.0,
+      "heading": 174.0,
+      "nav_status": "At Anchor"
+    },
+    {
+      "ts": "2026-05-16T05:27:00Z",
+      "lat": 28.929159,
+      "lon": 48.450012,
+      "sog": 5.4,
+      "cog": 318.0,
+      "heading": 314.0,
+      "nav_status": "At anchor"
+    },
+    {
+      "ts": "2026-05-16T06:00:00Z",
+      "lat": 28.947577,
+      "lon": 48.410927,
+      "sog": 3.5,
+      "cog": 288.0,
+      "heading": 288.0,
+      "nav_status": "At anchor"
+    },
+    {
+      "ts": "2026-05-16T06:02:00Z",
+      "lat": 28.947577,
+      "lon": 48.410927,
+      "sog": 3.5,
+      "cog": 288.0,
+      "heading": 288.0,
+      "nav_status": "At anchor"
+    },
+    {
+      "ts": "2026-05-16T08:16:00Z",
+      "lat": 29.052214,
+      "lon": 48.230194,
+      "sog": 6.4,
+      "cog": 352.0,
+      "heading": 352.0,
+      "nav_status": "At anchor"
+    },
+    {
+      "ts": "2026-05-16T08:57:00Z",
+      "lat": 29.125866,
+      "lon": 48.222099,
+      "sog": 6.1,
+      "cog": 355.0,
+      "heading": 354.0,
+      "nav_status": "At anchor"
+    },
+    {
+      "ts": "2026-05-16T09:15:00Z",
+      "lat": 29.155174,
+      "lon": 48.219391,
+      "sog": 6.0,
+      "cog": 355.0,
+      "heading": 354.0,
+      "nav_status": "At anchor"
+    },
+    {
+      "ts": "2026-05-16T09:52:04Z",
+      "lat": 29.219839,
+      "lon": 48.242512,
+      "sog": 6.5,
+      "cog": 36.0,
+      "heading": 28.0,
+      "nav_status": "Underway Using Engine"
+    },
+    {
+      "ts": "2026-05-16T09:53:00Z",
+      "lat": 29.219839,
+      "lon": 48.242512,
+      "sog": 6.5,
+      "cog": 36.0,
+      "heading": 28.0,
+      "nav_status": "At anchor"
+    },
+    {
+      "ts": "2026-05-16T09:56:00Z",
+      "lat": 29.219839,
+      "lon": 48.242512,
+      "sog": 6.5,
+      "cog": 36.0,
+      "heading": 28.0,
+      "nav_status": "Under way using engine"
+    },
+    {
+      "ts": "2026-05-16T15:32:00Z",
+      "lat": 29.232656,
+      "lon": 48.337132,
+      "sog": 6.0,
+      "cog": 272.0,
+      "heading": 270.0,
+      "nav_status": "Under way using engine"
+    },
+    {
+      "ts": "2026-05-16T15:40:00Z",
+      "lat": 29.233337,
+      "lon": 48.324028,
+      "sog": 3.4,
+      "cog": 275.0,
+      "heading": 269.0,
+      "nav_status": "Under way using engine"
+    },
+    {
+      "ts": "2026-05-16T16:54:00Z",
+      "lat": 29.233414,
+      "lon": 48.321327,
+      "sog": 0.0,
+      "cog": 330.0,
+      "heading": 199.0,
+      "nav_status": "Under way using engine"
+    },
+    {
+      "ts": "2026-05-16T17:07:02Z",
+      "lat": 29.23354,
+      "lon": 48.321354,
+      "sog": 0.1,
+      "cog": 0.0,
+      "heading": 199.0,
+      "nav_status": "Restricted Manoeuvrability"
+    },
+    {
+      "ts": "2026-05-16T17:28:00Z",
+      "lat": 29.233553,
+      "lon": 48.321327,
+      "sog": 0.0,
+      "cog": 330.0,
+      "heading": 203.0,
+      "nav_status": "Restricted manoeuverability"
+    },
+    {
+      "ts": "2026-05-16T17:57:00Z",
+      "lat": 29.233807,
+      "lon": 48.321487,
+      "sog": 0.0,
+      "cog": 330.0,
+      "heading": 218.0,
+      "nav_status": "Restricted manoeuverability"
+    },
+    {
+      "ts": "2026-05-16T18:20:00Z",
+      "lat": 29.233747,
+      "lon": 48.321442,
+      "sog": 0.0,
+      "cog": 330.0,
+      "heading": 214.0,
+      "nav_status": "Restricted manoeuverability"
+    },
+    {
+      "ts": "2026-05-16T18:21:00Z",
+      "lat": 29.233747,
+      "lon": 48.321442,
+      "sog": 0.0,
+      "cog": 330.0,
+      "heading": 214.0,
+      "nav_status": "Restricted manoeuverability"
+    },
+    {
+      "ts": "2026-05-16T21:22:00Z",
+      "lat": 29.232031,
+      "lon": 48.322899,
+      "sog": 0.3,
+      "cog": 258.0,
+      "heading": 303.0,
+      "nav_status": "Restricted manoeuverability"
+    },
+    {
+      "ts": "2026-05-16T21:56:00Z",
+      "lat": 29.232027,
+      "lon": 48.32304,
+      "sog": 0.3,
+      "cog": 254.0,
+      "heading": 307.0,
+      "nav_status": "Restricted manoeuverability"
+    },
+    {
+      "ts": "2026-05-16T22:30:00Z",
+      "lat": 29.232019,
+      "lon": 48.323002,
+      "sog": 0.4,
+      "cog": 251.0,
+      "heading": 303.0,
+      "nav_status": "Restricted manoeuverability"
+    },
+    {
+      "ts": "2026-05-16T22:50:00Z",
+      "lat": 29.232,
+      "lon": 48.32296,
+      "sog": 0.3,
+      "cog": 252.0,
+      "heading": 304.0,
+      "nav_status": "Restricted manoeuverability"
+    },
+    {
+      "ts": "2026-05-16T23:03:08Z",
+      "lat": 29.232014,
+      "lon": 48.323013,
+      "sog": 0.3,
+      "cog": 0.0,
+      "heading": 304.0,
+      "nav_status": "Restricted Manoeuvrability"
+    },
+    {
+      "ts": "2026-05-16T23:20:20Z",
+      "lat": 29.231991,
+      "lon": 48.323006,
+      "sog": 0.3,
+      "cog": 0.0,
+      "heading": 305.0,
+      "nav_status": "Restricted Manoeuvrability"
+    },
+    {
+      "ts": "2026-05-16T23:23:00Z",
+      "lat": 29.231991,
+      "lon": 48.323006,
+      "sog": 0.3,
+      "cog": 245.0,
+      "heading": 305.0,
+      "nav_status": "Restricted manoeuverability"
+    },
+    {
+      "ts": "2026-05-16T23:25:00Z",
+      "lat": 29.231991,
+      "lon": 48.323006,
+      "sog": 0.3,
+      "cog": 245.0,
+      "heading": 305.0,
+      "nav_status": "Restricted manoeuverability"
+    }
+  ],
+  "source": {
+    "provider": "datalastic",
+    "imported_at": "2026-05-17T05:21:20.286692Z",
+    "raw_query": "datalastic /vessel_pro polled"
+  },
+  "stats": {
+    "count": 26,
+    "first_ts": "2026-05-16T05:12:06Z",
+    "last_ts": "2026-05-16T23:25:00Z",
+    "bbox": [
+      28.914213,
+      48.219391,
+      29.233807,
+      48.454498
+    ],
+    "max_sog": 6.5
+  }
+}

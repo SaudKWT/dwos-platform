@@ -1,0 +1,301 @@
+{
+  "consumables": {
+    "fuel_oil": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": "2.241 M3",
+      "rob": "516.991 M3",
+      "max_capacity": "950 M3 (85%)",
+      "remaining_to_load": "433.009 M3",
+      "remarks": ""
+    },
+    "fresh_water": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": "6 M3",
+      "rob": "191 M3",
+      "max_capacity": "673 M3 (100%)",
+      "remaining_to_load": "482 M3",
+      "remarks": ""
+    },
+    "drill_water": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": null,
+      "rob": "1160 M3",
+      "max_capacity": "1180 M3 (80%)",
+      "remaining_to_load": "20 M3",
+      "remarks": ""
+    },
+    "base_oil": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": null,
+      "rob": "0 Bbls",
+      "max_capacity": "1000 Bbls (80%)",
+      "remaining_to_load": "1000 Bbls",
+      "remarks": ""
+    }
+  },
+  "task_log": [
+    {
+      "from_time": "00:01",
+      "to_time": "08:36",
+      "duration_min": 516,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "Vsl remain anchor at OD1 clear area stby waiting instruction",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:36",
+      "to_time": "08:45",
+      "duration_min": 9,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "SBE",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:45",
+      "to_time": "08:55",
+      "duration_min": 10,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Heave up anchor",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:55",
+      "to_time": "09:10",
+      "duration_min": 15,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Anchor aweigh proceed to OD 1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:10",
+      "to_time": "09:30",
+      "duration_min": 20,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "DP mode on",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:30",
+      "to_time": "09:50",
+      "duration_min": 20,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "DP set up completed, permission granted entering 500m zone",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:50",
+      "to_time": "10:05",
+      "duration_min": 15,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "In post P/S crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "10:05",
+      "to_time": "11:00",
+      "duration_min": 55,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Commenced deck cargo operation",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "11:35",
+      "to_time": "11:55",
+      "duration_min": 20,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Pull out 500m",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "11:55",
+      "to_time": "12:10",
+      "duration_min": 15,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Exit 500m DP off proceed to anchorage area",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:10",
+      "to_time": "12:15",
+      "duration_min": 5,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Vsl drop anchor at OD 1 clear area",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:15",
+      "to_time": "12:18",
+      "duration_min": 3,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "Anchor brought up",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:18",
+      "to_time": "21:30",
+      "duration_min": 12,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "Finish ME, Vsl remain anchor at OD1 clear area stby waiting instruction",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "21:30",
+      "to_time": "21:35",
+      "duration_min": 5,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "SBE",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "21:35",
+      "to_time": "21:45",
+      "duration_min": 10,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Heave up anchor",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "21:45",
+      "to_time": "22:30",
+      "duration_min": 45,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Anchor aweigh stby waiting approval from coast guard",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "22:30",
+      "to_time": "22:40",
+      "duration_min": 10,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "Vsl drop anchor at OD 1 clear area",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "22:40",
+      "to_time": "22:45",
+      "duration_min": 5,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "Anchor brought up",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "22:45",
+      "to_time": "23:00",
+      "duration_min": 15,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Permission granted from coast guard, Heave up anchor",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "23:00",
+      "to_time": "24:00",
+      "duration_min": 60,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "Anchor aweigh departure to Shuaiba Port",
+      "location_id": "B20",
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {
+    "accidents": "Nil",
+    "incidents": "Nil",
+    "near_miss": "Nil"
+  },
+  "provisions": {
+    "dry_store_days": 12,
+    "fresh_frozen_days": 12,
+    "drinking_water_days": 12,
+    "fuel_oil_unpumpable": "20 M3"
+  },
+  "delays": {
+    "arrival_time": "NA",
+    "departure_time": "NA"
+  },
+  "lifts": {},
+  "report_date": "2026-06-11",
+  "voyage_no": "75",
+  "days_since_port_call": 6,
+  "next_crew_change": "TBA",
+  "security_level": 3,
+  "issues_comments": "3\n                                                   Crest Argus 5\n                                                 Daily Vessel Report\n                                                Remaining Provisions Store On-board\nDry Store             : 12 Days\nFresh & Frozen Store: 12 Days\nDrinking Water        : 12 Days\nFO Unpumpable : 20 M3\nDurability for safe operation :\nDelay Arrival Time  : NA\nDelay Departure Time : NA",
+  "accident_summary": "Nil",
+  "compiled_by": {
+    "name": "Ahmad Sakour",
+    "role": "Master"
+  },
+  "vessel_id": "CA5",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CREST ARGUS 5 - Daily Midnight Report - 11.06.2026",
+    "email_from": "Crest Argus5 | OFCO <crestargus5@ofco-int.com>",
+    "email_date": "2026-06-12 00:15:31+03:00",
+    "attachment_name": "Crest Argus 5_Daily vessel report _11.06.2026.pdf",
+    "submitted_via": "msg_batch_import"
+  }
+}

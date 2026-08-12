@@ -1,0 +1,283 @@
+{
+  "consumables": {},
+  "task_log": [
+    {
+      "from_time": "00:00",
+      "to_time": "06:55",
+      "duration_min": 415,
+      "task_code": "S04",
+      "task_label": "Standby Shuaiba port",
+      "description": "Vsl secured berth 20 waiting instruction",
+      "location_id": "B20",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "06:55",
+      "to_time": "07:00",
+      "duration_min": 5,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "FW Hose connected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:00",
+      "to_time": "09:20",
+      "duration_min": 140,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "RX FW : 3 Trucks : 108 m3",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:25",
+      "to_time": "09:10",
+      "duration_min": 105,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "Deck cargo operation",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:10",
+      "to_time": "09:20",
+      "duration_min": 10,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "Base oil hose connected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:20",
+      "to_time": "10:00",
+      "duration_min": 50,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "FW Hose disconnected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:40",
+      "to_time": "12:12",
+      "duration_min": 152,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "Rx Base oil : 700 bbls",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:12",
+      "to_time": "12:15",
+      "duration_min": 3,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "Base oil hose disconnected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:15",
+      "to_time": "12:55",
+      "duration_min": 40,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "3 on signers on board + 4 pax for CA3",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:55",
+      "to_time": "13:00",
+      "duration_min": 5,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "SBE",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:00",
+      "to_time": "13:25",
+      "duration_min": 25,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "3 Offsigners disembarked",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:25",
+      "to_time": "13:36",
+      "duration_min": 11,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Pull out",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:36",
+      "to_time": "13:42",
+      "duration_min": 6,
+      "task_code": "IO1",
+      "task_label": "IO1",
+      "description": "Pass Shuaiba break water",
+      "location_id": "B20",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:42",
+      "to_time": "17:42",
+      "duration_min": 240,
+      "task_code": "IO1",
+      "task_label": "IO1",
+      "description": "Vsl underway to Rig OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "17:42",
+      "to_time": "17:50",
+      "duration_min": 8,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Arrived Rig OPH, DP Mode on",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "17:50",
+      "to_time": "18:05",
+      "duration_min": 15,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Permissiongranted to enter 500 MZ",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "18:05",
+      "to_time": "18:15",
+      "duration_min": 10,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "In position port side OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "18:15",
+      "to_time": "18:17",
+      "duration_min": 2,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "4 Pax transfer to CA 3 via OPH, Vsl Pull out",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "18:17",
+      "to_time": "18:24",
+      "duration_min": 7,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Outside 500mz DP Off",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "18:24",
+      "to_time": "18:35",
+      "duration_min": 11,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Drop anchor",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "18:35",
+      "to_time": "18:40",
+      "duration_min": 5,
+      "task_code": "S05",
+      "task_label": "Standby awaiting instructions",
+      "description": "F.W.E",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "18:40",
+      "to_time": "24:00",
+      "duration_min": 320,
+      "task_code": "S05",
+      "task_label": "Standby awaiting instructions",
+      "description": "Vsl anchorage safe area, Rig OPH , waiting instruction",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {
+    "accidents": "Nil",
+    "incidents": "Nil",
+    "near_miss": "Nil"
+  },
+  "provisions": {
+    "dry_store_days": 13,
+    "fresh_frozen_days": 13,
+    "drinking_water_days": 13,
+    "fuel_oil_unpumpable": "20 M3"
+  },
+  "delays": {
+    "arrival_time": "NA",
+    "departure_time": "NA"
+  },
+  "lifts": {},
+  "report_date": "2026-05-10",
+  "voyage_no": "62",
+  "issues_comments": "Remaining Provisions Store On-board\n      Dry Store             : 13 Days\n      Fresh & Frozen Store: 13 Days\n      Drinking Water        : 13 Days\n      FO Unpumpable : 20 M3\n      Durability for safe operation :\n      Delay Arrival Time    : NA\n                                                                                   4\n                                                   Crest Argus 5\n                                                 Daily Vessel Report\nDelay Departure Time : NA",
+  "accident_summary": "Nil",
+  "compiled_by": {
+    "name": "Aprio Karya",
+    "role": "Master"
+  },
+  "vessel_id": "CA5",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CREST ARGUS 5 - Daily Midnight Report - 10.05.2026",
+    "email_from": "Crest Argus5 | OFCO <crestargus5@ofco-int.com>",
+    "email_date": "2026-05-10T21:36:53+00:00",
+    "attachment_name": "Crest Argus 5_Daily vessel report _10.05.2026.pdf",
+    "submitted_via": "historical_import"
+  }
+}

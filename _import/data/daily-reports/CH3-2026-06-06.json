@@ -1,0 +1,161 @@
+{
+  "consumables": {
+    "fuel_oil": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": "0.24 m3",
+      "rob": "42.891 m3",
+      "max_capacity": "55 m3 (60%)",
+      "remaining_to_load": "12.109 m3",
+      "remarks": ""
+    },
+    "fresh_water": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": "01 m3",
+      "rob": "03.0 m3",
+      "max_capacity": "20 m3",
+      "remaining_to_load": "17 m3",
+      "remarks": ""
+    }
+  },
+  "task_log": [
+    {
+      "from_time": "00:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "VSL STBY ALS TO B# 4 IN SHUAIBA PORT. CARRIED OUT FIRE & SAFETY ROUND",
+      "location_id": "B4",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "04:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "CARRIED OUT FIRE & SAFETY ROUND",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "06:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "DAILY CLEANING OF ACCOMODATION AND BRIDGE DONE",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "COMMENCE DECK MAINTENANCE WORK",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "10:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "MAIN DECK AREA CLEANED",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:00",
+      "to_time": "13:00",
+      "duration_min": 60,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "LUNCH BREAK",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "DONE CLEANING OF PAX SEATS AND PAX TOILET",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "18:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "DONE FOR THE DAY",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "20:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "CARRIED OUT FIRE & SAFETY ROUND",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "23:59",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "VSL STBY ALS TO B# 4 IN SHUAIBA PORT. CARRIED OUT FIRE & SAFETY ROUND",
+      "location_id": "B4",
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {
+    "accidents": "Nil",
+    "incidents": "Nil",
+    "near_miss": "Nil"
+  },
+  "provisions": {},
+  "delays": {},
+  "lifts": {},
+  "report_date": "2026-06-06",
+  "voyage_no": "0",
+  "security_level": 2,
+  "compiled_by": {
+    "name": "MASTER CHARLIE 3",
+    "role": "Master"
+  },
+  "vessel_id": "CH3",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CHARLIE 3 - DAILY VESSEL REPORT OF 06.06.2026",
+    "email_from": "Charlie 3 | OFCO <charlie3@ofco-int.com>",
+    "email_date": "2026-06-07 00:03:25+03:00",
+    "attachment_name": "06 JUNE 2026 CHARLIE 3 Daily Vessel Report -.pdf",
+    "submitted_via": "msg_batch_import"
+  }
+}

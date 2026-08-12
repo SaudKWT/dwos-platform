@@ -1,0 +1,235 @@
+<meta charset="utf-8">
+<title>Free AIS / GPS tracking for the Kuwait fleet — what actually exists</title>
+<style>
+  html, body { background: #ffffff; }
+  body {
+    margin: 0 auto; padding: 48px 32px 96px; max-width: 860px;
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: #1c2024;
+  }
+  h1 { font-size: 30px; line-height: 1.25; margin: 0 0 6px; letter-spacing: -0.02em; }
+  .sub { color: #6b7280; font-size: 15px; margin: 0 0 36px; }
+  h2 {
+    font-size: 21px; margin: 44px 0 14px; padding-bottom: 8px;
+    border-bottom: 2px solid #e5e7eb; letter-spacing: -0.01em;
+  }
+  h3 { font-size: 17px; margin: 28px 0 8px; }
+  p { margin: 0 0 14px; }
+  ul, ol { margin: 0 0 14px; padding-left: 24px; }
+  li { margin-bottom: 6px; }
+  table { border-collapse: collapse; width: 100%; margin: 18px 0 22px; font-size: 14.5px; }
+  th, td { border: 1px solid #d8dce1; padding: 9px 11px; text-align: left; vertical-align: top; }
+  th { background: #f4f6f8; font-weight: 600; }
+  code {
+    background: #f1f3f5; padding: 1.5px 5px; border-radius: 4px;
+    font: 13.5px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .box {
+    border-left: 4px solid #2870c4; background: #f2f7fd;
+    padding: 14px 18px; margin: 22px 0; border-radius: 0 5px 5px 0;
+  }
+  .box.warn { border-left-color: #d97706; background: #fffaf0; }
+  .box.good { border-left-color: #16a34a; background: #f2fbf4; }
+  .box p:last-child { margin-bottom: 0; }
+  .box strong { display: block; margin-bottom: 4px; }
+  .verdict { font-weight: 600; }
+  .no  { color: #b91c1c; font-weight: 600; }
+  .yes { color: #15803d; font-weight: 600; }
+  footer { margin-top: 56px; padding-top: 16px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 13.5px; }
+</style>
+
+<h1>Free AIS / GPS tracking for the Kuwait fleet</h1>
+<p class="sub">What actually exists, what doesn't, and the one route that is genuinely free forever — researched 29 July 2026</p>
+
+<div class="box">
+  <p><strong>The one-line answer</strong>
+  There is <b>no free AIS data service that covers Kuwait</b>. Not one. But you can get
+  free-forever coverage by putting a <b>$200 antenna on a roof in Shuaiba</b> — and the
+  numbers say a single receiver covers your <i>entire</i> operation.</p>
+</div>
+
+<h2>Why free APIs don't work here</h2>
+
+<p>Free ship-tracking services are not charities running satellites. They are
+<b>swap clubs</b>. Hobbyists and ports around the world buy a small radio receiver,
+point it at the sea, and upload what they hear. In exchange they get to see
+everyone else's feed. The data is free because volunteers collected it.</p>
+
+<p>That model has one fatal weakness: <b>it only covers places where volunteers live.</b>
+Northern Europe is blanketed. The US coasts are blanketed. The Persian Gulf has
+almost nobody — no hobbyist community, and the ports don't share publicly.</p>
+
+<p>So the Gulf is a hole in every free network. This isn't a matter of finding the
+right provider; the data simply isn't being collected by anyone who gives it away.</p>
+
+<h2>Everything free that was checked</h2>
+
+<table>
+  <tr><th>Service</th><th>Cost</th><th>Covers Kuwait?</th><th>Verdict</th></tr>
+  <tr>
+    <td><b>AISStream.io</b></td>
+    <td>Free, no card</td>
+    <td class="no">No — proven</td>
+    <td>Live-tested 29 Jul: a worldwide unfiltered feed delivered <b>44,669 messages in 5 minutes with zero</b> from the Gulf, and zero from your five vessels. Their coverage map shows dots on Kuwait, but those are registered-and-silent stations. <span class="verdict">Dead end.</span></td>
+  </tr>
+  <tr>
+    <td><b>AISHub</b></td>
+    <td>Free API</td>
+    <td class="no">No</td>
+    <td>Free only if you run your own receiver, upload it to them, and hold 10+ vessels and 90% uptime for 7 days. On top of that: <b>zero stations anywhere in the Gulf region</b>, and Charlie 3 does not appear in their vessel database. Joining would mostly get you your own data back. <span class="verdict">Not a shortcut — see the hardware route.</span></td>
+  </tr>
+  <tr>
+    <td><b>ShipFinder</b></td>
+    <td>"Free API key"</td>
+    <td>Yes</td>
+    <td>The free key is a sales lead. Real pricing is quote-only enterprise — "every API package is built around your use case and budget." <span class="verdict">Not free.</span></td>
+  </tr>
+  <tr>
+    <td><b>VesselFinder / MarineTraffic websites</b></td>
+    <td>Free to view</td>
+    <td>Yes</td>
+    <td>You can look up any vessel by hand on the website — this is how Charlie 3's MMSI was found. But there is no free API, and scraping the pages breaks their terms and would break the app whenever they change layout. <span class="verdict">Fine for manual spot-checks, not for the map.</span></td>
+  </tr>
+  <tr>
+    <td><b>Government open feeds</b> (Norway, Denmark, Finland)</td>
+    <td>Free</td>
+    <td class="no">No</td>
+    <td>Each country publishes only its own waters. <span class="verdict">Irrelevant.</span></td>
+  </tr>
+  <tr>
+    <td><b>Global Fishing Watch</b></td>
+    <td>Free API</td>
+    <td>Partly</td>
+    <td>Fishing vessels only, and delayed. Your boats are supply and crew vessels. <span class="verdict">Wrong dataset.</span></td>
+  </tr>
+</table>
+
+<div class="box warn">
+  <p><strong>Free satellite AIS does not exist</strong>
+  Satellite AIS is the only technology that sees ships anywhere on earth without a
+  local antenna. Every operator of it (Spire, Kpler, ORBCOMM) sells to shipping
+  companies and governments at enterprise rates. There is no free tier, and there
+  won't be.</p>
+</div>
+
+<h2>The route that is actually free: your own receiver</h2>
+
+<p>AIS is just an unencrypted VHF radio signal. Every ship broadcasts its position
+in the clear, continuously, for anyone to hear. Nobody owns it and nobody bills for
+it. A <b>$200 antenna on a roof in Shuaiba</b> receives your vessels' own broadcasts
+directly, and after that the data costs <b>nothing per month, forever</b>.</p>
+
+<h3>Why this works unusually well for your fleet</h3>
+
+<p>The catch with a receiver is range — it only hears ships within line of sight,
+typically 15–20 nautical miles with the antenna 15 m up. That kills the idea for
+most fleets. It does not kill it for yours, because <b>your fleet barely leaves the
+neighbourhood.</b> Measured from Shuaiba Berth 4 against the coordinates in
+<code>data/locations.json</code>:</p>
+
+<table>
+  <tr><th>Location</th><th>Type</th><th>Distance from Shuaiba</th></tr>
+  <tr><td>Shuaiba Berth 4 (Charlie 3 home berth)</td><td>Berth</td><td>0.0 nm</td></tr>
+  <tr><td>Shuaiba Berth 20 (Crest Argus 1 / 3 / 5)</td><td>Berth</td><td>0.1 nm</td></tr>
+  <tr><td>North Port (NSBP)</td><td>Port</td><td>5.1 nm</td></tr>
+  <tr><td>OPH</td><td>Rig</td><td>15.3 nm</td></tr>
+  <tr><td>OD-1</td><td>Rig</td><td>18.1 nm</td></tr>
+</table>
+
+<div class="box good">
+  <p><strong>Everything is inside 18.1 nm</strong>
+  Every berth, port and rig your five vessels visit sits within 18.1 nm of Shuaiba.
+  That is inside the normal range of one modest antenna, and comfortably inside range
+  if it goes on a tall building — reception scales with height, and reports of
+  50+ nm from a well-placed antenna are routine. <b>One receiver covers the whole
+  operation, including the transits in between.</b></p>
+</div>
+
+<h3>What it costs</h3>
+
+<table>
+  <tr><th>Item</th><th>Cost</th><th>Note</th></tr>
+  <tr><td>dAISy HAT dual-channel AIS receiver</td><td>$86</td><td>Purpose-built board that sits on a Raspberry Pi</td></tr>
+  <tr><td>Raspberry Pi + power + SD card</td><td>~$60–80</td><td>Any recent model is plenty</td></tr>
+  <tr><td>Marine VHF antenna + cable</td><td>~$30–60</td><td>Height matters far more than price</td></tr>
+  <tr><td><b>One-time total</b></td><td><b>~$180–230</b></td><td></td></tr>
+  <tr><td><b>Monthly</b></td><td><b>$0</b></td><td>Forever</td></tr>
+</table>
+
+<p>Compare against the paid options: Datalastic is <b>€199/month</b> (€2,388/year) and
+MyShipTracking <b>€90/month</b> (€1,080/year). The receiver pays for itself in
+<b>under six weeks</b> against Datalastic, or about ten weeks against MyShipTracking.</p>
+
+<h3>What it gives you beyond free</h3>
+
+<ul>
+  <li><b>Better data than you were paying for.</b> Datalastic polled roughly every
+  30 minutes. Your own receiver hears each vessel every few seconds — the raw stream,
+  not snapshots. That is exactly the continuous feed
+  <code>docs/streaming-tracking-plan.md</code> was designed around, and it makes the
+  smooth-motion and trail work in that plan worth doing.</li>
+  <li><b>No credit limits.</b> No metering, no overage, no watching
+  <code>LIVE_DEFAULT_INTERVAL_MS</code> in case it burns 86,000 credits a month.</li>
+  <li><b>AISHub for free as a bonus.</b> Once the receiver is running and uploading,
+  you meet AISHub's contributor bar and get their worldwide API at no cost — useful if
+  a vessel ever sails outside Kuwait.</li>
+  <li><b>It's yours.</b> No trial expiring silently, which is exactly what took the
+  map down on 21 May.</li>
+</ul>
+
+<h3>The honest downsides</h3>
+
+<ul>
+  <li><b>Somebody has to mount an antenna.</b> It needs a spot with a clear view of
+  the water, mains power, and internet. A Shuaiba office roof or a colleague's flat
+  facing the port. This is the real obstacle — not the money or the code.</li>
+  <li><b>Roughly a day of code.</b> A small Node service reads the receiver's NMEA
+  stream and writes the same <code>data/ais-history/</code> JSON the app already
+  consumes. Phase 1 of the streaming plan, already scoped.</li>
+  <li><b>Single point of failure.</b> If the Pi or the internet drops, tracking stops
+  until someone reboots it. A paid API has no such dependency.</li>
+  <li><b>Hard ceiling at the horizon.</b> If a vessel is ever chartered far up the
+  Gulf, it vanishes until it returns. Today's routes never do that.</li>
+</ul>
+
+<h2>Recommendation</h2>
+
+<ol>
+  <li><b>Stop looking for a free API.</b> It has now been searched twice and
+  live-tested. For Kuwait it does not exist. The finding is settled — this document
+  is here so it doesn't get researched a third time.</li>
+  <li><b>Answer one question: can you get an antenna onto a roof near Shuaiba
+  port with power and internet?</b> Everything hinges on this, and it's an
+  operational question, not a technical one.</li>
+  <li><b>If yes → buy the receiver.</b> ~$200 once, $0/month, better data than
+  Datalastic ever gave, and it pays for itself in six weeks.</li>
+  <li><b>If no → the honest answer is you must pay.</b> MyShipTracking at €90/month
+  is the cheaper of the two finalists and adequate for Kuwait nearshore work; it
+  needs about a day of adapter code. Datalastic at €199/month works with the code
+  as-is. Both have free trials — probe either with
+  <code>tools/validate_ais_provider.py</code> before committing.</li>
+  <li><b>Meanwhile the map still works.</b> Positions are estimated from the
+  captains' daily reports. Less precise, never blank.</li>
+</ol>
+
+<div class="box">
+  <p><strong>Already done</strong>
+  Charlie 3's identity is recorded and merged: <code>AIS_MMSI_CH3=341930000</code>
+  in <code>.env</code>, plus MMSI and IMO 9889928 in <code>data/vessels.json</code>,
+  <code>.env.example</code>, and the import tool's vessel list. Whichever route you
+  pick, Charlie 3 starts being tracked with no further setup.</p>
+  <p style="margin-top:10px">One caveat carried in the code comments: public trackers
+  describe MMSI 341930000 as an offshore tug/supply vessel built 2020, while your
+  Charlie 3 works as a fast crew boat. Probably the same hull under a loose
+  classification — but check the first real fixes against its daily reports with
+  <code>tools/crosscheck_reports.py</code> before trusting the feed.</p>
+</div>
+
+<footer>
+  Researched 29 July 2026. Replaces <code>docs/ais-provider-research.html</code>,
+  which was lost before it was ever committed.<br>
+  Sources: aisstream.io (live probe, 29 Jul 2026) · aishub.net/stations ·
+  aishub.net/vessels · open.shipfinder.com · shop.wegmatt.com ·
+  support.marinetraffic.com · distances computed from
+  <code>data/locations.json</code>.
+</footer>

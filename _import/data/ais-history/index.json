@@ -1,0 +1,137 @@
+{
+  "tracks": [
+    {
+      "vessel_id": "CA3",
+      "date_utc": "2026-05-07",
+      "file": "ais-history/CA3-2026-05-07.json",
+      "positions": 7,
+      "provider": "datalastic"
+    },
+    {
+      "vessel_id": "CA3",
+      "date_utc": "2026-05-08",
+      "file": "ais-history/CA3-2026-05-08.json",
+      "positions": 8,
+      "provider": "datalastic"
+    },
+    {
+      "vessel_id": "CA5",
+      "date_utc": "2026-05-09",
+      "file": "ais-history/CA5-2026-05-09.json",
+      "positions": 4,
+      "provider": "datalastic"
+    },
+    {
+      "vessel_id": "CA5",
+      "date_utc": "2026-05-10",
+      "file": "ais-history/CA5-2026-05-10.json",
+      "positions": 5,
+      "provider": "datalastic"
+    },
+    {
+      "vessel_id": "CA1",
+      "date_utc": "2026-05-11",
+      "file": "ais-history/CA1-2026-05-11.json",
+      "positions": 11,
+      "provider": "datalastic"
+    },
+    {
+      "vessel_id": "CA1",
+      "date_utc": "2026-05-12",
+      "file": "ais-history/CA1-2026-05-12.json",
+      "positions": 2,
+      "provider": "datalastic"
+    },
+    {
+      "vessel_id": "JUNO",
+      "date_utc": "2026-05-14",
+      "file": "ais-history/JUNO-2026-05-14.json",
+      "positions": 9,
+      "provider": "datalastic"
+    },
+    {
+      "vessel_id": "JUNO",
+      "date_utc": "2026-05-15",
+      "file": "ais-history/JUNO-2026-05-15.json",
+      "positions": 16,
+      "provider": "datalastic"
+    },
+    {
+      "vessel_id": "CA1",
+      "date_utc": "2026-05-16",
+      "file": "ais-history/CA1-2026-05-16.json",
+      "positions": 26,
+      "provider": "datalastic"
+    },
+    {
+      "vessel_id": "CA3",
+      "date_utc": "2026-05-16",
+      "file": "ais-history/CA3-2026-05-16.json",
+      "positions": 9,
+      "provider": "datalastic"
+    },
+    {
+      "vessel_id": "CA5",
+      "date_utc": "2026-05-16",
+      "file": "ais-history/CA5-2026-05-16.json",
+      "positions": 8,
+      "provider": "datalastic"
+    },
+    {
+      "vessel_id": "JUNO",
+      "date_utc": "2026-05-16",
+      "file": "ais-history/JUNO-2026-05-16.json",
+      "positions": 11,
+      "provider": "datalastic"
+    },
+    {
+      "vessel_id": "CA1",
+      "date_utc": "2026-05-17",
+      "file": "ais-history/CA1-2026-05-17.json",
+      "positions": 5,
+      "provider": "datalastic"
+    },
+    {
+      "vessel_id": "CA5",
+      "date_utc": "2026-05-17",
+      "file": "ais-history/CA5-2026-05-17.json",
+      "positions": 1,
+      "provider": "datalastic"
+    },
+    {
+      "vessel_id": "JUNO",
+      "date_utc": "2026-05-17",
+      "file": "ais-history/JUNO-2026-05-17.json",
+      "positions": 1,
+      "provider": "datalastic"
+    },
+    {
+      "vessel_id": "CA5",
+      "date_utc": "2026-05-18",
+      "file": "ais-history/CA5-2026-05-18.json",
+      "positions": 1,
+      "provider": "datalastic"
+    },
+    {
+      "vessel_id": "CA1",
+      "date_utc": "2026-05-20",
+      "file": "ais-history/CA1-2026-05-20.json",
+      "positions": 1,
+      "provider": "datalastic"
+    },
+    {
+      "vessel_id": "CA3",
+      "date_utc": "2026-05-21",
+      "file": "ais-history/CA3-2026-05-21.json",
+      "positions": 1,
+      "provider": "datalastic"
+    },
+    {
+      "vessel_id": "JUNO",
+      "date_utc": "2026-05-21",
+      "file": "ais-history/JUNO-2026-05-21.json",
+      "positions": 1,
+      "provider": "datalastic"
+    }
+  ]
+}

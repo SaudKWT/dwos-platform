@@ -1,0 +1,257 @@
+{
+  "consumables": {
+    "fuel_oil": {
+      "max_capacity": "950 M3 (80%)",
+      "consumed": "4.827 M3",
+      "discharged": "-",
+      "rob": "543.550 M3",
+      "remaining_to_load": "406.450 M3",
+      "loaded": "-",
+      "remarks": ""
+    }
+  },
+  "task_log": [
+    {
+      "from_time": "00:00",
+      "to_time": "07:18",
+      "duration_min": 438,
+      "task_code": "S01",
+      "task_label": "Standby on location",
+      "description": "Vsl standby anchored at OPH Location, waiting for further instructions",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:18",
+      "to_time": "07:24",
+      "duration_min": 6,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "S.B.E",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:24",
+      "to_time": "07:30",
+      "duration_min": 6,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Heave up anchor",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:30",
+      "to_time": "07:42",
+      "duration_min": 12,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Anchor aweigh & proceeding to OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:42",
+      "to_time": "08:02",
+      "duration_min": 20,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Arrive outer 500m zone of OPH, Pre DP Setup & DP MODE ON",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:02",
+      "to_time": "08:22",
+      "duration_min": 20,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Completed DP set up ,enter 500m zone & Vsl in pos. STBD side",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:22",
+      "to_time": "08:35",
+      "duration_min": 13,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Standby on STBD side of OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:35",
+      "to_time": "14:20",
+      "duration_min": 345,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Deck cargo ops",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "14:20",
+      "to_time": "14:35",
+      "duration_min": 15,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Pull out",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "14:35",
+      "to_time": "15:05",
+      "duration_min": 30,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Stby at 200m,on STBD side to give way to Allianz Zuno.",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:05",
+      "to_time": "15:25",
+      "duration_min": 20,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Proceed back to STBD side",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:25",
+      "to_time": "17:10",
+      "duration_min": 105,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Deck cargo ops",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "17:10",
+      "to_time": "17:45",
+      "duration_min": 35,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Shifting to STBD aft crane of OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "17:45",
+      "to_time": "17:50",
+      "duration_min": 5,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Standby on STBD aft of OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "17:50",
+      "to_time": "18:54",
+      "duration_min": 64,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Deck cargo ops",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "18:54",
+      "to_time": "19:06",
+      "duration_min": 12,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Pull out",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "19:06",
+      "to_time": "19:18",
+      "duration_min": 12,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Out side 500mz, DP OFF & Proceed to anchorage",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "19:18",
+      "to_time": "19:24",
+      "duration_min": 6,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "Drop port side anchor 2Ø i/w – F.W.E",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "19:24",
+      "to_time": "24:00",
+      "duration_min": 276,
+      "task_code": "S01",
+      "task_label": "Standby on location",
+      "description": "Vsl standby anchored at OPH Location, waiting for further instructions",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {},
+  "provisions": {
+    "dry_store_days": 10,
+    "fresh_frozen_days": 10,
+    "drinking_water_days": 10,
+    "fuel_oil_unpumpable": "20 M3"
+  },
+  "delays": {
+    "arrival_time": "NA",
+    "departure_time": "NA"
+  },
+  "lifts": {},
+  "report_date": "2026-05-13",
+  "voyage_no": "057/2026",
+  "next_crew_change": "T.B.A",
+  "issues_comments": "Remaining provision store On-board:\nDry Store              : 10 Days\nFresh & Frozen Store : 10 Days\nDrinking Water         : 10 Days\nFO Unpumpable        : 20 M3\nDelay Arrival Time   : NA\nDelay Departure Time : NA",
+  "accident_summary": "NIL",
+  "compiled_by": {
+    "name": "Capt. Maguta Rochman Hidayat",
+    "role": "Master"
+  },
+  "vessel_id": "CA3",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CREST ARGUS 3 - Daily Midnight Report - 13 May 2026",
+    "email_from": "Crest Argus3 | OFCO <crestargus3@ofco-int.com>",
+    "email_date": "2026-05-13T22:49:03+00:00",
+    "attachment_name": "Crest Argus 3_Daily vessel report_ 13 MAY 2026.pdf",
+    "submitted_via": "historical_import"
+  }
+}
