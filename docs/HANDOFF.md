@@ -191,6 +191,75 @@ Then verify against the design system's own gate rather than by eye:
 npx tsx <design-system>/packages/tokens/src/check-motion.ts web/src
 ```
 
+### Confirming an update actually landed
+
+Done twice by hand now, so it is written down. A design-system release is not
+"taken" when the files change — it is taken when the change is visible in the
+running app, and the two are not the same event.
+
+**1. Read the payload before you sync.** In the design system:
+
+```bash
+npm run release:status <the tag you are on>
+```
+
+It separates the two kinds, and your action differs for each:
+
+| | what it means | what you do |
+|---|---|---|
+| a changed **cssVar** | restyles the app, including components you never re-add | re-add `@koc/theme` |
+| a changed **component file** | does nothing at all until that component is re-added | re-add that component |
+
+A `+` line is usually harmless. A `+` line **flagged as overriding a Tailwind
+default is not** — it re-points a class already used everywhere. That flag exists
+because `--text-sm` was new to the payload and not new to Tailwind, and shifted
+every table cell in this app on upgrade.
+
+**2. Sync from the tag, never from `main`.** `koc:sync` reads through
+`git show <tag>:` for this reason. `main` routinely carries committed but
+unreleased work — at v0.1.3 it held nine variable changes belonging to the *next*
+release. Syncing from a branch will pull them in and nothing will tell you.
+
+**3. Verify in the browser, as computed styles.** Screenshots do not distinguish
+`--secondary` from `--accent` when they hold the same value. For a change that
+alters a state — hover, selected, focus, disabled — read **all** of the states,
+not just the one that changed:
+
+```js
+// in the browser console, on the affected screen
+const el = document.querySelector('[data-slot="sidebar-menu-button"][data-active="true"]')
+getComputedStyle(el).backgroundColor
+```
+
+Hover cannot be forced from a script — move a real pointer, then read.
+
+**Why all the states and not just the changed one:** v0.1.4 moved `--accent` onto
+the same value as `--secondary` and `--muted`. Nothing about the sidebar looked
+wrong. What broke was a form control elsewhere whose *selected* half used one
+token and whose *hover* used the other — they had been different colours and were
+now identical, so hovering an unselected option made it look chosen. The changed
+token was fine. The pair was not.
+
+**4. Run the suites.** `npm run test:a11y` in `web/`, plus the design system's
+motion gate above. Neither is optional after a component re-add: twelve
+components once sat a version behind for a day, carrying bugs already fixed
+upstream, and nothing failed.
+
+### The daily loop, once everything exists
+
+First-run is above. Day to day it is:
+
+```bash
+docker compose --env-file keys.env up -d          # if not already running
+set -a; . ./keys.env; set +a
+dotnet run --project server/Koc.Vessels.Api --launch-profile http &
+cd web && npm run dev
+```
+
+The importer only needs re-running when the JSON corpus in `reference/data/`
+changes. `migrate.sh` only when a new script lands in `database/`. Both are
+safe to re-run at any time and say so when there is nothing to do.
+
 ### Two things that are silent when wrong
 
 Both are already correct in this repo. They matter if you ever rebuild the CSS
