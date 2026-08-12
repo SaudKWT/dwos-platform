@@ -264,4 +264,4 @@ Two conventions that keep it useful:
 - **Known gaps are listed rather than hidden.** If a thing does not work yet, it
   is in the list above.
 
-Last updated: 2026-08-12.
+Last updated: 2026-08-12. Design system pinned at v0.1.2.
