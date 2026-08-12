@@ -1,0 +1,42 @@
+{
+  "plan_date": "2026-05-16",
+  "issued_date": "2026-05-16",
+  "issued_by": "Nirmal Mishra",
+  "issued_role": "IODS Operations Supervisor (Offshore Project), HPM",
+  "subject": "Vessel Movement Plan for the next 48 Hrs. 16-May-2026",
+  "narrative": "Sunday, May 17, 2026 at 12:55:55 PM Arabian Standard Time\n\nSubject:     Vessel Movement Plan for the next 48 Hrs. 16-May-2026\nDate:        Saturday, May 16, 2026 at 6:19:56 PM Arabian Standard Time\nFrom:        Nirmal Mishra\nTo:          Gary Charles Black, Aniket Panchal, Oriental_Phoenix_LC, Oriental_Phoenix_DE, Ahmed Modather,\n             Oriental_Dragon1_LC, Oriental_Dragon1_DE\nCC:          Myo Thura KYAW, Sahil Balraj Balisti, Bjorn Rohde, ops.iods, Sammy Bhasin, Ansley Arthur Jeremiah,\n             Crest Argus3 | OFCO, juno@allianzmarine.org, Crest Argus1 | OFCO, crestargus5@ofco-int.com,\n             Amanuel Yohannes, Capt. Volodymyr Ivashchenko, Adnan Nasser, Bernard Garcia,\n             manish@meliusprojects.com, Varun Kumar - Hetco, Motawea Hussein, Abdallah Hassan Omran, Zuriqi,\n             Yousef Mahmoud, Aisha Al-Dayouli, Viswanath Matam, Murali Krishna, Kunjupillai, Rejeesh Kumar, Tarek\n             Saleh, Hassan, Naser M Gh, Saud, Zaid J A, Zuriqi, Yousef Mahmoud\nAttachments: image001.png\n\n\n\n   CAUTION: This is an external email, do not click on links or open attachments\n   unless you recognize the sender and know the content is safe!.\n\nAll,\n\nPlease see the below Vessel Movement plan for next 48hrs.:\n\nAllianz Juno…\n\n       Vessel Currently STBY at Shuaiba Port, Vessel will remain STBY at Shuaiba Port.\n       Tomorrow 17th May, Vessel will sail to Rig Oriental Phoenix Via NSBP with cargo & Crew\n       Change Pax, ETD at 10.00 Hrs.\n       Vessel will return to Shuaiba Port from Oriental Phoenix Via North Port with Og Signer Crew\n       Pax.\n\n Crest Argus 1…\n\n       Vessel currently STBY at Oriental Phoenix, Vessel will remain STBY at Rig OPH.\n       Tomorrow 17th May, Vessel will remain STBY at Oriental Phoenix.\n\nCrest Argus 3…\n\n       Vessel Currently enroute to Shuaiba Port, ETA at 19.0 Hrs. Vessel will remain STBY at Shuaiba\n       Port.\n       Tomorrow 17th May, Vessel will remain STBY at Shuaiba Port.\n\nCrest Argus 5….\n\n       Vessel Currently STBY at Oriental Dragon-1, Vessel will remain STBY at Oriental Dragon-1.\n       Tomorrow 17th May, Vessel will remain STBY at Oriental Dragon-1.\n\n\n                                                                                                                    1 of 2\n\fCrew change details will be sent by Rig Logistics/ Aisha/ Ahmed Modather.\n\nGary,\n        Kindly approve the above Vessel Movement Plan.\n\nRegards,\n\nNirmal Mishra\nIODS Operations Supervisor (Offshore Project), HPM\n\nKGL Logistics Area\nMina Abdullah 65200 Kuwait\nNirmal.Mishra@halliburton.com\nM: 96569974782/ 96565946120\n\n\nLinkedIn | Instagram | YouTube | Facebook\n\nThis e-mail, including any attached files, may contain confidential and privileged information for\nthe sole use of the intended recipient. Any review, use, distribution, or disclosure by others is\nstrictly prohibited. If you are not the intended recipient (or authorized to receive information for\nthe intended recipient), please contact the sender by reply e-mail and delete all copies of this\nmessage.\n\n\n\n\n                                                                                                       2 of 2",
+  "vessels": [
+    {
+      "vessel_id": "JUNO",
+      "current_status": "Vessel Currently STBY at Shuaiba Port, Vessel will remain STBY at Shuaiba Port.",
+      "tomorrow_plan": "Tomorrow 17th May, Vessel will sail to Rig Oriental Phoenix Via NSBP with cargo & Crew Change Pax, ETD at 10.00 Hrs.",
+      "additional": "Vessel will return to Shuaiba Port from Oriental Phoenix Via North Port with Og Signer Crew Pax."
+    },
+    {
+      "vessel_id": "CA1",
+      "current_status": "Vessel currently STBY at Oriental Phoenix, Vessel will remain STBY at Rig OPH.",
+      "tomorrow_plan": "Tomorrow 17th May, Vessel will remain STBY at Oriental Phoenix.",
+      "additional": ""
+    },
+    {
+      "vessel_id": "CA3",
+      "current_status": "Vessel Currently enroute to Shuaiba Port, ETA at 19.0 Hrs. Vessel will remain STBY at Shuaiba Port.",
+      "tomorrow_plan": "Tomorrow 17th May, Vessel will remain STBY at Shuaiba Port.",
+      "additional": ""
+    },
+    {
+      "vessel_id": "CA5",
+      "current_status": "Vessel Currently STBY at Oriental Dragon-1, Vessel will remain STBY at Oriental Dragon-1.",
+      "tomorrow_plan": "Tomorrow 17th May, Vessel will remain STBY at Oriental Dragon-1.",
+      "additional": ""
+    }
+  ],
+  "source": {
+    "type": "imported_pdf",
+    "email_subject": "Vessel Movement Plan for the next 48 Hrs. 16-May-2026",
+    "email_from": "Nirmal Mishra",
+    "email_date": "Saturday, May 16, 2026 at 6:19:56 PM Arabian Standard Time",
+    "attachment_name": "Vessel Movement Plan for the next 48 Hrs. 16-May-2026.pdf",
+    "submitted_via": "historical_import"
+  }
+}

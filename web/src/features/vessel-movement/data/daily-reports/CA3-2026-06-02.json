@@ -1,0 +1,322 @@
+{
+  "consumables": {
+    "fuel_oil": {
+      "loaded": "72.008 M3",
+      "discharged": null,
+      "consumed": "7.355 M3",
+      "rob": "700.940 M3",
+      "max_capacity": "950 M3 (80%)",
+      "remaining_to_load": "249.060 M3",
+      "remarks": ""
+    },
+    "fresh_water": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": "5 M3",
+      "rob": "542 M3",
+      "max_capacity": "673 M3 (100%)",
+      "remaining_to_load": "131 M3",
+      "remarks": ""
+    },
+    "drill_water": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": null,
+      "rob": "1118 M3",
+      "max_capacity": "1476 M3 (100%)",
+      "remaining_to_load": "358 M3",
+      "remarks": ""
+    },
+    "base_oil": {
+      "loaded": "900 Bbls",
+      "discharged": null,
+      "consumed": null,
+      "rob": "900 Bbls",
+      "max_capacity": "1094 Bbls (80%)",
+      "remaining_to_load": "194 Bbls",
+      "remarks": ""
+    }
+  },
+  "task_log": [
+    {
+      "from_time": "00:00",
+      "to_time": "00:45",
+      "duration_min": 45,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "Rx FO = 1st Truck & 2nd Truck",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "00:45",
+      "to_time": "01:18",
+      "duration_min": 33,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "S.B.E",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "01:18",
+      "to_time": "01:30",
+      "duration_min": 12,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Cast off",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "01:30",
+      "to_time": "05:25",
+      "duration_min": 235,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "Passing tower outbound & Departed to OPH with normal Speed",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "05:25",
+      "to_time": "05:30",
+      "duration_min": 5,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "Arrived OPH loc & Drop port side anchor 2 Ø i/w – F.W.E",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "05:30",
+      "to_time": "07:50",
+      "duration_min": 140,
+      "task_code": "S01",
+      "task_label": "Standby on location",
+      "description": "Vsl standby anchored at OPH Location, waiting for further instructions",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:50",
+      "to_time": "07:54",
+      "duration_min": 4,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "S.B.E",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:54",
+      "to_time": "08:00",
+      "duration_min": 6,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Heave up anchor",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:00",
+      "to_time": "08:06",
+      "duration_min": 6,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Anchor aweigh & proceeding to STBD side of OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:06",
+      "to_time": "08:18",
+      "duration_min": 12,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Arrived outside 500m zone of OPH, Pre DP Setup & DP MODE ON",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:18",
+      "to_time": "08:45",
+      "duration_min": 27,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Completed DP set up ,enter 500m zone",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:45",
+      "to_time": "09:12",
+      "duration_min": 27,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Vsl in position on STBD side & Standby",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:12",
+      "to_time": "09:54",
+      "duration_min": 42,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Standby on STBD side of OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:54",
+      "to_time": "13:00",
+      "duration_min": 186,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Deck cargo ops",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:00",
+      "to_time": "14:00",
+      "duration_min": 60,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Shifting to port side of OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "14:00",
+      "to_time": "15:30",
+      "duration_min": 90,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "Standby on port side of OPH,Rx SOBM hose.",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:30",
+      "to_time": "16:20",
+      "duration_min": 50,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Rx SOBM(17.9 PPG) 540 Bbls from OPH.",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "16:20",
+      "to_time": "17:08",
+      "duration_min": 48,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Base Oil hose connected, Blow line",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "17:08",
+      "to_time": "21:10",
+      "duration_min": 242,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Rx Base Oil (6.5 SG) 900 Bbls from OPH.",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "21:10",
+      "to_time": "21:50",
+      "duration_min": 40,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Blow line & hose disconnected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "21:50",
+      "to_time": "22:30",
+      "duration_min": 40,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "Shifting to STBD side of OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "23:00",
+      "to_time": "24:00",
+      "duration_min": 60,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Deck cargo ops",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {
+    "accidents": "Nil",
+    "incidents": "Nil",
+    "near_miss": "Nil"
+  },
+  "provisions": {
+    "dry_store_days": 5,
+    "fresh_frozen_days": 3,
+    "drinking_water_days": 3,
+    "fuel_oil_unpumpable": "20 M3"
+  },
+  "delays": {
+    "arrival_time": "NA",
+    "departure_time": "NA"
+  },
+  "lifts": {},
+  "report_date": "2026-06-02",
+  "voyage_no": "065/2026",
+  "next_crew_change": "T.B.A",
+  "security_level": 3,
+  "issues_comments": "Remaining provision store On-board:\nDry Store              : 5 Days\nFresh & Frozen Store : 3 Days\nDrinking Water         : 3 Days\nFO Unpumpable          : 20 M3\nDelay Arrival Time     : NA\nDelay Departure Time : NA",
+  "accident_summary": "NIL",
+  "compiled_by": {
+    "name": "Capt. Sergei Shcherbakov",
+    "role": "Master"
+  },
+  "vessel_id": "CA3",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CREST ARGUS 3 - Daily Midnight Report - 02 June 2026",
+    "email_from": "Crest Argus3 | OFCO <crestargus3@ofco-int.com>",
+    "email_date": "2026-06-03 01:19:10+03:00",
+    "attachment_name": "Crest Argus 3_Daily vessel report_ 02 JUNE 2026.pdf",
+    "submitted_via": "msg_batch_import"
+  }
+}

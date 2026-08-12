@@ -1,0 +1,260 @@
+{
+  "consumables": {
+    "fuel_oil": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": "1.95 m3",
+      "rob": "58.58 m3",
+      "max_capacity": "55 m3 (60%)",
+      "remaining_to_load": null,
+      "remarks": ""
+    },
+    "fresh_water": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": "02 m3",
+      "rob": "16.0 m3",
+      "max_capacity": "20 m3",
+      "remaining_to_load": "04 m3",
+      "remarks": ""
+    }
+  },
+  "task_log": [
+    {
+      "from_time": "00:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "VSL ALS TO JETTY IN NORTH PIER. CARRIED OUT FIRE & SAFETY ROUND",
+      "location_id": "NP",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "04:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "CARRIED OUT FIRE & SAFETY ROUND",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "06:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "DAILY CLEANING DONE OF BRIDGE & ACCOMODATION",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "11:35",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "4 PAX EMBARK & START M/E",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:25",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "C/O - PROCEED TO RIG OD1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:50",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "ENTER 500 MTR",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:55",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "VSL ALS TO RIG OD1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "14:00",
+      "to_time": "14:10",
+      "duration_min": null,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "PAX TRANSFER OPR - 6 IN",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "14:12",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "PULLOUT & C/O",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "14:15",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "EXIT 500 MTR",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:36",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "ENTER 500 MTR ZONE",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:45",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "ALS TO RIG OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:50",
+      "to_time": "16:00",
+      "duration_min": null,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "PAX TRANSFER DONE",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "16:02",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "PULLOUT & C/O",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "16:05",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "EXIT 500 MTR",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "17:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "VSL ALS TO NORTH PIER & PAX DISEMBARK",
+      "location_id": "NP",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "17:10",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "STOP M/E",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "20:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "CARRIED OUT FIRE & SAFETY ROUND",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "23:59",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "VSL ALS TO JETTY IN NORTH PIER. CARRIED OUT FIRE & SAFETY ROUND",
+      "location_id": "NP",
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {
+    "accidents": "Nil",
+    "incidents": "Nil",
+    "near_miss": "Nil"
+  },
+  "provisions": {},
+  "delays": {},
+  "lifts": {},
+  "report_date": "2026-05-29",
+  "voyage_no": "0",
+  "security_level": 2,
+  "compiled_by": {
+    "name": "MASTER CHARLIE 3",
+    "role": "Master"
+  },
+  "vessel_id": "CH3",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CHARLIE 3 - DAILY VESSEL REPORT OF 29.05.2026",
+    "email_from": "Charlie 3 | OFCO <charlie3@ofco-int.com>",
+    "email_date": "2026-05-30 00:21:05+03:00",
+    "attachment_name": "29 MAY 2026 CHARLIE 3 Daily Vessel Report -.pdf",
+    "submitted_via": "msg_batch_import"
+  }
+}

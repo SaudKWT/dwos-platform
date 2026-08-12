@@ -1,0 +1,41 @@
+{
+  "plan_date": "2026-05-15",
+  "issued_date": "2026-05-15",
+  "issued_by": "Nirmal Mishra",
+  "issued_role": "IODS Operations Supervisor (Offshore Project), HPM",
+  "subject": "Vessel Movement Plan for the next 48 Hrs. 15-May-2026",
+  "narrative": "All,\n\nPlease see the below Vessel Movement plan for next 48hrs.:\n\n\nAllianz Juno…\n\n\n\n  *   Vessel Currently STBY at Shuaiba Port, Vessel will remain STBY at Shuaiba Port.\n  *   Tomorrow 16th May, Vessel will sail to Rig Oriental Dragon via NSBP with Crew Change Pax, ETD at 08.00hrs.\n  *   Vessel will sail to Rig Oriental Phoenix from Rig OD-1 with Pax then return to Shuaiba Port Via North Port.\n\n\n\n  Crest Argus 1…\n\n\n\n  *   Vessel currently enroute to Rig Oriental Dragon-1, ETA at Rig OD-1 at 19.40 Hrs. Vessel will STBY at OD-1.\n  *   Tomorrow 16th May, Vessel will sail to Rig Oriental Phoenix once Vessel Crest Argus-5 arrives at Rig OD-1. ETD 17.00Hrs.\n\n\nCrest Argus 3…\n\n\n\n  *   Vessel Currently STBY at Rig Oriental Phoenix, Vessel will remain STBY at Oriental Phoenix.\n  *   Tomorrow 16th May, Vessel will sail to Shuaiba Port once Vessel Crest Argus-1 arrives at Rig OPH, ETD, 23.30 Hrs.\n\n\n\nCrest Argus 5….\n\n\n\n  *   Vessel Currently STBY at Oriental Dragon-1, Vessel will sail to Shuaiba Port, ETD 20.0hrs.\n  *   Tomorrow 16th May, Vessel will sail to Rig Oriental Dragon-1, ETD 14.00hrs.\n\n\n\nCrew change details will be sent by Rig Logistics/ Aisha/ Ahmed Modather.\n\n\n\nGary,\n\nKindly approve the above Vessel Movement Plan.\n\nRegards,\n\nNirmal Mishra\nIODS Operations Supervisor (Offshore Project), HPM\nKGL Logistics Area\nMina Abdullah 65200 Kuwait\nNirmal.Mishra@halliburton.com<mailto:Nirmal.Mishra@halliburton.com>\nM: 96569974782/ 96565946120\n[Halliburton]<https://urldefense.com/v3/__https://www.halliburton.com/__;!!KCsm8J4!H42nMcWtHuVdxEgzKKvw14EspfnogoJgvVHEdg1rXNRBirpkb59z7HiyT4s5nywm-iT82GYMO4JemDZn_ZoXEaXhxSaw$ >\nLinkedIn<https://urldefense.com/v3/__https://www.linkedin.com/company/halliburton__;!!KCsm8J4!H42nMcWtHuVdxEgzKKvw14EspfnogoJgvVHEdg1rXNRBirpkb59z7HiyT4s5nywm-iT82GYMO4JemDZn_ZoXEX5jNMwP$ > | Instagram<https://urldefense.com/v3/__https://www.instagram.com/halliburton__;!!KCsm8J4!H42nMcWtHuVdxEgzKKvw14EspfnogoJgvVHEdg1rXNRBirpkb59z7HiyT4s5nywm-iT82GYMO4JemDZn_ZoXEYmK36Od$ > | YouTube<https://urldefense.com/v3/__https://www.youtube.com/halliburton__;!!KCsm8J4!H42nMcWtHuVdxEgzKKvw14EspfnogoJgvVHEdg1rXNRBirpkb59z7HiyT4s5nywm-iT82GYMO4JemDZn_ZoXEWNG2aTo$ > | Facebook<https://urldefense.com/v3/__https://www.facebook.com/halliburton__;!!KCsm8J4!H42nMcWtHuVdxEgzKKvw14EspfnogoJgvVHEdg1rXNRBirpkb59z7HiyT4s5nywm-iT82GYMO4JemDZn_ZoXEcPL3x9t$ >\n\nThis e-mail, including any attached files, may contain confidential and privileged information for the sole use of the intended recipient. Any review, use, distribution, or disclosure by others is strictly prohibited. If you are not the intended recipient (or authorized to receive information for the intended recipient), please contact the sender by reply e-mail and delete all copies of this message.",
+  "vessels": [
+    {
+      "vessel_id": "JUNO",
+      "current_status": "Vessel Currently STBY at Shuaiba Port, Vessel will remain STBY at Shuaiba Port.",
+      "tomorrow_plan": "Tomorrow 16th May, Vessel will sail to Rig Oriental Dragon via NSBP with Crew Change Pax, ETD at 08.00hrs.",
+      "additional": "Vessel will sail to Rig Oriental Phoenix from Rig OD-1 with Pax then return to Shuaiba Port Via North Port."
+    },
+    {
+      "vessel_id": "CA1",
+      "current_status": "Vessel currently enroute to Rig Oriental Dragon-1, ETA at Rig OD-1 at 19.40 Hrs. Vessel will STBY at OD-1.",
+      "tomorrow_plan": "Tomorrow 16th May, Vessel will sail to Rig Oriental Phoenix once Vessel Crest Argus-5 arrives at Rig OD-1. ETD 17.00Hrs.",
+      "additional": ""
+    },
+    {
+      "vessel_id": "CA3",
+      "current_status": "Vessel Currently STBY at Rig Oriental Phoenix, Vessel will remain STBY at Oriental Phoenix.",
+      "tomorrow_plan": "Tomorrow 16th May, Vessel will sail to Shuaiba Port once Vessel Crest Argus-1 arrives at Rig OPH, ETD, 23.30 Hrs.",
+      "additional": ""
+    },
+    {
+      "vessel_id": "CA5",
+      "current_status": "Vessel Currently STBY at Oriental Dragon-1, Vessel will sail to Shuaiba Port, ETD 20.0hrs.",
+      "tomorrow_plan": "Tomorrow 16th May, Vessel will sail to Rig Oriental Dragon-1, ETD 14.00hrs.",
+      "additional": ""
+    }
+  ],
+  "source": {
+    "type": "imported_email",
+    "email_subject": "Vessel Movement Plan for the next 48 Hrs. 15-May-2026",
+    "email_from": "Nirmal Mishra <Nirmal.Mishra@halliburton.com>",
+    "email_date": "2026-05-15T15:09:58+00:00",
+    "submitted_via": "historical_import"
+  }
+}

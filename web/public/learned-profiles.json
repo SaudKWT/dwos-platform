@@ -1,0 +1,229 @@
+{
+  "generated_at": "2026-05-17T08:43:35.270055Z",
+  "n_positions_total": 119,
+  "vessels": {
+    "CA1": {
+      "cruise_speed_kts": 5.6,
+      "median_speed_kts": 6.1,
+      "max_speed_kts": 6.5,
+      "sample_count": 13
+    },
+    "CA3": {
+      "cruise_speed_kts": 5.8,
+      "median_speed_kts": 5.5,
+      "max_speed_kts": 7.9,
+      "sample_count": 18
+    },
+    "CA5": {
+      "cruise_speed_kts": 5.5,
+      "median_speed_kts": 5.6,
+      "max_speed_kts": 7.0,
+      "sample_count": 13
+    },
+    "JUNO": {
+      "cruise_speed_kts": 10.8,
+      "median_speed_kts": 11.2,
+      "max_speed_kts": 12.6,
+      "sample_count": 28
+    }
+  },
+  "routes": [
+    {
+      "vessel_id": "CA1",
+      "from": "OD",
+      "to": "OPH",
+      "sample_count": 1,
+      "avg_duration_min": 627.9,
+      "median_duration_min": 627.9,
+      "avg_speed_kts": 5.0,
+      "waypoints": [
+        [
+          28.914213,
+          48.454498
+        ],
+        [
+          28.929159,
+          48.450012
+        ],
+        [
+          28.947577,
+          48.410927
+        ],
+        [
+          28.947577,
+          48.410927
+        ],
+        [
+          29.052214,
+          48.230194
+        ],
+        [
+          29.125866,
+          48.222099
+        ],
+        [
+          29.155174,
+          48.219391
+        ],
+        [
+          29.219839,
+          48.242512
+        ],
+        [
+          29.219839,
+          48.242512
+        ],
+        [
+          29.219839,
+          48.242512
+        ],
+        [
+          29.232656,
+          48.337132
+        ],
+        [
+          29.233337,
+          48.324028
+        ]
+      ],
+      "best_episode": {
+        "t0": "2026-05-16T05:12:06Z",
+        "t1": "2026-05-16T15:40:00Z",
+        "duration_min": 627.9,
+        "n_fixes": 12
+      }
+    },
+    {
+      "vessel_id": "CA5",
+      "from": "B4",
+      "to": "OD",
+      "sample_count": 1,
+      "avg_duration_min": 151.6,
+      "median_duration_min": 151.6,
+      "avg_speed_kts": 5.7,
+      "waypoints": [
+        [
+          29.042839,
+          48.202469
+        ],
+        [
+          29.01869,
+          48.24765
+        ],
+        [
+          28.989428,
+          48.305836
+        ],
+        [
+          28.963711,
+          48.363941
+        ],
+        [
+          28.93318,
+          48.433628
+        ],
+        [
+          28.913187,
+          48.464767
+        ]
+      ],
+      "best_episode": {
+        "t0": "2026-05-16T04:31:00Z",
+        "t1": "2026-05-16T07:02:35Z",
+        "duration_min": 151.6,
+        "n_fixes": 6
+      }
+    },
+    {
+      "vessel_id": "JUNO",
+      "from": "B20",
+      "to": "OPH",
+      "sample_count": 1,
+      "avg_duration_min": 121.0,
+      "median_duration_min": 121.0,
+      "avg_speed_kts": 7.8,
+      "waypoints": [
+        [
+          29.073441,
+          48.176781
+        ],
+        [
+          29.129793,
+          48.155048
+        ],
+        [
+          29.238159,
+          48.342285
+        ]
+      ],
+      "best_episode": {
+        "t0": "2026-05-15T05:31:00Z",
+        "t1": "2026-05-15T07:32:00Z",
+        "duration_min": 121.0,
+        "n_fixes": 3
+      }
+    },
+    {
+      "vessel_id": "JUNO",
+      "from": "OD",
+      "to": "OPH",
+      "sample_count": 1,
+      "avg_duration_min": 30.0,
+      "median_duration_min": 30.0,
+      "avg_speed_kts": 5.5,
+      "waypoints": [
+        [
+          29.231079,
+          48.344082
+        ],
+        [
+          29.239836,
+          48.341881
+        ]
+      ],
+      "best_episode": {
+        "t0": "2026-05-16T10:59:00Z",
+        "t1": "2026-05-16T11:29:00Z",
+        "duration_min": 30.0,
+        "n_fixes": 2
+      }
+    },
+    {
+      "vessel_id": "JUNO",
+      "from": "OPH",
+      "to": "OD",
+      "sample_count": 1,
+      "avg_duration_min": 123.0,
+      "median_duration_min": 123.0,
+      "avg_speed_kts": 10.7,
+      "waypoints": [
+        [
+          29.200237,
+          48.358425
+        ],
+        [
+          29.162746,
+          48.373245
+        ],
+        [
+          29.050747,
+          48.413116
+        ],
+        [
+          28.992914,
+          48.43824
+        ],
+        [
+          28.918236,
+          48.473095
+        ]
+      ],
+      "best_episode": {
+        "t0": "2026-05-15T08:30:00Z",
+        "t1": "2026-05-15T10:33:00Z",
+        "duration_min": 123.0,
+        "n_fixes": 5
+      }
+    }
+  ]
+}

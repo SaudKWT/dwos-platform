@@ -1,0 +1,463 @@
+{
+  "consumables": {
+    "fuel_oil": {
+      "loaded": "M3",
+      "discharged": "M3",
+      "consumed": "2.200 m3",
+      "rob": "52.102 M3",
+      "max_capacity": "147 m3 (85%)",
+      "remaining_to_load": "m3",
+      "remarks": ""
+    },
+    "fresh_water": {
+      "loaded": "m3",
+      "discharged": "m3",
+      "consumed": "1 m3",
+      "rob": "58 m3",
+      "max_capacity": "139 m3 (85%)",
+      "remaining_to_load": "m3",
+      "remarks": ""
+    }
+  },
+  "task_log": [
+    {
+      "from_time": "00:01",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "VSL REMAIN STBY AT SHUAIBA PORT BERTH NO.4",
+      "location_id": "B4",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "06:45",
+      "to_time": "07:00",
+      "duration_min": null,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "UNLOADING 7 LIFT CARGO",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:15",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "LOADING 1 LIFT CARGO",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:45",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "S.M.E.",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "2 ENVELAPES NOBOARD",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:15",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I02",
+      "task_label": "In transit (channel)",
+      "description": "C/OFF FROM BERTH NO.4 PROCEED TO NORTH PORT",
+      "location_id": "NP",
+      "from_location_id": "B4",
+      "to_location_id": "NP"
+    },
+    {
+      "from_time": "09:20",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "CLEAR BRAEKWATER",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "10:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S01",
+      "task_label": "Standby on location",
+      "description": "SECURED A/S AT NORTH PORT",
+      "location_id": "NP",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "10:10",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S01",
+      "task_label": "Standby on location",
+      "description": "F.W.E.",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "10:50",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S01",
+      "task_label": "Standby on location",
+      "description": "S.M.E.",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "10:55",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "8 PAX ONBOARD",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "11:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "C/OFF FROM NORTH PORT PROCEED TO OPH",
+      "location_id": "OPH",
+      "from_location_id": "NP",
+      "to_location_id": "OPH"
+    },
+    {
+      "from_time": "12:05",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I02",
+      "task_label": "In transit (channel)",
+      "description": "ENTER 500 M SEFETY ZONE AT OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:10",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S01",
+      "task_label": "Standby on location",
+      "description": "A/S AT OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:14",
+      "to_time": "12:22",
+      "duration_min": null,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "PAX TRANSFER 8 PAX IN AND DROP 2 H.C",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:36",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "BACKLOAD 1 LIFT CARGO",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:38",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I02",
+      "task_label": "In transit (channel)",
+      "description": "PULL OUT",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:40",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "EXIT 500 M SEFETY ZONE PROCEED TO OD.1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "14:25",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I02",
+      "task_label": "In transit (channel)",
+      "description": "ENTER 500 M SEFETY ZONE AT OD.1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "14:30",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S01",
+      "task_label": "Standby on location",
+      "description": "A/S AT OD.1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "14:40",
+      "to_time": "14:45",
+      "duration_min": null,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "UNLOADING 2 LIFT CARGO",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "14:50",
+      "to_time": "15:05",
+      "duration_min": null,
+      "task_code": "B1",
+      "task_label": "Back-load at rig",
+      "description": "BACKLOAD 3 LIFT CARGO",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:16",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "P/UP 1 PAX",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:18",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I02",
+      "task_label": "In transit (channel)",
+      "description": "PULL OUT",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:20",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "EXIT 500 M SEFETY ZONE PROCEED TO SHUAIBA",
+      "location_id": "B4",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "16:50",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I02",
+      "task_label": "In transit (channel)",
+      "description": "ENTER BREAKWATER",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "17:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "A/S AT BERTH NO.4",
+      "location_id": "B4",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "17:01",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "DROP 1 PAX",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "17:02",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "UNLOADING 3 LIFT CARGO",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "17:10",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "F.W.E.",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "23:59",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "VSL REMAIN STBY AT SHUAIBA PORT BERTH NO.4",
+      "location_id": "B4",
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [
+    {
+      "first": "DEDE",
+      "last": "MULYADI",
+      "position": "MASTER",
+      "days_onboard": 176,
+      "sign_on_date": "17 NOV 2025",
+      "planned_crew_change": ""
+    },
+    {
+      "first": "JOKO",
+      "last": "MULYONO",
+      "position": "CH OFF",
+      "days_onboard": 166,
+      "sign_on_date": "27 NOV 2025",
+      "planned_crew_change": ""
+    },
+    {
+      "first": "MUHAMMAD ZAINUL",
+      "last": "ARIFIN",
+      "position": "CHI ENG",
+      "days_onboard": 176,
+      "sign_on_date": "17 NOV 2025",
+      "planned_crew_change": ""
+    },
+    {
+      "first": "DANRANGI",
+      "last": "SALENG",
+      "position": "2/E",
+      "days_onboard": 176,
+      "sign_on_date": "17 NOV 2025",
+      "planned_crew_change": ""
+    },
+    {
+      "first": "BARIYA NITESH",
+      "last": "RAMJI",
+      "position": "AB",
+      "days_onboard": 235,
+      "sign_on_date": "19 SEP 2025",
+      "planned_crew_change": ""
+    },
+    {
+      "first": "DEEPAK KUMAR",
+      "last": "KUMAR",
+      "position": "AB",
+      "days_onboard": 270,
+      "sign_on_date": "15 AUG 2025",
+      "planned_crew_change": ""
+    },
+    {
+      "first": "ASHU",
+      "last": "KUMAR",
+      "position": "OILER",
+      "days_onboard": 154,
+      "sign_on_date": "09 DEC 2025",
+      "planned_crew_change": ""
+    },
+    {
+      "first": "BHUVANESH",
+      "last": "RAVEENDHRAN",
+      "position": "OILER",
+      "days_onboard": 256,
+      "sign_on_date": "29 AUG 2025",
+      "planned_crew_change": ""
+    },
+    {
+      "first": "KANNAUJIA",
+      "last": "MAHENDRA",
+      "position": "COOK",
+      "days_onboard": 275,
+      "sign_on_date": "10 AUG 2025",
+      "planned_crew_change": ""
+    }
+  ],
+  "passengers": [],
+  "safety": {
+    "near_miss": "Nil"
+  },
+  "provisions": {},
+  "delays": {},
+  "lifts": {
+    "on_deck": "0",
+    "loaded": "0",
+    "discharged": "",
+    "utilization_pct": null
+  },
+  "report_date": "2026-05-11",
+  "voyage_no": "0",
+  "vessel_id": "JUNO",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "ALLIANZ JUNO - DAILY VESSEL REPORT OF 11.05.2026",
+    "email_from": "Allianz Juno <juno@allianzmarine.org>",
+    "email_date": "2026-05-11T23:04:25+00:00",
+    "attachment_name": "11. MAY 2026 ALLIANZ JUNO Daily Vessel Report.docx",
+    "submitted_via": "historical_import"
+  }
+}

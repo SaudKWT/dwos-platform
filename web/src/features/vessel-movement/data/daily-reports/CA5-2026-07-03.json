@@ -1,0 +1,400 @@
+{
+  "consumables": {
+    "fuel_oil": {
+      "loaded": "- M3",
+      "discharged": "- M3",
+      "consumed": "6.357 M3",
+      "rob": "498.125 M3",
+      "max_capacity": "950 M3 (85%)",
+      "remaining_to_load": "451.875 M3",
+      "remarks": ""
+    },
+    "fresh_water": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": null,
+      "rob": null,
+      "max_capacity": null,
+      "remaining_to_load": null,
+      "remarks": ""
+    },
+    "drill_water": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": null,
+      "rob": "1000 M3",
+      "max_capacity": "1180 M3 (80%)",
+      "remaining_to_load": "180 M3",
+      "remarks": ""
+    },
+    "base_oil": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": null,
+      "rob": "0 Bbls",
+      "max_capacity": "1000 Bbls (80%)",
+      "remaining_to_load": "1000 Bbls",
+      "remarks": ""
+    }
+  },
+  "task_log": [
+    {
+      "from_time": "00:00",
+      "to_time": "01:45",
+      "duration_min": 105,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Vsl at stbd crane OD 1, cargo ops in progress",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "01:45",
+      "to_time": "02:50",
+      "duration_min": 65,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Continue cargo ops",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "03:10",
+      "to_time": "03:15",
+      "duration_min": 5,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "FW hose connected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "03:15",
+      "to_time": "05:00",
+      "duration_min": 105,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Start tx FW to OD 1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "05:10",
+      "to_time": "06:55",
+      "duration_min": 105,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "FW hose disconnected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "06:55",
+      "to_time": "08:15",
+      "duration_min": 80,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Continue deck cargo ops",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:32",
+      "to_time": "08:44",
+      "duration_min": 12,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Cement hose connected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:44",
+      "to_time": "09:05",
+      "duration_min": 21,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Start tx Cement to OD1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:05",
+      "to_time": "09:25",
+      "duration_min": 20,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Stop due to back pressure",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:25",
+      "to_time": "09:26",
+      "duration_min": 1,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Cement hose disconnected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:26",
+      "to_time": "09:45",
+      "duration_min": 19,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Pull out 400 mtrs",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:45",
+      "to_time": "10:00",
+      "duration_min": 15,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Vsl at 400 mtrs from OD 1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "10:00",
+      "to_time": "10:25",
+      "duration_min": 25,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Commenced blow line found the line is clear",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "11:40",
+      "to_time": "12:24",
+      "duration_min": 44,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Approaching stbd crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:24",
+      "to_time": "12:30",
+      "duration_min": 6,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "In post at stbd crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:30",
+      "to_time": "12:40",
+      "duration_min": 10,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Cement hose connected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "12:40",
+      "to_time": "14:10",
+      "duration_min": 90,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Start tx Cement to OD1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "14:15",
+      "to_time": "15:00",
+      "duration_min": 45,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Cement hose disconnected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:00",
+      "to_time": "15:05",
+      "duration_min": 5,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Cement hose connected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:05",
+      "to_time": "15:30",
+      "duration_min": 25,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Resume tx cement to OD1, completed",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:48",
+      "to_time": "15:50",
+      "duration_min": 2,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Cement hose disconnected",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:50",
+      "to_time": "16:20",
+      "duration_min": 30,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Vsl move to port side crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "16:20",
+      "to_time": "17:18",
+      "duration_min": 58,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "In post at port side crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "17:18",
+      "to_time": "19:23",
+      "duration_min": 125,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Continue deck cargo ops",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "19:25",
+      "to_time": "19:40",
+      "duration_min": 15,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "PUll out 200 mtrs",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "19:40",
+      "to_time": "19:50",
+      "duration_min": 10,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Vsl at 200 mtrs fm OD 1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "19:50",
+      "to_time": "20:12",
+      "duration_min": 22,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Approacing port side crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "20:12",
+      "to_time": "20:45",
+      "duration_min": 33,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "In post at port side crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "20:45",
+      "to_time": null,
+      "duration_min": 195,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Continue deck cargo ops, Vsl at port side OD 1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {
+    "accidents": "Nil",
+    "incidents": "Nil",
+    "near_miss": "Nil"
+  },
+  "provisions": {
+    "dry_store_days": 25,
+    "fresh_frozen_days": 25,
+    "drinking_water_days": 25,
+    "fuel_oil_unpumpable": "20 M3"
+  },
+  "delays": {
+    "arrival_time": "NA",
+    "departure_time": "NA"
+  },
+  "lifts": {},
+  "report_date": "2026-07-03",
+  "voyage_no": "78",
+  "days_since_port_call": 2,
+  "next_crew_change": "TBA",
+  "security_level": 3,
+  "issues_comments": "Remaining Provisions Store On-board\n    Dry Store             : 25 Days\n    Fresh & Frozen Store: 25 Days\n    Drinking Water        : 25 Days\n    FO Unpumpable : 20 M3\n    Durability for safe operation :\n    Delay Arrival Time  : NA\n    Delay Departure Time : NA",
+  "accident_summary": "Nil",
+  "compiled_by": {
+    "name": "Ahmad Sakour",
+    "role": "Master"
+  },
+  "vessel_id": "CA5",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CREST ARGUS 5 - Daily Midnight Report - 03.07.2026 ",
+    "email_from": "Crest Argus5 | OFCO <crestargus5@ofco-int.com>",
+    "email_date": "2026-07-04 00:41:43+03:00",
+    "attachment_name": "Crest Argus 5_Daily vessel report _03.07.2026.pdf",
+    "submitted_via": "msg_batch_import"
+  }
+}

@@ -1,0 +1,336 @@
+{
+  "consumables": {
+    "fuel_oil": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": "3.336 M3",
+      "rob": "466.514 M3",
+      "max_capacity": "950 M3 (85%)",
+      "remaining_to_load": "483.486 M3",
+      "remarks": ""
+    },
+    "fresh_water": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": "6 M3",
+      "rob": "338 M3",
+      "max_capacity": "673 M3 (100%)",
+      "remaining_to_load": "335 M3",
+      "remarks": ""
+    },
+    "drill_water": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": null,
+      "rob": "1160 M3",
+      "max_capacity": "1180 M3 (80%)",
+      "remaining_to_load": "20 M3",
+      "remarks": ""
+    }
+  },
+  "task_log": [
+    {
+      "from_time": "00:00",
+      "to_time": "08:00",
+      "duration_min": 480,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "Vsl remain anchor at OD1 clear area stby waiting instruction",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:00",
+      "to_time": null,
+      "duration_min": 0,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "SBE",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:08",
+      "to_time": null,
+      "duration_min": 8,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "Heave up anchor",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:18",
+      "to_time": null,
+      "duration_min": 0,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "Anchor aweigh proceed to OD 1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:50",
+      "to_time": null,
+      "duration_min": 0,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "DP mode on",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:10",
+      "to_time": null,
+      "duration_min": 0,
+      "task_code": "O1",
+      "task_label": "Other",
+      "description": "DP set up completed, permission granted entering 500m zone",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:35",
+      "to_time": "09:40",
+      "duration_min": 5,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "In post S/S crane OD 1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:40",
+      "to_time": "10:00",
+      "duration_min": 20,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Deck cargo ops",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "10:15",
+      "to_time": "10:20",
+      "duration_min": 5,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Pick up 4 person for working flare boom",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "10:20",
+      "to_time": "11:00",
+      "duration_min": 40,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Pull out move to P/S crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "11:00",
+      "to_time": "11:25",
+      "duration_min": 25,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "In post P/S crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "11:25",
+      "to_time": "11:35",
+      "duration_min": 10,
+      "task_code": "S01",
+      "task_label": "Standby on location",
+      "description": "Pull out 300 mtrs",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:20",
+      "to_time": "13:43",
+      "duration_min": 23,
+      "task_code": "S01",
+      "task_label": "Standby on location",
+      "description": "Get instr approach P/S crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "13:43",
+      "to_time": "14:10",
+      "duration_min": 27,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "In post P/S crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "14:10",
+      "to_time": "15:48",
+      "duration_min": 98,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Drop 4 person to OD 1",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "15:48",
+      "to_time": "16:10",
+      "duration_min": 22,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Deck cargo ops",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "16:10",
+      "to_time": "16:20",
+      "duration_min": 10,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "pick up 2 person for working flare boom",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "16:20",
+      "to_time": "16:35",
+      "duration_min": 15,
+      "task_code": "S01",
+      "task_label": "Standby on location",
+      "description": "Pull out 200 mtrs",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "17:10",
+      "to_time": "17:20",
+      "duration_min": 10,
+      "task_code": "S01",
+      "task_label": "Standby on location",
+      "description": "Get instr approach P/S crane",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "17:20",
+      "to_time": "17:40",
+      "duration_min": 20,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "In post P/S crane drop 2 person",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "17:48",
+      "to_time": "18:05",
+      "duration_min": 17,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Pull out 500 mtrs zone",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "18:05",
+      "to_time": "18:19",
+      "duration_min": 14,
+      "task_code": "DP1",
+      "task_label": "DP cargo operations",
+      "description": "Exit 500m DP off and proceed to anchorage area",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "18:19",
+      "to_time": "18:24",
+      "duration_min": 5,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "Vsl drop anchor at OD1 clear area",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "18:24",
+      "to_time": "24:00",
+      "duration_min": 336,
+      "task_code": "A01",
+      "task_label": "Standby at anchor",
+      "description": "Finish ME, Vsl remain anchor at OD1 clear area stby waiting instruction",
+      "location_id": "OD",
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {
+    "accidents": "Nil",
+    "incidents": "Nil",
+    "near_miss": "Nil"
+  },
+  "provisions": {
+    "dry_store_days": 7,
+    "fresh_frozen_days": 7,
+    "drinking_water_days": 7,
+    "fuel_oil_unpumpable": "20 M3"
+  },
+  "delays": {
+    "arrival_time": "NA",
+    "departure_time": "NA"
+  },
+  "lifts": {},
+  "report_date": "2026-06-01",
+  "voyage_no": "73",
+  "days_since_port_call": 6,
+  "next_crew_change": "TBA",
+  "security_level": 3,
+  "issues_comments": "Remaining Provisions Store On-board\nDry Store             : 07 Days\nFresh & Frozen Store: 07 Days\nDrinking Water        : 07 Days\nFO Unpumpable : 20 M3\nDurability for safe operation :\nDelay Arrival Time  : NA\nDelay Departure Time : NA",
+  "accident_summary": "Nil",
+  "compiled_by": {
+    "name": "Ahmad Sakour",
+    "role": "Master"
+  },
+  "vessel_id": "CA5",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CREST ARGUS 5 - Daily Midnight Report - 01.06.2026",
+    "email_from": "Crest Argus5 | OFCO <crestargus5@ofco-int.com>",
+    "email_date": "2026-06-02 00:18:32+03:00",
+    "attachment_name": "Crest Argus 5_Daily vessel report _01.06.2026.pdf",
+    "submitted_via": "msg_batch_import"
+  }
+}

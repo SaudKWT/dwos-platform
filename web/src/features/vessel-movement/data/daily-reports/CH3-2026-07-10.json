@@ -1,0 +1,271 @@
+{
+  "consumables": {
+    "fuel_oil": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": "1.26 m3",
+      "rob": "25.527 m3",
+      "max_capacity": "55 m3 (60%)",
+      "remaining_to_load": "29.473 m3",
+      "remarks": ""
+    },
+    "fresh_water": {
+      "loaded": null,
+      "discharged": null,
+      "consumed": "02 m3",
+      "rob": "11 m3",
+      "max_capacity": "20 m3",
+      "remaining_to_load": "09 m3",
+      "remarks": ""
+    }
+  },
+  "task_log": [
+    {
+      "from_time": "00:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "VSL STBY ALS TO B# 4 IN SHUAIBA PORT. CARRIED OUT FIRE & SAFETY ROUND",
+      "location_id": "B4",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "04:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "CARRIED OUT FIRE & SAFETY ROUND",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "06:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "DONE CLEANING OF BRIDGE & ACCOMODATION",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "06:40",
+      "to_time": "06:50",
+      "duration_min": 10,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "LOADED CARGO FOR OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:30",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "2 PAX ONBOARD",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:40",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "START MAIN ENGINE",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "07:45",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "C/O & PROCEED TO OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:50",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "Enter 500 MTR ZONE",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "08:55",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S02",
+      "task_label": "Standby alongside rig in DP",
+      "description": "ASL TO THE RIG OPH",
+      "location_id": "OPH",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:00",
+      "to_time": "09:05",
+      "duration_min": null,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "CARGO TRANSFER OPR",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:10",
+      "to_time": "09:50",
+      "duration_min": null,
+      "task_code": "L2E",
+      "task_label": "Cargo ops",
+      "description": "PASSANGERS DISEMBARKED AND EMBARKED",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:52",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "PULLOUT & C/O",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "09:55",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "I01",
+      "task_label": "In transit",
+      "description": "EXIT 500 MTR",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "11:05",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "VSL ALS TO B# 4 IN SHUAIBA PORT",
+      "location_id": "B4",
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "11:07",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "DISEMBARKED THE PAX",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "11:10",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "STOP M/E",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "16:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "CLEANING OF MAIN DECK DONE",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "18:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "DONE FOR THE DAY",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "20:00",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "CARRIED OUT FIRE AND SAFETY ROUND",
+      "location_id": null,
+      "from_location_id": null,
+      "to_location_id": null
+    },
+    {
+      "from_time": "23:59",
+      "to_time": null,
+      "duration_min": null,
+      "task_code": "S03",
+      "task_label": "Standby (semi DP / base)",
+      "description": "VSL STBY ALS TO B# 4 IN SHUAIBA PORT. CARRIED OUT FIRE & SAFETY ROUND",
+      "location_id": "B4",
+      "from_location_id": null,
+      "to_location_id": null
+    }
+  ],
+  "crew": [],
+  "passengers": [],
+  "safety": {
+    "accidents": "Nil",
+    "incidents": "Nil",
+    "near_miss": "Nil"
+  },
+  "provisions": {},
+  "delays": {},
+  "lifts": {},
+  "report_date": "2026-07-10",
+  "voyage_no": "0",
+  "security_level": 2,
+  "compiled_by": {
+    "name": "MASTER CHARLIE 3",
+    "role": "Master"
+  },
+  "vessel_id": "CH3",
+  "period_end": "24:00",
+  "source": {
+    "type": "imported_email",
+    "email_subject": "CHARLIE 3 - DAILY VESSEL REPORT OF 10.07.2026",
+    "email_from": "Charlie 3 | OFCO <charlie3@ofco-int.com>",
+    "email_date": "2026-07-11 00:05:12+03:00",
+    "attachment_name": "10 JULY 2026 CHARLIE 3 Daily Vessel Report.pdf",
+    "submitted_via": "msg_batch_import"
+  }
+}
