@@ -95,6 +95,10 @@ function useAisTracks() {
 /** Cruise speeds + route shapes learned from AIS (static artifact, like the original). */
 function useLearnedProfiles() {
   return useQuery({
+    // Not an API call, deliberately. learned-profiles.json is a derived model —
+    // cruise speeds fitted from AIS history by reference/tools/learn_from_ais.py —
+    // regenerated offline, not operational data. It is a static asset in public/
+    // because there is nothing for the API to serve: no table holds it.
     queryKey: ['learned-profiles'],
     staleTime: Infinity,
     queryFn: async () => {

@@ -1,0 +1,21 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "api",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "set -a; . ./keys.env; set +a; export PATH=\"/opt/homebrew/opt/dotnet@8/bin:$PATH\"; export DOTNET_ROOT=\"/opt/homebrew/opt/dotnet@8/libexec\"; exec dotnet run --project server/Koc.Vessels.Api --launch-profile http"
+      ],
+      "port": 5280
+    },
+    {
+      "name": "web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "web"],
+      "port": 4200,
+      "autoPort": true
+    }
+  ]
+}

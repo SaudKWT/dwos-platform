@@ -29,8 +29,11 @@ builder.Services.AddSwaggerGen();
 // same app, so there is no cross-origin request to permit.
 const string DevCors = "dev";
 builder.Services.AddCors(o => o.AddPolicy(DevCors, p => p
-    .WithOrigins("http://localhost:5173", "http://127.0.0.1:5173",
-                 "http://localhost:5174", "http://127.0.0.1:5174")
+    // web/ runs on 4200. These are a fallback: Vite proxies /api, so the browser
+    // is same-origin in dev and CORS never fires. They matter only when someone
+    // points the client at the API directly, without the proxy.
+    .WithOrigins("http://localhost:4200", "http://127.0.0.1:4200",
+                 "http://localhost:4201", "http://127.0.0.1:4201")
     .AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
 
 var app = builder.Build();
@@ -48,9 +51,15 @@ if (app.Environment.IsDevelopment())
 app.MapControllers();
 app.MapHub<LiveHub>("/hubs/live");
 
-// Serves the built React client (client/dist copied to wwwroot) in production.
+// Serves the built React client (web/dist copied to wwwroot) in production.
 app.UseDefaultFiles();
 app.UseStaticFiles();
+
+// The client is a single-page app with real routes — /unit-4/vessels/reports is
+// a client-side path, not a file on disk. Without this, a deep link or a refresh
+// on any screen but the root returns 404 from the static handler. The fallback is
+// registered AFTER MapControllers so it never shadows an /api route.
+app.MapFallbackToFile("index.html");
 
 app.MapGet("/api/health", async (DwoDbContext db) => Results.Ok(new
 {

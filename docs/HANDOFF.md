@@ -37,18 +37,27 @@ new — in their own SQL schema. See "Adding a module" below.
 | | |
 |---|---|
 | SQL Server | version and instance **TBD — see Deployment** |
-| .NET SDK | matching `server/Koc.Vessels.Api/*.csproj` |
+| .NET SDK | **8.0** — `server/*.csproj` target `net8.0`. On macOS: `brew install dotnet@8` (keg-only; export `DOTNET_ROOT` and add its `bin` to `PATH`) |
 | Node | 20+, for building `web/` |
 | `keys.env` | at the repo root, untracked. See `database/README.md`. |
 
 ## First run, locally
 
 ```bash
-cp keys.env.example keys.env && $EDITOR keys.env   # set MSSQL_SA_PASSWORD
+cp keys.env.example keys.env && $EDITOR keys.env   # password + connection string
 docker compose --env-file keys.env up -d           # local SQL Server, container dwos-sql
 ./database/migrate.sh                              # applies 000..004, journalled
-cd web && npm ci && npm run build
+
+set -a; . ./keys.env; set +a                       # API and importer read ConnectionStrings__Dwo
+dotnet run --project server/Koc.Vessels.Importer -- --data reference/data
+dotnet run --project server/Koc.Vessels.Api --launch-profile http   # :5280
+
+cd web && npm ci && npm run dev                    # :4200, proxies /api to 5280
 ```
+
+The importer is re-runnable: it clears the marine tables and reloads from the
+JSON corpus, then verifies row counts and coordinates against the source files.
+It never touches a table from `001-schema0726.sql`.
 
 `migrate.sh --status` shows what has been applied without changing anything.
 
@@ -83,8 +92,9 @@ wrong. What is known:
 - [ ] Whether outbound internet exists on the build agent — this decides the
       design-system question below
 
-The previous repo carried `vercel.json` and `docker-compose.yml`. Both were for a
-demo deployment and neither came across. Do not resurrect them as a template.
+The previous repo carried a `vercel.json` for a demo deployment. It did not come
+across; do not resurrect it as a template. `docker-compose.yml` did come across,
+but it is a laptop SQL Server for development and says nothing about KOC.
 
 ## The design system
 
@@ -241,9 +251,6 @@ The vessel app is the worked example. Follow it, plus the step it skipped.
 
 Honest list. None of these are hidden in the code.
 
-- **The web app reads bundled JSON fixtures, not the API.** `web/src/features/
-  vessel-movement/data/` is a snapshot of the real corpus for development. Wiring
-  it to `server/` is the next substantial piece of work.
 - **`dbo.Entity` is empty**, so there is nothing yet to bind units to. `001` ships
   DDL only — no seed rows anywhere, including `Module`, `Entity` and `Status`. The
   seven unit bindings below therefore cannot be filled from a fresh local database;
@@ -277,4 +284,4 @@ Two conventions that keep it useful:
 - **Known gaps are listed rather than hidden.** If a thing does not work yet, it
   is in the list above.
 
-Last updated: 2026-08-12. Design system pinned at v0.1.2. Migrations verified against a real SQL Server.
+Last updated: 2026-08-12. Design system pinned at v0.1.2. Migrations and the full client→API→SQL Server round trip verified locally.
