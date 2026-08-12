@@ -178,11 +178,11 @@ export default function VesselSheet({ vessel: v, ctx, reports, t, onClose }: {
                             <tr key={r.id} className="border-t">
                               <td className="px-3 py-2 font-medium">{r.name}</td>
                               <td className="px-3 py-2">
-                                <span className="rounded bg-secondary px-1.5 py-0.5 text-[11px] uppercase text-muted-foreground">{r.type}</span>
+                                <span className="rounded bg-secondary px-1.5 py-0.5 text-2xs uppercase text-muted-foreground">{r.type}</span>
                               </td>
                               <td className="whitespace-nowrap px-3 py-2 text-right">
                                 <b>{r.stayMinutes ? fmtDur(r.stayMinutes) : '—'}</b>
-                                <span className="ml-1 text-[10px] text-muted-foreground">total</span>
+                                <span className="ml-1 text-2xs text-muted-foreground">total</span>
                               </td>
                               <td className="px-3 py-2">
                                 <div className="flex items-center gap-2">
@@ -214,7 +214,7 @@ export default function VesselSheet({ vessel: v, ctx, reports, t, onClose }: {
                             }),
                             ...(r.hasOverlap
                               ? [
-                                  <tr key={`${r.id}-note`} className="text-[10px] text-muted-foreground/70">
+                                  <tr key={`${r.id}-note`} className="text-2xs text-muted-foreground/70">
                                     <td className="pb-1.5 pl-7 pr-3 italic" colSpan={4}>
                                       Some of these jobs ran at the same time, so they add up to
                                       more than {fmtDur(r.stayMinutes)}.
@@ -266,7 +266,7 @@ export default function VesselSheet({ vessel: v, ctx, reports, t, onClose }: {
                               {r.from_time}
                               {fixed && (
                                 <span
-                                  className="ml-1 rounded bg-warning/15 px-1 text-[10px] text-warning"
+                                  className="ml-1 rounded bg-warning/15 px-1 text-2xs text-warning"
                                   title={`captain wrote ${orig} — adjusted to keep the timeline monotonic`}
                                 >
                                   ~{orig}
@@ -278,7 +278,7 @@ export default function VesselSheet({ vessel: v, ctx, reports, t, onClose }: {
                             <td className="px-3 py-2">
                               {r.description || ''}
                               {active && (
-                                <span className="ml-1.5 rounded bg-primary px-1.5 py-0.5 text-[10px] font-bold uppercase text-primary-foreground">
+                                <span className="ml-1.5 rounded bg-primary px-1.5 py-0.5 text-2xs font-bold uppercase text-primary-foreground">
                                   Now
                                 </span>
                               )}
@@ -317,7 +317,7 @@ export default function VesselSheet({ vessel: v, ctx, reports, t, onClose }: {
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border px-3 py-2">
-      <div className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</div>
+      <div className="text-2xs uppercase tracking-wide text-muted-foreground">{label}</div>
       <div className="mt-0.5 truncate text-sm font-semibold" title={value}>{value}</div>
     </div>
   )

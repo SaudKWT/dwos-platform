@@ -426,13 +426,13 @@ function VesselCard({ vessel: v, ctx, t, segments, aisTracks, aisOverlay, onOpen
       const nearest = nearestAisPoint(aisTracks, v.id, t)
       const ago = nearest ? Math.round(Math.abs(t.getTime() - nearest.ts.getTime()) / 60000) : null
       source = (
-        <div className="text-[11px] text-info">
+        <div className="text-2xs text-info">
           📡 Position: <b>real AIS</b>
           {ago !== null && ` · nearest fix ${ago} min ${nearest!.ts < t ? 'before' : 'after'} now`}
         </div>
       )
     } else {
-      source = <div className="text-[11px] text-muted-foreground">📝 Position: <b>interpolated from daily report</b> · no AIS within ±30 min</div>
+      source = <div className="text-2xs text-muted-foreground">📝 Position: <b>interpolated from daily report</b> · no AIS within ±30 min</div>
     }
   }
 
@@ -463,7 +463,7 @@ function VesselCard({ vessel: v, ctx, t, segments, aisTracks, aisOverlay, onOpen
 function Tag({ tone, children }: { tone: 'moored' | 'transit' | 'muted'; children: React.ReactNode }) {
   return (
     <span className={cn(
-      'inline-block rounded px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide',
+      'inline-block rounded px-1.5 py-0.5 text-2xs font-semibold uppercase tracking-wide',
       tone === 'moored' && 'bg-success/15 text-success',
       tone === 'transit' && 'bg-info/15 text-info',
       tone === 'muted' && 'bg-secondary text-muted-foreground',

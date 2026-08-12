@@ -29,17 +29,17 @@ import { cn } from '@/lib/utils'
 // indistinguishable.
 
 const FAMILY_TINT: Record<string, string> = {
-  standby: 'bg-amber-500/[0.06] border-l-amber-400',
-  transit: 'bg-sky-500/[0.06] border-l-sky-400',
-  cargo: 'bg-emerald-500/[0.06] border-l-emerald-400',
-  other: 'bg-muted/40 border-l-slate-400',
+  standby: 'bg-warning/[0.06] border-l-warning',
+  transit: 'bg-info/[0.06] border-l-info',
+  cargo: 'bg-success/[0.06] border-l-success',
+  other: 'bg-muted/40 border-l-muted-foreground/40',
 }
 
 const FAMILY_BAR: Record<string, string> = {
-  standby: 'bg-amber-400',
-  transit: 'bg-sky-500',
-  cargo: 'bg-emerald-500',
-  other: 'bg-slate-400',
+  standby: 'bg-warning',
+  transit: 'bg-info',
+  cargo: 'bg-success',
+  other: 'bg-muted-foreground/50',
   gap: 'bg-destructive/60',
 }
 
@@ -294,7 +294,7 @@ export default function ReportForm() {
       )}
 
       <form onSubmit={submit} className="space-y-4 pb-2">
-        <Card title="Report header" accent="blue">
+        <Card title="Report header">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             <Field label="Vessel" required>
               <select id="dvr-vessel" required value={f.vesselId} onChange={e => patch({ vesselId: e.target.value })} className={inputCls}>
@@ -349,7 +349,7 @@ export default function ReportForm() {
               <button
                 type="button"
                 onClick={() => loadReport(f.vesselId, f.reportDate, false)}
-                className="rounded border border-warning/40 px-2 py-0.5 font-medium hover:bg-amber-500/20"
+                className="rounded border border-warning/40 px-2 py-0.5 font-medium hover:bg-warning/20"
               >
                 Load it in
               </button>
@@ -357,7 +357,7 @@ export default function ReportForm() {
           )}
         </Card>
 
-        <Card title="Safety (24 hrs)" accent="red" subtitle="Answer the question — the box only opens if there is something to report.">
+        <Card title="Safety (24 hrs)" subtitle="Answer the question — the box only opens if there is something to report.">
           <div className="grid gap-3 sm:grid-cols-3">
             <NilToggle
               label="Accidents" value={f.safety.accidents} isNil={isNilAnswer(f.safety.accidents)}
@@ -378,7 +378,7 @@ export default function ReportForm() {
         </Card>
 
         <Card
-          title="Operational task log" required accent="violet" id="dvr-task-log"
+          title="Operational task log" required id="dvr-task-log"
           subtitle="Spans account for the day; events mark the moment something happened. Both drive the map."
         >
           <div className="sticky top-0 z-10 -mx-4 mb-3 border-b bg-card px-4 pb-2 pt-1">
@@ -418,7 +418,7 @@ export default function ReportForm() {
         </Card>
 
         <Card
-          title="Consumables" accent="teal"
+          title="Consumables"
           subtitle={f.vesselId
             ? "Loaded / Discharged are what prove a delivery happened — fill them whenever a hose was connected."
             : "Pick a vessel to see its tanks."}
@@ -453,7 +453,7 @@ export default function ReportForm() {
         </Card>
 
         <CollapsibleCard
-          title="Provisions & delays" accent="green"
+          title="Provisions & delays"
           open={open.provisions} onOpenChange={v => setOpen(o => ({ ...o, provisions: v }))}
           summary={provisionsSummary(f)}
           action="Add"
@@ -479,7 +479,7 @@ export default function ReportForm() {
         </CollapsibleCard>
 
         <CollapsibleCard
-          title="Deck cargo / lifts" accent="amber"
+          title="Deck cargo / lifts"
           open={open.cargo} onOpenChange={v => setOpen(o => ({ ...o, cargo: v }))}
           summary={f.lifts.on_deck || f.lifts.loaded || f.lifts.discharged ? 'has entries' : undefined}
           action="Add"
@@ -493,7 +493,7 @@ export default function ReportForm() {
         </CollapsibleCard>
 
         <CollapsibleCard
-          title="Crew list" accent="cyan"
+          title="Crew list"
           subtitle="Fills the crew table on page 3 of the printed report."
           open={open.crew} onOpenChange={v => setOpen(o => ({ ...o, crew: v }))}
           summary={f.crew.length ? `${f.crew.length} aboard` : undefined}
@@ -505,7 +505,7 @@ export default function ReportForm() {
           />
         </CollapsibleCard>
 
-        <Card title="Comments & sign-off" accent="slate">
+        <Card title="Comments & sign-off">
           <Field label="Requirements next port call">
             <textarea rows={2} value={f.requirements} onChange={e => patch({ requirements: e.target.value })} className={inputCls} />
           </Field>
@@ -577,7 +577,7 @@ function TaskRow({ i, row, locOptions, onEdit, onDuplicate, onRemove }: {
   return (
     <div className={cn('rounded-md border border-l-4 p-2', FAMILY_TINT[fam])}>
       <div className="flex flex-wrap items-center gap-2">
-        <span className="w-5 text-right font-mono text-[11px] text-muted-foreground">{i + 1}</span>
+        <span className="w-5 text-right font-mono text-2xs text-muted-foreground">{i + 1}</span>
 
         {/*
           Changing the kind drops the importer's carried duration: it described
@@ -600,7 +600,7 @@ function TaskRow({ i, row, locOptions, onEdit, onDuplicate, onRemove }: {
         />
 
         {isEvent ? (
-          <span className="w-[7.75rem] text-[11px] text-muted-foreground">a moment in time</span>
+          <span className="w-[7.75rem] text-2xs text-muted-foreground">a moment in time</span>
         ) : (
           <>
             <span className="text-xs text-muted-foreground">→</span>
@@ -613,7 +613,7 @@ function TaskRow({ i, row, locOptions, onEdit, onDuplicate, onRemove }: {
               aria-label={`Row ${i + 1} end time`}
               className={cn(inputCls, 'w-[4.5rem] text-center font-mono')}
             />
-            <span className="w-12 font-mono text-[11px] text-muted-foreground">
+            <span className="w-12 font-mono text-2xs text-muted-foreground">
               {dur !== null ? `${Math.floor(dur / 60)}h${dur % 60 ? String(dur % 60).padStart(2, '0') : ''}` : '—'}
             </span>
           </>
@@ -677,7 +677,7 @@ function TaskRow({ i, row, locOptions, onEdit, onDuplicate, onRemove }: {
           aria-label={`Row ${i + 1} job type`}
           title="What kind of job this was — the analytics use it instead of guessing"
           className={cn(
-            'max-w-[13rem] shrink-0 truncate rounded-full border px-2 py-0.5 text-[11px] outline-none focus:ring-2 focus:ring-ring/30',
+            'max-w-[13rem] shrink-0 truncate rounded-full border px-2 py-0.5 text-2xs outline-none focus:ring-2 focus:ring-ring/30',
             row.activity ? 'border-primary/40 bg-primary/10 text-foreground' : 'border-transparent bg-secondary text-muted-foreground',
           )}
         >
@@ -691,7 +691,7 @@ function TaskRow({ i, row, locOptions, onEdit, onDuplicate, onRemove }: {
 
 function KindToggle({ kind, onChange }: { kind: TaskRowState['kind']; onChange: (k: TaskRowState['kind']) => void }) {
   return (
-    <span className="flex overflow-hidden rounded border border-input text-[10px] font-medium" role="group" aria-label="Row type">
+    <span className="flex overflow-hidden rounded border border-input text-2xs font-medium" role="group" aria-label="Row type">
       {(['span', 'event'] as const).map(k => (
         <button
           key={k}
@@ -740,12 +740,12 @@ function CoverageStrip({ coverage }: { coverage: ReturnType<typeof computeCovera
           />
         ))}
       </div>
-      <div className="mt-1 flex flex-wrap items-center justify-between gap-x-3 text-[11px] text-muted-foreground">
+      <div className="mt-1 flex flex-wrap items-center justify-between gap-x-3 text-2xs text-muted-foreground">
         <span className="flex flex-wrap items-center gap-3">
-          <LegendDot cls="bg-amber-400" label="Standby" />
-          <LegendDot cls="bg-sky-500" label="Transit" />
-          <LegendDot cls="bg-emerald-500" label="Cargo" />
-          <LegendDot cls="bg-slate-400" label="Other" />
+          <LegendDot cls={FAMILY_BAR.standby} label="Standby" />
+          <LegendDot cls={FAMILY_BAR.transit} label="Transit" />
+          <LegendDot cls={FAMILY_BAR.cargo} label="Cargo" />
+          <LegendDot cls={FAMILY_BAR.other} label="Other" />
           <LegendDot cls="bg-destructive/60" label="Nothing logged" />
           <span className="flex items-center gap-1"><span className="inline-block h-2.5 w-px bg-foreground/70" />Event</span>
           <LegendDot cls="bg-muted-foreground/25" label="Events only" />
@@ -812,7 +812,7 @@ function TankFieldset({ spec, value, onChange }: {
         </Field>
       </div>
       {over && (
-        <p className="mt-1.5 text-[11px] text-destructive">ROB is above the tank's stated capacity.</p>
+        <p className="mt-1.5 text-2xs text-destructive">ROB is above the tank's stated capacity.</p>
       )}
     </fieldset>
   )
@@ -843,7 +843,7 @@ function QtyField({ id, label, unit, value, hint, invalid, onChange }: {
           className={cn(inputCls, unit && 'pr-9', invalid && 'border-destructive')}
         />
         {unit && (
-          <span className="pointer-events-none absolute inset-y-0 right-2 flex items-center text-[11px] text-muted-foreground">
+          <span className="pointer-events-none absolute inset-y-0 right-2 flex items-center text-2xs text-muted-foreground">
             {unit}
           </span>
         )}
@@ -873,7 +873,7 @@ function CrewTable({ crew, onChange }: {
     <>
       {crew.length > 0 && (
         <>
-          <div className="mb-1 flex flex-wrap items-center gap-1.5 pr-9 text-[11px] font-medium text-muted-foreground">
+          <div className="mb-1 flex flex-wrap items-center gap-1.5 pr-9 text-2xs font-medium text-muted-foreground">
             {CREW_COLS.map(c => <span key={c.key} className={c.cls}>{c.label}</span>)}
           </div>
           <div className="mb-2 space-y-1.5">
@@ -930,14 +930,14 @@ function DraftBanner({ drafts, vesselName, onOpen, onDiscard }: {
       </p>
       <ul className="space-y-1">
         {drafts.map(d => (
-          <li key={d.key} className="flex flex-wrap items-center gap-2 text-[13px]">
+          <li key={d.key} className="flex flex-wrap items-center gap-2 text-sm">
             <span className="font-mono">
               {d.vesselId ? vesselName(d.vesselId) : 'No vessel'} · {d.reportDate || 'no date'}
             </span>
             <span className="text-muted-foreground">
               {d.state.tasks.length} row{d.state.tasks.length === 1 ? '' : 's'}
             </span>
-            <button type="button" onClick={() => onOpen(d)} className="rounded border border-warning/40 px-2 py-0.5 text-xs font-medium hover:bg-amber-500/20">
+            <button type="button" onClick={() => onOpen(d)} className="rounded border border-warning/40 px-2 py-0.5 text-xs font-medium hover:bg-warning/20">
               Open
             </button>
             <button type="button" onClick={() => onDiscard(d.key)} className="rounded px-1.5 py-0.5 text-xs text-muted-foreground hover:text-destructive">
@@ -967,7 +967,7 @@ function ActionBar({ busy, warnings, status, savedAt, onPrint }: {
   return (
     <div className="sticky bottom-0 -mx-4 border-t bg-card/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-card/80">
       {showWarnings && warnings.length > 0 && (
-        <ul className="mb-2 max-h-40 space-y-0.5 overflow-y-auto rounded-md border border-warning/40 bg-warning/10 px-3 py-2 text-[13px]">
+        <ul className="mb-2 max-h-40 space-y-0.5 overflow-y-auto rounded-md border border-warning/40 bg-warning/10 px-3 py-2 text-sm">
           {warnings.map((w, i) => (
             <li key={i}>
               <button type="button" onClick={() => focusField(w.id)} className="text-left underline-offset-2 hover:underline">

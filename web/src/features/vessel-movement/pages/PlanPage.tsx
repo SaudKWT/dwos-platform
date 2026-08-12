@@ -107,7 +107,7 @@ export default function PlanPage() {
         />
 
         <form onSubmit={submit} className="mt-4 space-y-4">
-          <Card title="Plan header" accent="blue">
+          <Card title="Plan header">
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               <Field label="Plan date" required>
                 <input
@@ -146,7 +146,7 @@ export default function PlanPage() {
           </Card>
 
           {activeVessels.map((v, idx) => (
-            <Card key={v.id} title={v.name} accent="teal">
+            <Card key={v.id} title={v.name}>
               <div className="space-y-3">
                 <Field label="Current status (today)">
                   <textarea

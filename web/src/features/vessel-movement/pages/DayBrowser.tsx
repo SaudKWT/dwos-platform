@@ -142,7 +142,7 @@ export default function DayBrowser({ focus }: { focus?: DayBrowserFocus }) {
             <ChevronRight className="h-4 w-4" />
           </button>
         </div>
-        <div className="border-b px-3 py-1.5 text-[11px] text-muted-foreground">
+        <div className="border-b px-3 py-1.5 text-2xs text-muted-foreground">
           {days.length} days · {(index.data ?? []).length} reports
         </div>
         <ul className="min-h-0 flex-1 overflow-y-auto">

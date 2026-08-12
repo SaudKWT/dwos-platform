@@ -39,41 +39,27 @@ export const inputCls = cn(
   "aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive/30",
 )
 
-export type Accent = "blue" | "red" | "violet" | "teal" | "amber" | "green" | "cyan" | "slate"
-
-/**
- * Section accents.
+/*
+ * The eight-colour section palette is gone.
  *
- * These are the one place this app reaches past the semantic tokens, and it is
- * deliberate: there is no `--section-3` token and inventing eight would be
- * eight more things to keep in contrast tests for no gain. They are decorative
- * 4px rules and 10px dots — never a text or background colour, never the only
- * signal for anything, and every one is a Tailwind palette step rather than a
- * hand-written hex.
+ * It existed to break up nine identical white cards — a layout problem being
+ * solved with hue, at a cost of sixteen raw palette steps in a system whose
+ * first rule is that colour comes from tokens. Sections are identified by title
+ * and position now, and the restructure keeps fewer of them on screen at once,
+ * which is the actual fix. Colour in this form is reserved for meaning: the task
+ * log's row families (standby / transit / cargo) and validation state.
  */
-const ACCENTS: Record<Accent, { bar: string; dot: string }> = {
-  blue: { bar: "border-l-blue-500", dot: "bg-blue-500" },
-  red: { bar: "border-l-red-500", dot: "bg-red-500" },
-  violet: { bar: "border-l-violet-500", dot: "bg-violet-500" },
-  teal: { bar: "border-l-teal-500", dot: "bg-teal-500" },
-  amber: { bar: "border-l-amber-500", dot: "bg-amber-500" },
-  green: { bar: "border-l-green-500", dot: "bg-green-500" },
-  cyan: { bar: "border-l-cyan-500", dot: "bg-cyan-500" },
-  slate: { bar: "border-l-slate-400", dot: "bg-slate-400" },
-}
 
 export function Card({
-  title, subtitle, accent = "slate", required, id, children,
+  title, subtitle, required, id, children,
 }: {
-  title: string; subtitle?: string; accent?: Accent; required?: boolean
+  title: string; subtitle?: string; required?: boolean
   id?: string; children: React.ReactNode
 }) {
-  const a = ACCENTS[accent]
   return (
-    <KocCard id={id} className={cn("border-l-4", a.bar)}>
+    <KocCard id={id}>
       <CardHeader className="p-4 pb-3">
         <CardTitle className="flex items-center gap-2 text-sm">
-          <span className={cn("inline-block size-2.5 rounded-full", a.dot)} />
           {title}
           {required && <span className="text-destructive" title="Required">*</span>}
         </CardTitle>
@@ -91,16 +77,15 @@ export function Card({
  * when closed: a shut section holding data has to say so.
  */
 export function CollapsibleCard({
-  title, subtitle, accent = "slate", open, onOpenChange, summary, action, id, children,
+  title, subtitle, open, onOpenChange, summary, action, id, children,
 }: {
-  title: string; subtitle?: string; accent?: Accent
+  title: string; subtitle?: string
   open: boolean; onOpenChange: (v: boolean) => void
   summary?: string; action?: string; id?: string; children: React.ReactNode
 }) {
-  const a = ACCENTS[accent]
   const bodyId = useId()
   return (
-    <KocCard id={id} className={cn("border-l-4", a.bar)}>
+    <KocCard id={id}>
       <CardHeader className={cn("p-4", open && "pb-0")}>
         <button
           type="button"
@@ -115,10 +100,9 @@ export function CollapsibleCard({
               open && "rotate-90",
             )}
           />
-          <span className={cn("inline-block size-2.5 shrink-0 rounded-full", a.dot)} />
           {title}
           {summary && (
-            <span className="rounded-full bg-secondary px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+            <span className="rounded-full bg-secondary px-2 py-0.5 text-2xs font-medium text-muted-foreground">
               {summary}
             </span>
           )}
@@ -167,7 +151,7 @@ export function Field({ label, hint, children, className, required }: {
         {required && <span className="ml-0.5 text-destructive">*</span>}
       </span>
       {children}
-      {hint && <span className="mt-1 block text-[11px] text-muted-foreground/80">{hint}</span>}
+      {hint && <span className="mt-1 block text-2xs text-muted-foreground/80">{hint}</span>}
     </label>
   )
 }
