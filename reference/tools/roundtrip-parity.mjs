@@ -5,16 +5,17 @@
 // importer wrote — a captain filling the form gets identical analytics to a
 // captain emailing a PDF.
 //
-// Run:  node --experimental-strip-types tools/roundtrip-parity.mjs
+// Run:  node --experimental-strip-types reference/tools/roundtrip-parity.mjs
 // (model.ts is erasable TypeScript; its only TS import is `import type`)
 
 import { readdirSync, readFileSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
-const root = join(dirname(fileURLToPath(import.meta.url)), '..')
+// reference/tools/ -> repo root is two levels up, not one.
+const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const { reportToFormState, formStateToPayload } =
-  await import(pathToFileURL(join(root, 'client/src/features/report-form/model.ts')).href)
+  await import(pathToFileURL(join(root, 'web/src/features/vessel-movement/report-form/model.ts')).href)
 
 // null / undefined / '' are the same "empty" for comparison; numbers compare
 // loosely against their string forms (the form keeps strings).
@@ -28,7 +29,7 @@ const eq = (a, b) => {
 const LIQUIDS = ['fuel_oil', 'fresh_water', 'drill_water', 'base_oil']
 const LIQ_FIELDS = ['loaded', 'discharged', 'consumed', 'rob', 'max_capacity', 'remaining_to_load', 'remarks']
 
-const dir = join(root, 'data/daily-reports')
+const dir = join(root, 'reference/data/daily-reports')
 const files = readdirSync(dir).filter(f => f.endsWith('.json') && f !== 'index.json').sort()
 
 let reports = 0

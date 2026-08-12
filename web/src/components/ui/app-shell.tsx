@@ -141,7 +141,31 @@ export function AppShell({
 
   return (
     <SidebarProvider>
-      <Sidebar collapsible="icon">
+      {/*
+       * `role="navigation"` with a label, on the sidebar itself.
+       *
+       * The shell produced `main` and two `header`s, and the sidebar — every nav
+       * link, every group label, the unit switcher, the user menu — sat in none
+       * of them. axe reported 19 `region` nodes on a typical DWOS screen.
+       *
+       * Two consequences, and the second is the one that wastes an afternoon.
+       * Screen-reader users lose landmark navigation to the primary nav, which
+       * is how you reach it without tabbing the page. And
+       * `getByRole('navigation')` finds the BREADCRUMB, because that was the
+       * only nav on the page — a consumer writing the obvious test gets three
+       * links and concludes their sidebar is broken.
+       *
+       * The label is not optional: PageHeader's breadcrumb is also a nav, and
+       * two unlabelled navigation landmarks are worse than one.
+       *
+       * Reported from the DWOS app. It could not be found from the docs site,
+       * where the shell is embedded inside a page that already has a `main`.
+       */}
+      <Sidebar
+        collapsible="icon"
+        role="navigation"
+        aria-label={`${team.shortName} navigation`}
+      >
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>

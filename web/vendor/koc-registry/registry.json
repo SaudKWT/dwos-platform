@@ -173,6 +173,16 @@
       "description": "Action and option menus built on Radix."
     },
     {
+      "name": "filter-tabs",
+      "type": "registry:ui",
+      "title": "Filter Tabs",
+      "description": "A segmented control that filters a view, with a count on each option. Takes `renderPanel` rather than children, so it is not possible to build one whose tabs control nothing.",
+      "categories": [
+        "data",
+        "koc"
+      ]
+    },
+    {
       "name": "input",
       "type": "registry:ui",
       "title": "Input",

@@ -50,9 +50,22 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
 );
 Alert.displayName = "Alert";
 
-const AlertTitle = React.forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTMLHeadingElement>>(
+/**
+ * A div, not a heading.
+ *
+ * This was `<h5>`, which put every page using PageHeader and an alert at
+ * `h1 → h5` — not an edge case but the shape of every such page. The DWOS app
+ * hit it on two of five screens immediately, and neither repo's axe run caught
+ * it: `heading-order` is a best-practice rule and this suite filtered to WCAG
+ * tags only.
+ *
+ * An alert's title is rarely a document heading, and when it is, the PAGE knows
+ * what level it should be and the component cannot. shadcn canonical renders a
+ * div here too. Pass a real heading as a child if a page genuinely needs one.
+ */
+const AlertTitle = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <h5
+    <div
       ref={ref}
       className={cn("col-start-2 font-medium leading-none tracking-tight", className)}
       {...props}

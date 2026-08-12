@@ -39,25 +39,14 @@ import AxeBuilder from '@axe-core/playwright'
  * starts guarding it again rather than quietly tolerating a regression.
  */
 /**
- * Two violations belong to @koc/*, not to this app, and are handled by scoping
- * rather than by switching the rule off — a rule-level exemption would hide the
- * same mistake if it were made here.
+ * Nothing is scoped out.
  *
- *   region        @koc/app-shell renders its sidebar outside any landmark. There
- *                 is no <nav> around the nav; main and header exist, the links
- *                 are in neither. Scoped out by excluding the sidebar subtree,
- *                 so `region` still guards this app's own content.
- *
- *   heading-order @koc/alert hardcodes <h5> for AlertTitle, so any page whose
- *                 alert is not nested under an h4 skips levels — almost every
- *                 page. Exempted at rule level, but see the guard test below:
- *                 it fails if this app ever introduces an h5 of its own, which
- *                 is the only way the exemption could start hiding something.
- *
- * Both reported upstream 2026-08-12. Delete the scoping when they ship fixes,
- * so the checks start guarding again.
+ * Two rules were exempted here until v0.1.5 — `region`, because @koc/app-shell
+ * rendered its sidebar outside any landmark, and `heading-order`, because
+ * @koc/alert hardcoded <h5> for AlertTitle. Both are fixed upstream, so both
+ * exemptions and the guard test that protected the second one are gone. The
+ * suite runs every rule against every screen again.
  */
-const UPSTREAM_SHELL = '[data-slot="sidebar"]'
 
 const SCREENS = [
   { path: '/', name: 'team overview' },
@@ -76,19 +65,9 @@ async function ready(page: Page, path: string) {
 for (const screen of SCREENS) {
   test(`${screen.name} has no axe violations`, async ({ page }) => {
     await ready(page, screen.path)
-    // Everything except the two upstream rules, over the whole page.
-    const main = await new AxeBuilder({ page })
-      .disableRules(['color-contrast', 'region', 'heading-order'])
+    const { violations } = await new AxeBuilder({ page })
+      .disableRules(['color-contrast'])
       .analyze()
-
-    // `region` again, this time with the shell's sidebar excluded, so it still
-    // guards content this repo actually owns.
-    const scoped = await new AxeBuilder({ page })
-      .exclude(UPSTREAM_SHELL)
-      .withRules(['region'])
-      .analyze()
-
-    const violations = [...main.violations, ...scoped.violations]
 
     // Report what failed and where, rather than just a count — a bare
     // "expected 0, got 3" sends you back to the browser to find out which.
@@ -102,10 +81,7 @@ for (const screen of SCREENS) {
 
 test('every screen reachable from the sidebar renders something', async ({ page }) => {
   await ready(page, '/unit-4/vessels/reports')
-  // Queried by data-slot rather than by the navigation role, because the shell
-  // does not wrap the sidebar in one — see KNOWN_UPSTREAM.region. When that is
-  // fixed this should become getByRole('navigation').
-  const links = await page.locator('[data-slot="sidebar"] a[href]').all()
+  const links = await page.getByRole('navigation', { name: /navigation/i }).getByRole('link').all()
   expect(links.length).toBeGreaterThan(5)
 
   for (const link of links.slice(0, 8)) {
@@ -156,19 +132,4 @@ test('a validation warning names a field and moves focus to it', async ({ page }
   // link, and it is what stopped working when the warnings sat nine cards up.
   const focused = await page.evaluate(() => document.activeElement?.id ?? '')
   expect(focused).not.toBe('')
-})
-
-test('the only skipped heading levels come from @koc/alert', async ({ page }) => {
-  // The guard that makes exempting heading-order safe. AlertTitle's hardcoded
-  // <h5> is upstream; an h5 or h6 of this app's own would be ours to fix, and
-  // would otherwise hide behind that exemption.
-  for (const screen of SCREENS) {
-    await ready(page, screen.path)
-    const strays = await page.evaluate(() =>
-      [...document.querySelectorAll('h5,h6')]
-        .filter(h => !h.closest('[data-slot="alert"], [role="alert"]'))
-        .map(h => `${h.tagName} "${h.textContent?.trim().slice(0, 40)}"`),
-    )
-    expect(strays, `${screen.name} has a heading below h4 that is not an alert title`).toEqual([])
-  }
 })

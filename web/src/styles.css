@@ -6,6 +6,17 @@
  * tooltip and sheet just pops. */
 @import "tw-animate-css";
 
+/* The vendored @koc registry is component SOURCE stored as JSON strings, and
+ * Tailwind v4's auto content detection scans it — so utilities were being
+ * emitted for the whole registry, including components never installed.
+ * Verified 2026-08-12 by injecting `mix-blend-hard-light` into an uninstalled
+ * component's JSON: it reached the stylesheet.
+ *
+ * Beyond the wasted bytes, it makes this app's built CSS unrepresentative of
+ * what a consumer who does NOT vendor would get — and this app's CSS is the
+ * evidence the design system uses to check what actually reaches consumers. */
+@source not "../vendor";
+
 /* Tailwind v4 binds `dark:` to prefers-color-scheme. Rebound to a `.dark` class
  * so the theme can be chosen explicitly: an operator on night shift needs dark
  * mode regardless of what the OS thinks. */
