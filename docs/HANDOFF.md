@@ -138,7 +138,7 @@ Run by whoever maintains the design system — it needs access to that repo:
 
 ```bash
 cd web
-npm run koc:sync -- v0.1.2 --from "/path/to/KOC Design System"
+npm run koc:sync -- v0.1.3 --from "/path/to/KOC Design System"
 ```
 
 It reads the files at that **tag** (via `git show`, so an uncommitted experiment
@@ -309,4 +309,4 @@ Two conventions that keep it useful:
 - **Known gaps are listed rather than hidden.** If a thing does not work yet, it
   is in the list above.
 
-Last updated: 2026-08-12. Design system pinned at v0.1.2. Migrations, the full client→API→SQL Server round trip, and the a11y suite all verified locally.
+Last updated: 2026-08-12. Design system pinned at v0.1.3. Migrations, the full client→API→SQL Server round trip, and the a11y suite all verified locally.
