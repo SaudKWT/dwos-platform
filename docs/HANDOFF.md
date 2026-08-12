@@ -255,6 +255,11 @@ Honest list. None of these are hidden in the code.
   DDL only — no seed rows anywhere, including `Module`, `Entity` and `Status`. The
   seven unit bindings below therefore cannot be filled from a fresh local database;
   they need the real DWO instance.
+- **The unit binding has no consumer yet.** Nothing calls `teamIdFor` or
+  `unitScopeReady`, the API does not model `dbo.Entity`, and both `Entity` and
+  `EntityType` are empty. Building the resolution path now would mean guessing
+  the data and the shape of the need at once, so it is deliberately left alone
+  until a screen actually needs to scope by unit.
 - **The seven unit bindings are unresolved.** `web/src/config/schema-binding.ts`
   has `entityCode: null, teamId: null` for all seven. They were not guessed —
   a wrong `TeamID` silently scopes a screen to the wrong unit's data. They need
@@ -264,10 +269,30 @@ Honest list. None of these are hidden in the code.
   a KOC team.
 - **`dbo.Privilege`, `Role`, `RolePrivilege`, `UserPrivilege` and `UserRole` have
   no primary key, no unique constraint and no index** — the only five tables of
-  43 in that state, and the ones every module hits on every request. Worth fixing
-  before module #3, in its own migration.
-- **No screen reader has been run.** Behaviour is tested in Chromium. KOC is a
-  Windows/Edge organisation, so test NVDA + Edge.
+  43 in that state, and the ones every module hits on every request once
+  authentication is on. A script is written and tested but **deliberately not
+  applied**: `database/proposed/auth-table-keys.sql`. Those are `001` tables, and
+  the rule here is that the corporate schema is read-only, so adding a clustered
+  primary key is the DBA's call, not an unattended migration's. It sits outside
+  `migrate.sh`'s glob and is journalled nowhere. Verified idempotent against a
+  fresh DWO on 2026-08-12.
+- **No screen reader has been run.** `cd web && npm run test:a11y` proves
+  keyboard reach, visible focus, ARIA correctness and announced state across the
+  five real screens (Playwright + axe, Chromium only — KOC is Windows/Edge and
+  WebKit would be testing a browser no KOC user has). It cannot tell you what
+  NVDA says: live-region politeness, table navigation mode, how `aria-sort` is
+  voiced. **That pass is NVDA + Edge on Windows, by a person, and it has never
+  been done.** Start with the report form — it is the only screen where someone
+  types rather than reads.
+
+  The suite needs the API up on 5280 with a seeded database; it will not silently
+  pass against an empty one.
+
+- **Two accessibility defects are upstream, in `@koc/*`,** and are scoped out of
+  the suite rather than switched off — see the header of `web/tests/a11y.spec.ts`.
+  `@koc/app-shell` renders its sidebar outside any landmark, and `@koc/alert`
+  hardcodes `<h5>` for `AlertTitle`. Both reported 2026-08-12. Delete the scoping
+  when the design system ships fixes.
 
 ---
 
@@ -284,4 +309,4 @@ Two conventions that keep it useful:
 - **Known gaps are listed rather than hidden.** If a thing does not work yet, it
   is in the list above.
 
-Last updated: 2026-08-12. Design system pinned at v0.1.2. Migrations and the full client→API→SQL Server round trip verified locally.
+Last updated: 2026-08-12. Design system pinned at v0.1.2. Migrations, the full client→API→SQL Server round trip, and the a11y suite all verified locally.

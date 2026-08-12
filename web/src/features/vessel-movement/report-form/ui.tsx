@@ -17,7 +17,6 @@ import { useId, useState } from "react"
 import { ChevronRight } from "lucide-react"
 
 import { Card as KocCard, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 
 /**
@@ -138,14 +137,27 @@ export function CollapsibleCard({
   )
 }
 
-export function Field({ label, hint, children, className, required, htmlFor }: {
+/**
+ * A labelled field.
+ *
+ * The label is a real <label> WRAPPING the control, not a sibling with htmlFor.
+ * That is deliberate and was a bug fix: this started as a wrapping label, the
+ * port to @koc/label turned it into a <div> + <Label htmlFor?>, and htmlFor was
+ * optional — so almost no call site passed one. axe found eight unlabelled
+ * controls on the report form and two selects with no accessible name.
+ *
+ * Implicit association needs no id, so it cannot rot the way forty hand-written
+ * htmlFor/id pairs would. @koc/label is not used here for exactly that reason:
+ * nesting a <label> inside a <label> is invalid, and its contribution is the
+ * type styling, which is reproduced below.
+ */
+export function Field({ label, hint, children, className, required }: {
   label: string; hint?: string; children: React.ReactNode
-  className?: string; required?: boolean; htmlFor?: string
+  className?: string; required?: boolean
 }) {
   return (
-    <div className={cn("block", className)}>
-      <Label
-        htmlFor={htmlFor}
+    <label className={cn("block", className)}>
+      <span
         className={cn(
           "mb-1 block text-xs",
           required ? "font-semibold text-foreground" : "font-medium text-muted-foreground",
@@ -153,10 +165,10 @@ export function Field({ label, hint, children, className, required, htmlFor }: {
       >
         {label}
         {required && <span className="ml-0.5 text-destructive">*</span>}
-      </Label>
+      </span>
       {children}
       {hint && <span className="mt-1 block text-[11px] text-muted-foreground/80">{hint}</span>}
-    </div>
+    </label>
   )
 }
 

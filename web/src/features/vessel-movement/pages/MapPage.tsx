@@ -224,6 +224,14 @@ export default function MapPage() {
 
   return (
     <div className="flex h-full flex-col">
+      {/*
+        The map is full-bleed by design — there is no PageHeader here, and the
+        other screens get their h1 from one. Without this the page had no heading
+        at all: nothing announced on arrival, and heading navigation dead. Visually
+        hidden rather than shown, because the screen's own chrome already says
+        where you are and a title bar would cost map.
+      */}
+      <h1 className="sr-only">Fleet map — Offshore vessel movement</h1>
       <div className="flex min-h-0 flex-1">
         {/* the rail stays on the page canvas so the vessel cards read as cards */}
         <aside className="flex w-80 shrink-0 flex-col gap-2 overflow-y-auto border-r p-3">

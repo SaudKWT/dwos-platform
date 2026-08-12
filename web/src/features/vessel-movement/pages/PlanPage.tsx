@@ -109,19 +109,19 @@ export default function PlanPage() {
         <form onSubmit={submit} className="mt-4 space-y-4">
           <Card title="Plan header" accent="blue">
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              <Field label="Plan date" required htmlFor="plan-date">
+              <Field label="Plan date" required>
                 <input
                   id="plan-date" required type="date" value={planDate}
                   onChange={e => setPlanDate(e.target.value)} className={inputCls}
                 />
               </Field>
-              <Field label="Issued by" htmlFor="plan-issued-by">
+              <Field label="Issued by">
                 <input
                   id="plan-issued-by" value={issuedBy} onChange={e => setIssuedBy(e.target.value)}
                   placeholder="Supervisor's name" className={inputCls}
                 />
               </Field>
-              <Field label="Load existing" htmlFor="plan-load">
+              <Field label="Load existing">
                 <select
                   id="plan-load" className={inputCls} defaultValue=""
                   onChange={e => loadExisting(e.target.value)}
@@ -136,7 +136,7 @@ export default function PlanPage() {
                     ))}
                 </select>
               </Field>
-              <Field label="Role" className="col-span-2 sm:col-span-3" htmlFor="plan-role">
+              <Field label="Role" className="col-span-2 sm:col-span-3">
                 <input
                   id="plan-role" value={issuedRole} onChange={e => setIssuedRole(e.target.value)}
                   className={inputCls}

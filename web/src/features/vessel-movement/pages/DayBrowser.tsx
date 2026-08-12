@@ -116,7 +116,7 @@ export default function DayBrowser({ focus }: { focus?: DayBrowserFocus }) {
         <div className="flex items-center gap-1 border-b px-3 py-2">
           <button
             type="button"
-            title="Older day (←)"
+            title="Older day (←)" aria-label="Go to the previous day with reports"
             onClick={() => stepDay(-1)}
             disabled={dayIdx < 0 || dayIdx >= days.length - 1}
             className="rounded-md border p-1 hover:bg-accent disabled:opacity-40"
@@ -130,11 +130,11 @@ export default function DayBrowser({ focus }: { focus?: DayBrowserFocus }) {
             max={days.length ? days[0].date : undefined}
             onChange={e => jumpToDate(e.target.value)}
             className="min-w-0 flex-1 rounded-md border bg-card px-2 py-1 text-xs"
-            title="Jump to a date (snaps to the nearest day with reports)"
+            title="Jump to a date (snaps to the nearest day with reports)" aria-label="Jump to a date"
           />
           <button
             type="button"
-            title="Newer day (→)"
+            title="Newer day (→)" aria-label="Go to the next day with reports"
             onClick={() => stepDay(1)}
             disabled={dayIdx <= 0}
             className="rounded-md border p-1 hover:bg-accent disabled:opacity-40"
