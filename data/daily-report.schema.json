@@ -55,6 +55,7 @@
           "to_time":         { "type": ["string", "null"], "pattern": "^[0-2][0-9]:[0-5][0-9]$" },
           "duration_min":    { "type": ["integer", "null"] },
           "task_code":       { "type": "string", "$comment": "S01..S05, DP1, L1F, L2E, B1, O1, I01, I02, D1, WOW, A01, or a slash-combination like S01/A01" },
+          "activity":        { "type": ["string", "null"], "$comment": "Optional. What kind of job it was, when the captain said so on the form — 'Cargo loading / unloading', 'Water bunkering', 'Crew / passenger transfer'… Absent from every imported report; where it is missing the analytics classify the row from its code and description as before. Never written by the importer." },
           "description":     { "type": "string" },
           "location_id":     { "type": ["string", "null"], "$comment": "Normalised location at the END of this row (where the vessel is during the segment). One of B4, B20, NP, OPH, OD, or null if at sea / transit." },
           "from_location_id":{ "type": ["string", "null"] },

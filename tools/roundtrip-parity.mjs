@@ -87,7 +87,10 @@ for (const file of files) {
   if (oT.length !== nT.length) { flag(`task_log.length (${oT.length} -> ${nT.length})`, file); continue }
   oT.forEach((t, i) => {
     const n = nT[i]
-    for (const k of ['from_time', 'to_time', 'task_code', 'description', 'location_id', 'from_location_id', 'to_location_id']) {
+    // `activity` is form-only and absent from every import: it must round-trip
+    // as absent, never as a value the form invented from its own guess.
+    for (const k of ['from_time', 'to_time', 'task_code', 'description', 'activity',
+                     'location_id', 'from_location_id', 'to_location_id']) {
       if (!eq(t[k], n[k])) flag(`task_log.${k}`, file)
     }
     // A junk imported label that just echoes the code ("L1f", "Dp1") is

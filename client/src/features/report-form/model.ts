@@ -31,6 +31,78 @@ export const CODE_LABELS: Record<string, string> = {
 
 export const TASK_CODE_OPTIONS = Object.entries(CODE_LABELS)
 
+/** The same codes grouped for the picker, so 15 options read as four choices. */
+export const TASK_CODE_GROUPS: { family: string; codes: string[] }[] = [
+  { family: 'Standby / waiting', codes: ['S01', 'S02', 'S03', 'S04', 'S05', 'A01', 'WOW', 'D1'] },
+  { family: 'Transit', codes: ['I01', 'I02'] },
+  { family: 'Cargo', codes: ['DP1', 'L1F', 'L2E', 'B1'] },
+  { family: 'Other', codes: ['O1'] },
+]
+
+/**
+ * What kind of job the row was — the question the paper form never asked.
+ * 1,268 of 4,835 imported rows are coded O1 "Other" and bunkering has no code
+ * at all, so the analytics have to guess the answer from the description. The
+ * official code stays untouched for compliance; this rides alongside it.
+ *
+ * The vocabulary is the classifier's own output (features/simulator/activity.ts)
+ * so an explicit answer and a guessed one are the same string downstream.
+ */
+export const ACTIVITY_OPTIONS: string[] = [
+  'Cargo loading / unloading',
+  'Water bunkering',
+  'Diesel bunkering',
+  'Base oil bunkering',
+  'Crew / passenger transfer',
+  'Provisions',
+  'Slop / mud transfer',
+  'Tank cleaning',
+  'Inspection',
+  'Maneuvering',
+  'Waiting / giving way',
+  'Idle (no work logged)',
+  'Other activity',
+]
+
+/**
+ * The fleet's own phrasing, most-used first, offered as autocomplete on the
+ * description box. The same handful of entries is retyped constantly across the
+ * imported reports — "deck cargo ops" 117 times, "SBE" 104, "exit 500 mtr" 96 —
+ * so suggesting them saves more keystrokes than any other change, and it nudges
+ * the wording the location and activity classifiers already read well.
+ */
+export const COMMON_DESCRIPTIONS: string[] = [
+  'Deck cargo ops',
+  'SBE',
+  'FWE',
+  'Exit 500 mtr',
+  'Enter 500 mtr',
+  'Pull out & c/o',
+  'Heave up anchor',
+  'Carried out fire & safety round',
+  'Stop M/E',
+  'DP setup carried out',
+  'Vessel cast off',
+  'FW hose connected',
+  'FW hose disconnected',
+  'FO received via road tanker',
+  'Slop hose connected',
+  'Slop hose disconnected',
+  'Anchor aweigh, proceeding to OPH',
+  'Standby awaiting instructions',
+]
+
+/**
+ * Values that mean "nothing to report" in the safety and delay boxes. All 719
+ * safety values across 256 reports are the literal string "Nil" and all 379
+ * delay values are "NA" — the boxes have never once carried real content, which
+ * is what a free-text field defaulted to "Nil" gets you. The form asks the
+ * yes/no question instead and only opens a box when the answer is yes.
+ */
+const NIL_RE = /^(nil|none|na|n\.?\/?a\.?|-|nil delay|na delay)\.?$/i
+
+export const isNilAnswer = (v: string): boolean => v.trim() === '' || NIL_RE.test(v.trim())
+
 export interface LiquidState {
   rob: string
   consumed: string
@@ -50,10 +122,24 @@ export const LIQUID_TITLES: Record<LiquidKey, string> = {
   base_oil: 'Base oil',
 }
 
+/**
+ * How a row accounts for time. The fleet logs two different ways and the form
+ * used to understand only one of them: the PSVs log spans that tile the day
+ * ("00:00–06:00 standby"), while the crew boats log the moments things happened
+ * ("14:20 FW hose connected"). 1,535 of 4,835 imported rows have no end time
+ * and never will — treating those as unfinished spans made the coverage bar sit
+ * empty and put up to 38 "no valid end time" warnings on a correctly filled
+ * report. An event row is complete with one timestamp.
+ */
+export type RowKind = 'span' | 'event'
+
 export interface TaskRowState {
+  kind: RowKind
   from_time: string
   to_time: string
   task_code: string
+  /** Optional explicit job type; '' means "let the classifier guess". */
+  activity: string
   description: string
   /** Explicit at-location for non-transit rows ('' = infer from text). */
   location_id: string
@@ -127,11 +213,51 @@ export function emptyFormState(): ReportFormState {
     compiledName: '',
     compiledRole: 'Master',
     crew: [],
-    tasks: [{ from_time: '00:00', to_time: '', task_code: 'S01', description: '', location_id: '', from_location_id: '', to_location_id: '' }],
+    tasks: [emptyTaskRow('00:00')],
+  }
+}
+
+export function emptyTaskRow(from = '', carry: Partial<TaskRowState> = {}): TaskRowState {
+  return {
+    kind: 'span', from_time: from, to_time: '', task_code: 'S01', activity: '',
+    description: '', location_id: '', from_location_id: '', to_location_id: '',
+    ...carry,
   }
 }
 
 const s = (v: unknown): string => (v == null ? '' : String(v))
+
+/**
+ * Fill in anything a stored draft predates. Drafts are JSON written by whatever
+ * version of the form was open at the time, so a restored one can be missing
+ * fields the inputs now bind to — and an input bound to undefined is an
+ * uncontrolled input that React refuses to take over later.
+ */
+export function hydrateFormState(raw: Partial<ReportFormState> | null | undefined): ReportFormState {
+  const base = emptyFormState()
+  if (!raw || !Array.isArray(raw.tasks)) return base
+  const liquids = { ...base.liquids }
+  for (const k of LIQUID_KEYS) liquids[k] = { ...base.liquids[k], ...(raw.liquids?.[k] ?? {}) }
+  return {
+    ...base,
+    ...raw,
+    safety: { ...base.safety, ...(raw.safety ?? {}) },
+    liquids,
+    lifts: { ...base.lifts, ...(raw.lifts ?? {}) },
+    provisions: { ...base.provisions, ...(raw.provisions ?? {}) },
+    delays: { ...base.delays, ...(raw.delays ?? {}) },
+    crew: ((raw.crew ?? []) as Partial<CrewRowState>[]).map(c => ({
+      first: '', last: '', position: '', days_onboard: '',
+      sign_on_date: '', planned_crew_change: '', ...c,
+    })),
+    // A draft written before row kinds existed carries none: read it the way
+    // the importer reads a report — no end time means an event.
+    tasks: raw.tasks.map(t => ({
+      ...emptyTaskRow(), ...t,
+      kind: (t.kind ?? (t.to_time ? 'span' : 'event')) as RowKind,
+    })),
+  }
+}
 
 /** 'HH:MM' -> minutes past midnight; '24:00' (1440) is a valid end-of-day. */
 export function parseClock(t: string | null | undefined): number | null {
@@ -222,9 +348,12 @@ export function reportToFormState(r: DailyReport): ReportFormState {
     planned_crew_change: s(c.planned_crew_change),
   }))
   f.tasks = (r.task_log ?? []).map(t => ({
+    // No end time in the source means the captain logged an event, not a span.
+    kind: (t.to_time ? 'span' : 'event') as RowKind,
     from_time: s(t.from_time),
     to_time: s(t.to_time),
     task_code: s(t.task_code),
+    activity: s(t.activity),
     description: s(t.description),
     location_id: s(t.location_id),
     from_location_id: s(t.from_location_id),
@@ -250,14 +379,18 @@ export function formStateToPayload(f: ReportFormState): DailyReport {
     .filter(t => t.from_time && t.task_code)
     .map(t => {
       const code = t.task_code.trim()
+      // An event row has no span to emit: exactly the shape the importer writes
+      // for the crew boats' single-timestamp events.
+      const isEvent = t.kind === 'event'
       const row: ReportTask = {
         from_time: t.from_time,
-        to_time: t.to_time || null,
-        duration_min: rowDurationMin(t.from_time, t.to_time) ?? t.raw_duration_min ?? null,
+        to_time: isEvent ? null : (t.to_time || null),
+        duration_min: (isEvent ? null : rowDurationMin(t.from_time, t.to_time)) ?? t.raw_duration_min ?? null,
         task_code: code,
         task_label: CODE_LABELS[code.toUpperCase()] ?? t.raw_label ?? code,
         description: t.description.trim(),
       }
+      if (t.activity) row.activity = t.activity
       if (t.location_id) row.location_id = t.location_id
       if (t.from_location_id) row.from_location_id = t.from_location_id
       if (t.to_location_id) row.to_location_id = t.to_location_id
@@ -337,19 +470,41 @@ export function formStateToPayload(f: ReportFormState): DailyReport {
 // Day-coverage validation: which parts of 00:00–24:00 the task rows account
 // for. Overlapping rows are FINE (captains log parallel work); gaps are the
 // thing a captain should fix before submitting, so they come back as warnings.
+//
+// Only SPAN rows can cover time. Event rows are marks on the same 24-hour
+// strip: they don't fill a gap but they do explain one, so a stretch of clock
+// with events logged in it is not reported as unaccounted for. Without that,
+// 165 of 256 real reports would raise a gap warning — a warning two thirds of
+// correct reports trigger has stopped meaning anything.
 // ---------------------------------------------------------------------------
 
 export interface CoverageSegment {
   start: number      // minutes past midnight
   end: number
   kind: 'standby' | 'transit' | 'cargo' | 'other' | 'gap'
+  /** Gap segments only: event rows logged inside it. 0 = truly unaccounted. */
+  events?: number
+}
+
+export interface CoverageGap {
+  start: number
+  end: number
+  /** Event rows logged inside this stretch. >0 means it is accounted for. */
+  events: number
 }
 
 export interface DayCoverage {
   segments: CoverageSegment[]      // contiguous, 00:00 -> 24:00
   coveredMin: number
-  gaps: { start: number; end: number }[]
-  rowsMissingTo: number[]          // row indexes with a from but no usable to
+  gaps: CoverageGap[]
+  /** Gaps with no events in them — the only ones worth warning about. */
+  silentGaps: CoverageGap[]
+  /** Times of event rows, minutes past midnight, for the strip's tick marks. */
+  eventTimes: number[]
+  /** Span rows with a start but no usable end — genuinely unfinished. */
+  rowsMissingTo: number[]
+  spanRows: number
+  eventRows: number
 }
 
 export function codeFamily(code: string): 'standby' | 'transit' | 'cargo' | 'other' {
@@ -364,10 +519,20 @@ export function computeCoverage(tasks: TaskRowState[]): DayCoverage {
   interface Iv { start: number; end: number; kind: CoverageSegment['kind'] }
   const ivs: Iv[] = []
   const rowsMissingTo: number[] = []
+  const eventTimes: number[] = []
+  let spanRows = 0
+  let eventRows = 0
+
   tasks.forEach((t, i) => {
     const a = parseClock(t.from_time)
-    const b = parseClock(t.to_time)
     if (a === null) return
+    if (t.kind === 'event') {
+      eventRows++
+      eventTimes.push(a)
+      return
+    }
+    spanRows++
+    const b = parseClock(t.to_time)
     if (b === null || b <= a) {
       if (t.from_time) rowsMissingTo.push(i)
       return
@@ -377,24 +542,32 @@ export function computeCoverage(tasks: TaskRowState[]): DayCoverage {
   ivs.sort((x, y) => x.start - y.start)
 
   const segments: CoverageSegment[] = []
-  const gaps: { start: number; end: number }[] = []
+  const gaps: CoverageGap[] = []
+  const addGap = (start: number, end: number) => {
+    // Strictly inside: an event sitting exactly on a span's edge is that span's
+    // bookend ("16:00 cast off"), not an account of the fourteen hours after it.
+    const events = eventTimes.filter(m => m > start && m < end).length
+    segments.push({ start, end, kind: 'gap', events })
+    gaps.push({ start, end, events })
+  }
+
   let cursor = 0
   for (const iv of ivs) {
-    if (iv.start > cursor) {
-      segments.push({ start: cursor, end: iv.start, kind: 'gap' })
-      gaps.push({ start: cursor, end: iv.start })
-    }
+    if (iv.start > cursor) addGap(cursor, iv.start)
     if (iv.end > cursor) {
       segments.push({ start: Math.max(iv.start, cursor), end: iv.end, kind: iv.kind })
       cursor = iv.end
     }
   }
-  if (cursor < 1440) {
-    segments.push({ start: cursor, end: 1440, kind: 'gap' })
-    gaps.push({ start: cursor, end: 1440 })
-  }
+  if (cursor < 1440) addGap(cursor, 1440)
+
   const coveredMin = segments.filter(sg => sg.kind !== 'gap').reduce((acc, sg) => acc + (sg.end - sg.start), 0)
-  return { segments, coveredMin, gaps, rowsMissingTo }
+  return {
+    segments, coveredMin, gaps,
+    silentGaps: gaps.filter(g => g.events === 0),
+    eventTimes: eventTimes.sort((a, b) => a - b),
+    rowsMissingTo, spanRows, eventRows,
+  }
 }
 
 export const fmtMin = (m: number): string =>

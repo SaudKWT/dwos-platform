@@ -59,6 +59,12 @@ export interface ReportTask {
   duration_min?: number | null
   task_code?: string | null
   task_label?: string | null
+  /**
+   * What kind of job it was, when the captain said so on the form. Optional and
+   * absent from every imported report — where it is missing the analytics
+   * classify the row from its code and description, exactly as before.
+   */
+  activity?: string | null
   description?: string | null
   location_id?: string | null
   from_location_id?: string | null

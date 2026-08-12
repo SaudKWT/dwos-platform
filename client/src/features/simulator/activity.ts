@@ -201,9 +201,14 @@ export function timeByLocation(ctx: SimContext, reports: DailyReport[]): Locatio
       if (r.location_id) lastLoc = r.location_id
       const mn = r.duration_min || 0
       if (mn <= 0) continue
-      const label = codeIsStandby(r.task_code, r.task_label)
-        ? STANDBY_LABEL
-        : classifyActivity(r.task_code, r.task_label, r.description)
+      // An explicit answer from the form beats the classifier's guess — that is
+      // the whole point of asking. Transit still drops out: it is time between
+      // locations, not time at one.
+      const label = r.activity && !codeIsTransit(r.task_code)
+        ? r.activity
+        : codeIsStandby(r.task_code, r.task_label)
+          ? STANDBY_LABEL
+          : classifyActivity(r.task_code, r.task_label, r.description)
       if (!label) continue     // skip transit — time between locations, not at one
 
       const key = lastLoc || '__sea'
