@@ -134,11 +134,43 @@ Without `--from` it falls back to the GitHub API and needs `KOC_REGISTRY_TOKEN`.
 To take the update:
 
 ```bash
-npm run koc:add -- @koc/dialog        # then read the diff
+node scripts/koc-registry.mjs add @koc/dialog --yes --overwrite   # then read the diff
 ```
 
 That overwrites the file, including local edits. This is the shadcn model, not a
 vendoring limitation — installing from GitHub behaves identically.
+
+**This is the easiest thing on this page to get wrong**, and it has already been
+got wrong once here. After bumping to `v0.1.1` only `theme` was re-added, so
+twelve components sat on the previous version for a day — carrying bare
+transitions that the design system had already fixed. Nothing failed; they just
+weren't the current components. After any sync, either re-add everything or be
+deliberate about what you skipped.
+
+To re-add the lot:
+
+```bash
+node scripts/koc-registry.mjs serve &     # one server
+for i in $(ls src/components/ui/*.tsx | xargs -n1 basename | sed 's/.tsx//'); do
+  npx shadcn@latest add "@koc/$i" --yes --overwrite
+done
+kill %1
+```
+
+Three quirks worth knowing, all found the hard way:
+
+- **One item per invocation.** Passing 36 items to a single `shadcn add` joins
+  them into one argument and 404s.
+- **`--overwrite` is required** to refresh an existing file. Without it the CLI
+  prompts, and in a script it just stops.
+- **`npm run koc:add -- <args>`** joins its arguments. Call
+  `node scripts/koc-registry.mjs add …` directly when passing more than one.
+
+Then verify against the design system's own gate rather than by eye:
+
+```bash
+npx tsx <design-system>/packages/tokens/src/check-motion.ts web/src
+```
 
 ### Two things that are silent when wrong
 
