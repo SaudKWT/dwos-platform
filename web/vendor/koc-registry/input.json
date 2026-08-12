@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "input",
+  "type": "registry:ui",
+  "title": "Input",
+  "description": "Text field. Its border carries KOC's WCAG 1.4.11 compliance at 3.63:1 — do not soften it to border-border.",
+  "categories": [
+    "form"
+  ],
+  "registryDependencies": [
+    "@koc/utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/input.tsx",
+      "content": "import * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\n/**\n * Input.\n *\n * `border-input` is the token that carries KOC's WCAG 1.4.11 compliance —\n * measured 3.63:1 against the page and 3.96:1 on a card. Do not \"soften\" this to\n * `border-border` to make forms look lighter: that border is the only thing\n * telling a user the field exists, and dropping it to 1.6:1 makes the form\n * invisible to low-vision users while looking fine to everyone reviewing it.\n */\nexport interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}\n\nconst Input = React.forwardRef<HTMLInputElement, InputProps>(\n  ({ className, type, ...props }, ref) => {\n    return (\n      <input\n        type={type}\n        ref={ref}\n        data-slot=\"input\"\n        className={cn(\n          \"flex h-9 w-full rounded-md border border-input bg-background px-3 py-1\",\n          \"text-sm shadow-xs transition-colors duration-fast ease-out\",\n          \"file:border-0 file:bg-transparent file:text-sm file:font-medium\",\n          \"placeholder:text-muted-foreground\",\n          \"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background\",\n          \"disabled:cursor-not-allowed disabled:opacity-50\",\n          // Error state is driven by aria-invalid rather than a prop, so the\n          // visual and the assistive-tech announcement can never disagree.\n          \"aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive/30\",\n          className,\n        )}\n        {...props}\n      />\n    );\n  },\n);\nInput.displayName = \"Input\";\n\nexport { Input };\n",
+      "type": "registry:ui",
+      "target": "components/ui/input.tsx"
+    }
+  ]
+}

@@ -19,12 +19,6 @@
     "hooks": "@/hooks"
   },
   "registries": {
-    "@koc": {
-      "url": "https://api.github.com/repos/SaudKWT/koc-design-system/contents/apps/docs/public/r/{name}.json?ref=v0.1.1",
-      "headers": {
-        "Authorization": "Bearer ${KOC_REGISTRY_TOKEN}",
-        "Accept": "application/vnd.github.raw"
-      }
-    }
+    "@koc": "http://127.0.0.1:4183/{name}.json"
   }
 }

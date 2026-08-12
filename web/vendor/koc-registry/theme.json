@@ -1,0 +1,174 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "theme",
+  "type": "registry:theme",
+  "title": "KOC Theme",
+  "description": "Kuwait Oil Company brand tokens for light and dark. Anchored to #0060A9, recovered from KOC's own stylesheets. Install this first — it re-skins a stock shadcn app into a KOC app.",
+  "dependencies": [
+    "tw-animate-css"
+  ],
+  "cssVars": {
+    "theme": {
+      "font-sans": "Inter var, Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif",
+      "font-mono": "JetBrains Mono, SF Mono, Menlo, Consolas, Liberation Mono, monospace",
+      "radius": "0.375rem",
+      "radius-none": "0",
+      "radius-sm": "0.25rem",
+      "radius-md": "0.5rem",
+      "radius-lg": "0.75rem",
+      "radius-xl": "1rem",
+      "radius-full": "9999px",
+      "shadow-none": "none",
+      "shadow-xs": "0 1px 2px 0 oklch(0.28 0.02 250 / 0.05)",
+      "shadow-sm": "0 1px 3px 0 oklch(0.28 0.02 250 / 0.08), 0 1px 2px -1px oklch(0.28 0.02 250 / 0.06)",
+      "shadow": "0 2px 4px -1px oklch(0.28 0.02 250 / 0.08), 0 1px 2px -1px oklch(0.28 0.02 250 / 0.06)",
+      "shadow-md": "0 4px 8px -2px oklch(0.28 0.02 250 / 0.10), 0 2px 4px -2px oklch(0.28 0.02 250 / 0.06)",
+      "shadow-lg": "0 12px 20px -4px oklch(0.28 0.02 250 / 0.12), 0 4px 8px -4px oklch(0.28 0.02 250 / 0.08)",
+      "shadow-xl": "0 24px 32px -8px oklch(0.28 0.02 250 / 0.16), 0 8px 12px -6px oklch(0.28 0.02 250 / 0.10)",
+      "shadow-focus": "0 0 0 3px oklch(0.483 0.139 250.61 / 0.35)",
+      "duration-instant": "0ms",
+      "duration-fast": "120ms",
+      "duration": "180ms",
+      "duration-slow": "240ms",
+      "duration-slower": "300ms",
+      "ease": "cubic-bezier(0.4, 0, 0.2, 1)",
+      "ease-in": "cubic-bezier(0.4, 0, 1, 1)",
+      "ease-out": "cubic-bezier(0, 0, 0.2, 1)",
+      "ease-in-out": "cubic-bezier(0.4, 0, 0.2, 1)",
+      "ease-spring": "cubic-bezier(0.34, 1.2, 0.64, 1)"
+    },
+    "light": {
+      "background": "oklch(0.97 0.0029 264.54)",
+      "foreground": "oklch(0.2061 0.0086 240.33)",
+      "card": "oklch(1 0 0)",
+      "card-foreground": "oklch(0.2061 0.0086 240.33)",
+      "popover": "oklch(1 0 0)",
+      "popover-foreground": "oklch(0.2061 0.0086 240.33)",
+      "primary": "oklch(0.483 0.139 250.61)",
+      "primary-foreground": "oklch(1 0 0)",
+      "secondary": "oklch(0.9364 0.0046 258.33)",
+      "secondary-foreground": "oklch(0.2866 0.0131 253.03)",
+      "muted": "oklch(0.9364 0.0046 258.33)",
+      "muted-foreground": "oklch(0.4836 0.0224 248.29)",
+      "accent": "oklch(0.936 0.0276 248.12)",
+      "accent-foreground": "oklch(0.4225 0.1219 250.7)",
+      "destructive": "oklch(0.4835 0.1706 27.03)",
+      "destructive-foreground": "oklch(1 0 0)",
+      "success": "oklch(0.4825 0.1032 163.75)",
+      "success-foreground": "oklch(1 0 0)",
+      "warning": "oklch(0.4826 0.1044 70.21)",
+      "warning-foreground": "oklch(1 0 0)",
+      "info": "oklch(0.4833 0.0834 209.34)",
+      "info-foreground": "oklch(1 0 0)",
+      "border": "oklch(0.8829 0.0088 247.93)",
+      "input": "oklch(0.5987 0.0205 250.71)",
+      "ring": "oklch(0.483 0.139 250.61)",
+      "chart-1": "oklch(0.483 0.139 250.61)",
+      "chart-2": "oklch(0.5975 0.1297 69.62)",
+      "chart-3": "oklch(0.4825 0.1032 163.75)",
+      "chart-4": "oklch(0.5974 0.1141 329.7)",
+      "chart-5": "oklch(0.4833 0.0834 209.34)",
+      "sidebar": "oklch(1 0 0)",
+      "sidebar-foreground": "oklch(0.4197 0.0203 251.08)",
+      "sidebar-primary": "oklch(0.483 0.139 250.61)",
+      "sidebar-primary-foreground": "oklch(1 0 0)",
+      "sidebar-accent": "oklch(0.936 0.0276 248.12)",
+      "sidebar-accent-foreground": "oklch(0.4225 0.1219 250.7)",
+      "sidebar-border": "oklch(0.8829 0.0088 247.93)",
+      "sidebar-ring": "oklch(0.483 0.139 250.61)"
+    },
+    "dark": {
+      "background": "oklch(0.2061 0.0086 240.33)",
+      "foreground": "oklch(0.97 0.0029 264.54)",
+      "card": "oklch(0.2866 0.0131 253.03)",
+      "card-foreground": "oklch(0.97 0.0029 264.54)",
+      "popover": "oklch(0.2866 0.0131 253.03)",
+      "popover-foreground": "oklch(0.97 0.0029 264.54)",
+      "primary": "oklch(0.709 0.1147 250.08)",
+      "primary-foreground": "oklch(0.2061 0.0086 240.33)",
+      "secondary": "oklch(0.3528 0.0168 251.8)",
+      "secondary-foreground": "oklch(0.9364 0.0046 258.33)",
+      "muted": "oklch(0.3528 0.0168 251.8)",
+      "muted-foreground": "oklch(0.8138 0.0125 247.98)",
+      "accent": "oklch(0.2855 0.0802 250.94)",
+      "accent-foreground": "oklch(0.936 0.0276 248.12)",
+      "destructive": "oklch(0.7084 0.1413 26.96)",
+      "destructive-foreground": "oklch(0.2061 0.0086 240.33)",
+      "success": "oklch(0.7087 0.0952 163.86)",
+      "success-foreground": "oklch(0.2061 0.0086 240.33)",
+      "warning": "oklch(0.7101 0.129 70.39)",
+      "warning-foreground": "oklch(0.2061 0.0086 240.33)",
+      "info": "oklch(0.708 0.0953 210.38)",
+      "info-foreground": "oklch(0.2061 0.0086 240.33)",
+      "border": "oklch(0.3528 0.0168 251.8)",
+      "input": "oklch(0.5987 0.0205 250.71)",
+      "ring": "oklch(0.709 0.1147 250.08)",
+      "chart-1": "oklch(0.709 0.1147 250.08)",
+      "chart-2": "oklch(0.7101 0.129 70.39)",
+      "chart-3": "oklch(0.7087 0.0952 163.86)",
+      "chart-4": "oklch(0.7089 0.1006 330.12)",
+      "chart-5": "oklch(0.8134 0.0704 209.75)",
+      "sidebar": "oklch(0.2866 0.0131 253.03)",
+      "sidebar-foreground": "oklch(0.9364 0.0046 258.33)",
+      "sidebar-primary": "oklch(0.709 0.1147 250.08)",
+      "sidebar-primary-foreground": "oklch(0.2061 0.0086 240.33)",
+      "sidebar-accent": "oklch(0.2067 0.056 251.7)",
+      "sidebar-accent-foreground": "oklch(0.8137 0.0844 249.43)",
+      "sidebar-border": "oklch(0.3528 0.0168 251.8)",
+      "sidebar-ring": "oklch(0.709 0.1147 250.08)"
+    }
+  },
+  "css": {
+    "@utility duration-instant": {
+      "transition-duration": "0ms",
+      "animation-duration": "0ms"
+    },
+    "@utility duration-fast": {
+      "transition-duration": "120ms",
+      "animation-duration": "120ms"
+    },
+    "@utility duration-base": {
+      "transition-duration": "180ms",
+      "animation-duration": "180ms"
+    },
+    "@utility duration-slow": {
+      "transition-duration": "240ms",
+      "animation-duration": "240ms"
+    },
+    "@utility duration-slower": {
+      "transition-duration": "300ms",
+      "animation-duration": "300ms"
+    },
+    "@layer base": {
+      "*": {
+        "border-color": "var(--border)"
+      },
+      "body": {
+        "background-color": "var(--background)",
+        "color": "var(--foreground)",
+        "font-family": "var(--font-sans)",
+        "font-size": "0.875rem",
+        "line-height": "1.5",
+        "font-feature-settings": "\"cv02\", \"cv03\", \"cv04\", \"cv11\"",
+        "-webkit-font-smoothing": "antialiased"
+      },
+      ".tabular, table tbody td, [data-slot=\"kpi-value\"]": {
+        "font-variant-numeric": "tabular-nums",
+        "font-feature-settings": "\"tnum\""
+      },
+      ":focus-visible": {
+        "outline": "2px solid var(--ring)",
+        "outline-offset": "2px"
+      },
+      "@media (prefers-reduced-motion: reduce)": {
+        "*, *::before, *::after": {
+          "animation-duration": "0.01ms !important",
+          "animation-iteration-count": "1 !important",
+          "transition-duration": "0.01ms !important",
+          "scroll-behavior": "auto !important"
+        }
+      }
+    }
+  },
+  "docs": "Ships the colour tokens, the radius/shadow/duration/easing scales, the duration-* utilities and the base layer (border colour, body type, tabular figures, focus ring, reduced motion). Every colour pair is asserted against WCAG 2.1 AA in CI. TWO MANUAL STEPS, both silent if you skip them — the app renders, wrong. 1. Put `@import \"tw-animate-css\";` directly under `@import \"tailwindcss\";` in your CSS entry. The package installs with this item, but @import must precede every other rule and this item's CSS is appended, so the CLI cannot place it for you. Without the import, animate-in / fade-in-0 / zoom-in-95 are inert and every tooltip, dropdown and sheet pops. 2. Load Inter: `<link rel=\"stylesheet\" href=\"https://rsms.me/inter/inter.css\" />`, or install the `inter` package. --font-sans names it first and falls through to the system stack without it, and the base layer asks for contextual alternates (cv02/03/04/11) that only exist in Inter."
+}

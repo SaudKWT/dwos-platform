@@ -1,0 +1,339 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "koc",
+  "homepage": "https://design.kockw.com",
+  "items": [
+    {
+      "name": "theme",
+      "type": "registry:theme",
+      "title": "KOC Theme",
+      "description": "Kuwait Oil Company brand tokens for light and dark. Anchored to #0060A9, recovered from KOC's own stylesheets. Install this first — it re-skins a stock shadcn app into a KOC app."
+    },
+    {
+      "name": "org",
+      "type": "registry:lib",
+      "title": "Org model",
+      "description": "The KOC organisational model a team dashboard is configured from — Directorate › Group › Team › Unit. Adding a team dashboard is a TeamConfig, not a new component."
+    },
+    {
+      "name": "use-mobile",
+      "type": "registry:lib",
+      "title": "useIsMobile",
+      "description": "Viewport hook backing the sidebar's mobile sheet behaviour."
+    },
+    {
+      "name": "utils",
+      "type": "registry:lib",
+      "title": "cn utility",
+      "description": "Class merger — clsx + tailwind-merge."
+    },
+    {
+      "name": "alert",
+      "type": "registry:ui",
+      "title": "Alert",
+      "description": "Inline message. Callers must supply an icon — colour alone cannot carry severity."
+    },
+    {
+      "name": "app-shell",
+      "type": "registry:ui",
+      "title": "App Shell",
+      "description": "The standard KOC team dashboard frame. Configured entirely from a TeamConfig — unit switcher, unit nav and an always-visible team-wide zone. Building a dashboard for another team is a config file, not a fork.",
+      "categories": [
+        "layout",
+        "koc"
+      ]
+    },
+    {
+      "name": "avatar",
+      "type": "registry:ui",
+      "title": "Avatar",
+      "description": "User image with initials fallback. Two letters is the most that stays legible at 32px."
+    },
+    {
+      "name": "badge",
+      "type": "registry:ui",
+      "title": "Badge",
+      "description": "Counts, tags and categories. `shape=\"count\"` gives a circular count that becomes a pill past two digits. For plant state use @koc/status-badge instead."
+    },
+    {
+      "name": "breadcrumb",
+      "type": "registry:ui",
+      "title": "Breadcrumb",
+      "description": "Path within an app. Used by @koc/page-header.",
+      "categories": [
+        "layout"
+      ]
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "title": "Button",
+      "description": "Six variants, four sizes. Every label/background pair is contrast-tested.",
+      "categories": [
+        "form"
+      ]
+    },
+    {
+      "name": "calendar",
+      "type": "registry:ui",
+      "title": "Calendar",
+      "description": "Date and range picker built on react-day-picker.",
+      "categories": [
+        "form"
+      ]
+    },
+    {
+      "name": "card",
+      "type": "registry:ui",
+      "title": "Card",
+      "description": "The primary surface for grouping dashboard content.",
+      "categories": [
+        "layout"
+      ]
+    },
+    {
+      "name": "chart",
+      "type": "registry:ui",
+      "title": "Charts",
+      "description": "TrendChart, ComparisonChart and VolumeChart. Series colour comes from the tested --chart-1..5 tokens in order, every chart carries a screen-reader text alternative, and the React 19 StrictMode fix is not a prop.",
+      "categories": [
+        "data",
+        "koc"
+      ]
+    },
+    {
+      "name": "checkbox",
+      "type": "registry:ui",
+      "title": "Checkbox",
+      "description": "Binary control built on Radix.",
+      "categories": [
+        "form"
+      ]
+    },
+    {
+      "name": "collapsible",
+      "type": "registry:ui",
+      "title": "Collapsible",
+      "description": "Show/hide a region. Backs nested sidebar navigation."
+    },
+    {
+      "name": "combobox",
+      "type": "registry:ui",
+      "title": "Combobox",
+      "description": "Searchable single-select. shadcn documents this as a Command + Popover pattern rather than shipping it, which means every project assembles a slightly different one; this is the KOC version.",
+      "categories": [
+        "form"
+      ]
+    },
+    {
+      "name": "command",
+      "type": "registry:ui",
+      "title": "Command",
+      "description": "Filterable command list built on cmdk. Backs @koc/combobox."
+    },
+    {
+      "name": "confirm-dialog",
+      "type": "registry:ui",
+      "title": "Confirm Dialog",
+      "description": "A decision that cannot be undone. Takes the subject as a required prop, so the question reads 'Void report BG-1042?' rather than 'Delete Item?' — a confirmation that does not name what it destroys is how people delete the wrong thing.",
+      "categories": [
+        "koc"
+      ]
+    },
+    {
+      "name": "data-table",
+      "type": "registry:ui",
+      "title": "Data Table",
+      "description": "Sorting, filtering, column visibility and pagination on TanStack Table v9 — with loading, empty and filtered-empty as three distinct states, and numeric alignment declared on the column rather than remembered in a cell renderer.",
+      "categories": [
+        "data",
+        "koc"
+      ]
+    },
+    {
+      "name": "date-range-filter",
+      "type": "registry:ui",
+      "title": "Date Range Filter",
+      "description": "Presets first, calendar second. Today / 7 days / 30 days / This month are one click; the range picker is there for the exception.",
+      "categories": [
+        "form",
+        "koc"
+      ]
+    },
+    {
+      "name": "dialog",
+      "type": "registry:ui",
+      "title": "Dialog",
+      "description": "Modal surface. Use for a record you read and return from, or a short focused form."
+    },
+    {
+      "name": "dropdown-menu",
+      "type": "registry:ui",
+      "title": "Dropdown Menu",
+      "description": "Action and option menus built on Radix."
+    },
+    {
+      "name": "input",
+      "type": "registry:ui",
+      "title": "Input",
+      "description": "Text field. Its border carries KOC's WCAG 1.4.11 compliance at 3.63:1 — do not soften it to border-border.",
+      "categories": [
+        "form"
+      ]
+    },
+    {
+      "name": "label",
+      "type": "registry:ui",
+      "title": "Label",
+      "description": "Form label. Always pair with a control via htmlFor.",
+      "categories": [
+        "form"
+      ]
+    },
+    {
+      "name": "navigation-menu",
+      "type": "registry:ui",
+      "title": "Navigation Menu",
+      "description": "Horizontal menu primitive with dropdown panels. Backs @koc/page-nav.",
+      "categories": [
+        "layout"
+      ]
+    },
+    {
+      "name": "notification-menu",
+      "type": "registry:ui",
+      "title": "Notification Menu",
+      "description": "Operational alerts in the app header. The unread count is derived from the items rather than passed in, so the badge cannot disagree with the list — an unread count nobody can clear trains people to ignore it.",
+      "categories": [
+        "koc"
+      ]
+    },
+    {
+      "name": "page-header",
+      "type": "registry:ui",
+      "title": "Page Header",
+      "description": "The top of every KOC application screen — title, optional breadcrumb, actions and meta. The title is an h1 because the app shell contributes no heading, so without it a screen has no top-level landmark at all.",
+      "categories": [
+        "layout",
+        "koc"
+      ]
+    },
+    {
+      "name": "page-nav",
+      "type": "registry:ui",
+      "title": "Page Nav",
+      "description": "Horizontal navigation inside an application. The sidebar answers 'which app am I in'; this answers 'which part of this app'. One level of dropdown only — deeper than that and the screen wants a sidebar.",
+      "categories": [
+        "layout",
+        "koc"
+      ]
+    },
+    {
+      "name": "popover",
+      "type": "registry:ui",
+      "title": "Popover",
+      "description": "Non-modal floating panel. Backs the date picker and combobox."
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "title": "Select",
+      "description": "Single-choice dropdown built on Radix.",
+      "categories": [
+        "form"
+      ]
+    },
+    {
+      "name": "separator",
+      "type": "registry:ui",
+      "title": "Separator",
+      "description": "Visual divider."
+    },
+    {
+      "name": "sheet",
+      "type": "registry:ui",
+      "title": "Sheet",
+      "description": "Edge-anchored panel. Backs the sidebar's mobile behaviour.",
+      "categories": [
+        "layout"
+      ]
+    },
+    {
+      "name": "sidebar",
+      "type": "registry:ui",
+      "title": "Sidebar",
+      "description": "Collapsible sidebar primitives with an icon rail, mobile sheet and keyboard shortcut. Diverges from upstream: collapsed padding is scoped per size, because upstream's base `p-2!` beats `lg`'s `p-0!` on CSS source order.",
+      "categories": [
+        "layout"
+      ]
+    },
+    {
+      "name": "skeleton",
+      "type": "registry:ui",
+      "title": "Skeleton",
+      "description": "Loading placeholder. Prefer it over a spinner so layout does not jump when data lands."
+    },
+    {
+      "name": "sonner",
+      "type": "registry:ui",
+      "title": "Toaster",
+      "description": "Transient confirmation of an action the user just took. Mount once at the app root; call `toast` from anywhere.",
+      "categories": [
+        "koc"
+      ]
+    },
+    {
+      "name": "stat-card",
+      "type": "registry:ui",
+      "title": "Stat Card",
+      "description": "A KPI with a change indicator. Direction and sentiment are separate inputs, because at an oil company 'up' is not always good.",
+      "categories": [
+        "data",
+        "koc"
+      ]
+    },
+    {
+      "name": "status-badge",
+      "type": "registry:ui",
+      "title": "Status Badge",
+      "description": "Operational state for wells, assets and jobs. Takes a status, not a colour — it derives colour, icon and label together so WCAG 1.4.1 cannot be violated by omission.",
+      "categories": [
+        "data",
+        "koc"
+      ]
+    },
+    {
+      "name": "table",
+      "type": "registry:ui",
+      "title": "Table",
+      "description": "Table primitives. Body cells get tabular figures automatically; right-align numeric columns. For sorting, filtering and pagination use @koc/data-table.",
+      "categories": [
+        "data"
+      ]
+    },
+    {
+      "name": "tabs",
+      "type": "registry:ui",
+      "title": "Tabs",
+      "description": "Switch between sibling views. Use for scope (assets, periods), not for filters.",
+      "categories": [
+        "layout"
+      ]
+    },
+    {
+      "name": "tooltip",
+      "type": "registry:ui",
+      "title": "Tooltip",
+      "description": "Short label on hover and focus. Load-bearing in a collapsed icon rail — it is the only accessible name those buttons have."
+    },
+    {
+      "name": "user-menu",
+      "type": "registry:ui",
+      "title": "User Menu",
+      "description": "Account menu. Groups render with separators between them; put sign out in its own group so it is not one pixel below Settings.",
+      "categories": [
+        "koc"
+      ]
+    }
+  ]
+}

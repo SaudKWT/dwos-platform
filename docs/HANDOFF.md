@@ -77,34 +77,96 @@ wrong. What is known:
 The previous repo carried `vercel.json` and `docker-compose.yml`. Both were for a
 demo deployment and neither came across. Do not resurrect them as a template.
 
-## The design system dependency
+## The design system
 
-`web/` consumes `@koc/*` from a **private** GitHub repo
-(`SaudKWT/koc-design-system`) via the GitHub Contents API, pinned to `v0.1.1` in
-`web/components.json`.
+`web/` is built on the KOC Design System (`@koc/*`). **You need no GitHub access
+and no token.** The registry is vendored into this repo at
+`web/vendor/koc-registry/` — 42 items, version recorded in
+`web/vendor/koc-registry/VERSION`.
 
-**This does not affect building or deploying.** `shadcn add` is a one-shot,
-build-time operation: component source is copied into `web/src/components/ui/`
-and committed. Everything needed to compile is already in this repo. You can
-build with no network access to GitHub at all.
+Two separate things, often confused:
 
-It matters only when you want to add a component that isn't installed yet. Two
-options, and this is a decision for Saud:
+| | what it is | where it lives |
+|---|---|---|
+| The **registry** | the catalogue — one JSON per component | `web/vendor/koc-registry/` |
+| The **components** | the actual source you compile | `web/src/components/ui/` |
 
-1. **A collaborator token.** You get read access to the design-system repo and
-   your own fine-grained token in `KOC_REGISTRY_TOKEN`. Needs `api.github.com`
-   reachable from wherever you run the CLI.
-2. **Vendor the registry.** Copy the registry JSON into
-   `vendor/koc-registry/` and point `components.json` at the local path. No
-   network, no token, at the cost of a manual refresh when the system updates.
+The components are already installed and committed, so **building and deploying
+touch neither the registry nor the network.**
 
-If KOC build agents can't reach GitHub, take option 2.
+### Adding a component
 
-Two things the CLI cannot do for you after `npx shadcn add @koc/theme`, both
-silent if missed — see `docs/CONSUMING.md` in the design system:
+```bash
+cd web
+npm run koc:add -- @koc/dialog        # one or more items
+```
 
-- `@import "tw-animate-css";` must be the **second line** of `web/src/styles.css`
-- Inter must be loaded in `web/index.html`
+That serves the vendored registry on `127.0.0.1:4183` for the length of the
+command and runs the real shadcn CLI against it, so registry dependencies,
+import rewriting and overwrite behaviour all work exactly as shadcn documents.
+Nothing leaves the machine.
+
+`npm run koc:serve` keeps it up if you'd rather run `npx shadcn add` yourself.
+
+> Why not point shadcn straight at the folder? Because it can't. A relative
+> registry path resolves against `https://ui.shadcn.com/r/`, and a `file://` URL
+> returns *"not implemented... yet..."*. Both verified against the CLI on
+> 2026-08-12. Loopback is the workaround, not a preference.
+
+### Taking a design-system update
+
+Run by whoever maintains the design system — it needs access to that repo:
+
+```bash
+cd web
+npm run koc:sync -- v0.1.2 --from "/path/to/KOC Design System"
+```
+
+It reads the files at that **tag** (via `git show`, so an uncommitted experiment
+can't leak in), replaces `vendor/koc-registry/` wholesale, and writes `VERSION`.
+Commit the diff. You then receive it as an ordinary `git pull` or PR — a design
+system change arrives as reviewable content in this repo, never as a silent fetch.
+
+Without `--from` it falls back to the GitHub API and needs `KOC_REGISTRY_TOKEN`.
+
+**Syncing does not update installed components.** Refreshing
+`vendor/koc-registry/dialog.json` does not touch `src/components/ui/dialog.tsx`.
+To take the update:
+
+```bash
+npm run koc:add -- @koc/dialog        # then read the diff
+```
+
+That overwrites the file, including local edits. This is the shadcn model, not a
+vendoring limitation — installing from GitHub behaves identically.
+
+### Two things that are silent when wrong
+
+Both are already correct in this repo. They matter if you ever rebuild the CSS
+entry from scratch — see `docs/CONSUMING.md` in the design system:
+
+- `@import "tw-animate-css";` must be the **second line** of `web/src/styles.css`.
+  Below that and every entrance animation is inert: tooltips, dropdowns, dialogs
+  and sheets pop instead of animating, with nothing in the build to say why.
+- Inter must be loaded in `web/index.html`. `--font-sans` names it first and
+  falls through to the system stack without it, so the app renders in the wrong
+  typeface and asks for contextual alternates that only exist in Inter.
+
+### Rules that are load-bearing
+
+These come from the design system and are commented as such where they appear.
+Each exists because of a specific failure:
+
+- Never hand-write a hex. Semantic tokens only — `--primary`, not a ramp step.
+- Motion comes from the scale: `duration-fast|base|slow|slower`,
+  `ease-out|in|spring`. Never `duration-200`, never a bare `transition-*` with no
+  duration — Tailwind silently supplies 150ms, which is not a step here.
+- `isAnimationActive={false}` stays on every chart line. Without it Recharts
+  draws nothing at all under React 19 StrictMode. Still true in recharts 3.8.
+- `--input` is a different token from `--border`, and must stay that way.
+- After any `shadcn add`, check `git diff` on `web/src/styles.css` and
+  `git status`. Third-party registry items append stock theme blocks and write
+  outside your configured aliases.
 
 ## Adding a module
 
@@ -154,3 +216,20 @@ Honest list. None of these are hidden in the code.
   before module #3, in its own migration.
 - **No screen reader has been run.** Behaviour is tested in Chromium. KOC is a
   Windows/Edge organisation, so test NVDA + Edge.
+
+---
+
+## About this document
+
+It is maintained as the system is built, not written at the end. If something
+here is stale, that is a bug — report it.
+
+Two conventions that keep it useful:
+
+- **Unknowns are marked as unknowns.** The deployment section is a checklist of
+  things to find out, not a guess. Config that looks authoritative and is wrong
+  costs more than an admitted gap.
+- **Known gaps are listed rather than hidden.** If a thing does not work yet, it
+  is in the list above.
+
+Last updated: 2026-08-12.

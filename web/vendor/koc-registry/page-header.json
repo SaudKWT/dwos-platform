@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "page-header",
+  "type": "registry:ui",
+  "title": "Page Header",
+  "description": "The top of every KOC application screen — title, optional breadcrumb, actions and meta. The title is an h1 because the app shell contributes no heading, so without it a screen has no top-level landmark at all.",
+  "categories": [
+    "layout",
+    "koc"
+  ],
+  "docs": "Keep breadcrumbs shallow. Directorate and Group are identity, not navigation, and the unit is already in the sidebar switcher — a breadcrumb here should carry only the path within the app.",
+  "registryDependencies": [
+    "@koc/breadcrumb",
+    "@koc/utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/page-header.tsx",
+      "content": "import * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\nimport {\n  Breadcrumb,\n  BreadcrumbItem,\n  BreadcrumbLink,\n  BreadcrumbList,\n  BreadcrumbPage,\n  BreadcrumbSeparator,\n} from \"@/components/ui/breadcrumb\";\n\n/**\n * PageHeader — the top of every KOC application screen.\n *\n * Not in the shadcn registry and not in any block worth copying: every dashboard\n * kit improvises one, which is exactly why forty KOC apps would improvise forty\n * slightly different ones. This fixes the arrangement so a user moving between\n * two KOC apps finds the title, the context and the actions in the same places.\n *\n * WHY THE TITLE IS AN <h1>\n * ------------------------\n * The app shell contributes no heading — a sidebar is navigation, not document\n * structure. If the page does not supply an h1 the screen has no top-level\n * heading at all, and screen-reader users lose the single most-used way to\n * orient on a page. Making it structural here means a team cannot ship a screen\n * without one by forgetting.\n *\n * WHY BREADCRUMBS ARE OPTIONAL AND SHALLOW\n * ----------------------------------------\n * KOC nests four levels deep, and the temptation is to render the whole chain.\n * But Directorate and Group are identity rather than navigation — a user does\n * not travel up to them from a screen — and the unit is already in the sidebar\n * switcher. So a breadcrumb here should carry only the path *within* the app:\n * the list you came from, and where you are now. Anything more repeats the\n * chrome and buries the one link that matters.\n */\n\nexport interface PageHeaderCrumb {\n  label: string;\n  href?: string;\n}\n\nexport interface PageHeaderProps {\n  title: string;\n  /** One line explaining what this screen is for. Optional but usually earned. */\n  description?: string;\n  /** Path within the app. The last entry renders as the current page. */\n  breadcrumbs?: PageHeaderCrumb[];\n  /**\n   * Primary and secondary actions. Kept to the right of the title so the\n   * scan order is \"where am I → what is this → what can I do\".\n   */\n  actions?: React.ReactNode;\n  /** Counters, freshness stamps, status. Rendered under the title. */\n  meta?: React.ReactNode;\n  className?: string;\n}\n\nexport function PageHeader({\n  title,\n  description,\n  breadcrumbs,\n  actions,\n  meta,\n  className,\n}: PageHeaderProps) {\n  return (\n    <header className={cn(\"border-b border-border pb-4\", className)}>\n      {breadcrumbs && breadcrumbs.length > 0 && (\n        <Breadcrumb className=\"mb-2\">\n          <BreadcrumbList>\n            {breadcrumbs.map((crumb, i) => {\n              const last = i === breadcrumbs.length - 1;\n              return (\n                <React.Fragment key={`${crumb.label}-${i}`}>\n                  <BreadcrumbItem>\n                    {last || !crumb.href ? (\n                      <BreadcrumbPage>{crumb.label}</BreadcrumbPage>\n                    ) : (\n                      <BreadcrumbLink href={crumb.href}>{crumb.label}</BreadcrumbLink>\n                    )}\n                  </BreadcrumbItem>\n                  {!last && <BreadcrumbSeparator />}\n                </React.Fragment>\n              );\n            })}\n          </BreadcrumbList>\n        </Breadcrumb>\n      )}\n\n      <div className=\"flex flex-wrap items-start justify-between gap-3\">\n        <div className=\"min-w-0\">\n          <h1 className=\"truncate text-2xl font-semibold tracking-tight\">{title}</h1>\n          {description && (\n            <p className=\"mt-1 max-w-2xl text-sm text-muted-foreground\">{description}</p>\n          )}\n          {meta && <div className=\"mt-2 flex flex-wrap items-center gap-3\">{meta}</div>}\n        </div>\n\n        {/* `shrink-0` so a long title truncates rather than squeezing the actions\n            into an unusable column — the primary action must stay clickable at\n            any width. */}\n        {actions && <div className=\"flex shrink-0 items-center gap-2\">{actions}</div>}\n      </div>\n    </header>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/ui/page-header.tsx"
+    }
+  ]
+}

@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "koc:add": "node scripts/koc-registry.mjs add",
+    "koc:serve": "node scripts/koc-registry.mjs serve",
+    "koc:sync": "node scripts/sync-registry.mjs"
   },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.15",

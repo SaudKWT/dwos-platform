@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "badge",
+  "type": "registry:ui",
+  "title": "Badge",
+  "description": "Counts, tags and categories. `shape=\"count\"` gives a circular count that becomes a pill past two digits. For plant state use @koc/status-badge instead.",
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "@koc/utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/badge.tsx",
+      "content": "import * as React from \"react\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\nimport { cn } from \"@/lib/utils\";\n\n/**\n * Badge — a small label for counts, tags and categories.\n *\n * For plant/asset state use `StatusBadge` instead: it forces an icon and a text\n * label, which this component does not.\n */\nconst badgeVariants = cva(\n  [\n    \"inline-flex items-center gap-1 border\",\n    \"text-2xs font-medium transition-colors duration-fast ease-out\",\n    \"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2\",\n    \"[&_svg]:size-3 [&_svg]:shrink-0\",\n  ],\n  {\n    variants: {\n      variant: {\n        default: \"border-transparent bg-primary text-primary-foreground\",\n        secondary: \"border-transparent bg-secondary text-secondary-foreground\",\n        destructive: \"border-transparent bg-destructive text-destructive-foreground\",\n        success: \"border-transparent bg-success text-success-foreground\",\n        warning: \"border-transparent bg-warning text-warning-foreground\",\n        info: \"border-transparent bg-info text-info-foreground\",\n        outline: \"border-input text-foreground\",\n      },\n      shape: {\n        label: \"rounded-sm px-2 py-0.5\",\n        /**\n         * A count next to a label — tab counts, unread markers, nav badges.\n         *\n         * `min-w-5` with `h-5` rather than a fixed `size-5`: at one digit the\n         * min-width and height are equal so it renders as a true circle, and at\n         * three digits it grows into a pill instead of clipping the number or\n         * squashing it into an ellipse. A hard-coded circle looks right until\n         * the first count reaches 100, which on an operations dashboard is a\n         * matter of time.\n         *\n         * The padding is `px-1`, not `px-1.5`: at 1.5 a single digit plus 12px\n         * of padding measured 21px against a 20px height — one pixel out of\n         * round, which is invisible in a spec and obvious on a 20px circle.\n         * At `px-1` the min-width wins for one and two digits and the padding\n         * only takes over at three.\n         *\n         * `tabular-nums` so a count ticking 8 → 9 → 10 does not jitter.\n         */\n        count: \"h-5 min-w-5 justify-center rounded-full px-1 tabular-nums\",\n      },\n    },\n    defaultVariants: { variant: \"default\", shape: \"label\" },\n  },\n);\n\nexport interface BadgeProps\n  extends React.HTMLAttributes<HTMLSpanElement>,\n    VariantProps<typeof badgeVariants> {}\n\nfunction Badge({ className, variant, shape, ...props }: BadgeProps) {\n  return (\n    <span\n      data-slot=\"badge\"\n      className={cn(badgeVariants({ variant, shape }), className)}\n      {...props}\n    />\n  );\n}\n\nexport { Badge, badgeVariants };\n",
+      "type": "registry:ui",
+      "target": "components/ui/badge.tsx"
+    }
+  ]
+}

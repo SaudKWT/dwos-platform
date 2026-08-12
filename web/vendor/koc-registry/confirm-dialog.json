@@ -1,0 +1,27 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "confirm-dialog",
+  "type": "registry:ui",
+  "title": "Confirm Dialog",
+  "description": "A decision that cannot be undone. Takes the subject as a required prop, so the question reads 'Void report BG-1042?' rather than 'Delete Item?' — a confirmation that does not name what it destroys is how people delete the wrong thing.",
+  "categories": [
+    "koc"
+  ],
+  "docs": "Cancel is ordered first and takes initial focus. Radix focuses the first focusable child on open, and on a destructive dialog that must not be the destructive button — a stray Enter is a very common way to dismiss a dialog.",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "@koc/button",
+    "@koc/dialog",
+    "@koc/utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/confirm-dialog.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { AlertTriangle, Trash2, type LucideIcon } from \"lucide-react\";\n\nimport { cn } from \"@/lib/utils\";\nimport { Button } from \"@/components/ui/button\";\nimport {\n  Dialog,\n  DialogContent,\n  DialogDescription,\n  DialogFooter,\n  DialogHeader,\n  DialogTitle,\n} from \"@/components/ui/dialog\";\n\n/**\n * ConfirmDialog — a decision that cannot be undone.\n *\n * Adapted from shadcn-space's dialog-02: centred icon, plain question, two\n * equal-weight buttons. Two things changed in the port.\n *\n * FIRST, IT TAKES THE SUBJECT AS A PROP.\n * The original hardcodes \"Delete Item\". A confirmation that does not name what\n * it is about to destroy is the mechanism by which people delete the wrong\n * thing — you click through three identical dialogs and the fourth one was a\n * different record. `subject` is required for exactly that reason, so the\n * question reads \"Delete report BG-1042?\" and the user can catch the mistake.\n *\n * SECOND, THE CONFIRM BUTTON IS NOT AUTOFOCUSED.\n * Radix focuses the first focusable element on open. For a destructive dialog\n * that must be Cancel, not Delete — otherwise a stray Enter, which is a very\n * common way to dismiss a dialog, destroys the record. The cancel button is\n * ordered first and carries the initial focus.\n */\n\nexport interface ConfirmDialogProps {\n  open: boolean;\n  onOpenChange: (open: boolean) => void;\n  /** What is about to happen, e.g. \"Delete report\". */\n  title: string;\n  /** What it will happen to, e.g. \"BG-1042\". Named so the user can catch a mistake. */\n  subject: string;\n  /** Consequence, in plain words. */\n  description?: string;\n  confirmLabel?: string;\n  cancelLabel?: string;\n  onConfirm: () => void;\n  /** `destructive` is the default. `caution` for reversible-but-serious. */\n  tone?: \"destructive\" | \"caution\";\n  icon?: LucideIcon;\n  /** Disables the confirm button while an async action runs. */\n  busy?: boolean;\n}\n\nexport function ConfirmDialog({\n  open,\n  onOpenChange,\n  title,\n  subject,\n  description,\n  confirmLabel,\n  cancelLabel = \"Cancel\",\n  onConfirm,\n  tone = \"destructive\",\n  icon,\n  busy = false,\n}: ConfirmDialogProps) {\n  const Icon = icon ?? (tone === \"destructive\" ? Trash2 : AlertTriangle);\n\n  return (\n    <Dialog open={open} onOpenChange={onOpenChange}>\n      <DialogContent className=\"sm:max-w-md\" showCloseButton={false}>\n        <div className=\"flex flex-col items-center gap-4 text-center\">\n          <div\n            className={cn(\n              \"flex size-12 items-center justify-center rounded-full\",\n              tone === \"destructive\"\n                ? \"bg-destructive/10 text-destructive\"\n                : \"bg-warning/10 text-warning\",\n            )}\n          >\n            <Icon aria-hidden className=\"size-5\" />\n          </div>\n\n          <DialogHeader className=\"items-center\">\n            <DialogTitle>\n              {title} {subject}?\n            </DialogTitle>\n            {description && <DialogDescription>{description}</DialogDescription>}\n          </DialogHeader>\n        </div>\n\n        {/* Cancel first, and it takes the initial focus. Radix focuses the first\n            focusable child on open; on a destructive dialog that must not be the\n            destructive button. */}\n        <DialogFooter className=\"sm:justify-center\">\n          <Button\n            variant=\"outline\"\n            className=\"flex-1\"\n            autoFocus\n            onClick={() => onOpenChange(false)}\n          >\n            {cancelLabel}\n          </Button>\n          <Button\n            variant={tone === \"destructive\" ? \"destructive\" : \"default\"}\n            className=\"flex-1\"\n            disabled={busy}\n            onClick={onConfirm}\n          >\n            {confirmLabel ?? (tone === \"destructive\" ? \"Delete\" : \"Continue\")}\n          </Button>\n        </DialogFooter>\n      </DialogContent>\n    </Dialog>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/ui/confirm-dialog.tsx"
+    }
+  ]
+}
