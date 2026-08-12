@@ -153,7 +153,7 @@ export default function DayBrowser({ focus }: { focus?: DayBrowserFocus }) {
                 <button
                   onClick={() => openDay(d.date)}
                   className={cn(
-                    'flex w-full items-center justify-between gap-2 border-b px-3 py-2 text-left text-sm transition-colors',
+                    'flex w-full items-center justify-between gap-2 border-b px-3 py-2 text-left text-sm transition-colors duration-fast ease-out',
                     active ? 'bg-secondary' : 'hover:bg-accent',
                   )}
                 >
@@ -192,7 +192,7 @@ export default function DayBrowser({ focus }: { focus?: DayBrowserFocus }) {
                     key={r.vessel_id}
                     onClick={() => setSelectedVessel(r.vessel_id)}
                     className={cn(
-                      'rounded-full border px-2.5 py-0.5 text-xs transition-colors',
+                      'rounded-full border px-2.5 py-0.5 text-xs transition-colors duration-fast ease-out',
                       active ? 'bg-secondary font-medium' : 'text-muted-foreground hover:bg-accent',
                     )}
                     style={active ? { borderColor: vesselColor(r.vessel_id) } : undefined}

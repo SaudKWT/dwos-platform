@@ -337,7 +337,7 @@ function ControlButton({ children, onClick, title, primary }: {
       title={title}
       onClick={onClick}
       className={cn(
-        'flex h-8 w-8 items-center justify-center rounded-md border transition-colors',
+        'flex h-8 w-8 items-center justify-center rounded-md border transition-colors duration-fast ease-out',
         primary ? 'bg-primary text-primary-foreground hover:opacity-90' : 'bg-card hover:bg-accent',
       )}
     >
@@ -431,7 +431,7 @@ function VesselCard({ vessel: v, ctx, t, segments, aisTracks, aisOverlay, onOpen
       title="Click for full daily activities"
       onClick={onOpen}
       onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpen() } }}
-      className="cursor-pointer rounded-lg border bg-card p-3 text-sm shadow-sm transition-colors hover:bg-accent/50"
+      className="cursor-pointer rounded-lg border bg-card p-3 text-sm shadow-sm transition-colors duration-fast ease-out hover:bg-accent/50"
       style={{ borderLeftColor: v.color ?? undefined, borderLeftWidth: 3 }}
     >
       <div className="font-medium">

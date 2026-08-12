@@ -699,7 +699,7 @@ function KindToggle({ kind, onChange }: { kind: TaskRowState['kind']; onChange: 
           onClick={() => onChange(k)}
           aria-pressed={kind === k}
           title={k === 'span' ? 'Covers a stretch of the day' : 'Marks the moment something happened'}
-          className={cn('px-1.5 py-1 capitalize transition-colors',
+          className={cn('px-1.5 py-1 capitalize transition-colors duration-fast ease-out',
             k === 'event' && 'border-l border-input',
             kind === k ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:bg-accent')}
         >
