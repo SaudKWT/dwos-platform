@@ -220,7 +220,11 @@ export function NilToggle({
           type="button" onClick={() => set(true)} aria-pressed={isNil}
           className={cn(
             "flex-1 px-2 py-1 text-xs font-medium transition-colors duration-fast ease-out",
-            isNil ? "bg-secondary text-secondary-foreground" : "text-muted-foreground hover:bg-accent",
+            // hover is 60% of the fill, not the whole fill. --accent, --secondary
+            // and --muted became the same value in v0.1.4, so a full-strength
+            // hover renders identically to the selected half and a passing
+            // cursor reads as an answer. Same resolution @koc/sidebar uses.
+            isNil ? "bg-secondary text-secondary-foreground" : "text-muted-foreground hover:bg-accent/60",
           )}
         >
           {nilWord}
@@ -229,7 +233,7 @@ export function NilToggle({
           type="button" onClick={() => set(false)} aria-pressed={!isNil}
           className={cn(
             "flex-1 border-l border-input px-2 py-1 text-xs font-medium transition-colors duration-fast ease-out",
-            !isNil ? "bg-destructive/15 text-destructive" : "text-muted-foreground hover:bg-accent",
+            !isNil ? "bg-destructive/15 text-destructive" : "text-muted-foreground hover:bg-accent/60",
           )}
         >
           {yesWord}
