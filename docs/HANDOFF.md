@@ -44,11 +44,20 @@ new — in their own SQL schema. See "Adding a module" below.
 ## First run, locally
 
 ```bash
-./database/migrate.sh          # applies 000..004 in order, journalled
+cp keys.env.example keys.env && $EDITOR keys.env   # set MSSQL_SA_PASSWORD
+docker compose --env-file keys.env up -d           # local SQL Server, container dwos-sql
+./database/migrate.sh                              # applies 000..004, journalled
 cd web && npm ci && npm run build
 ```
 
 `migrate.sh --status` shows what has been applied without changing anything.
+
+Verified end to end on 2026-08-12 — Docker Desktop on arm64 under Rosetta, SQL
+Server 2022, healthy in 20s, all five scripts clean: **56 tables, 30 foreign keys,
+one registered module**. `004` is idempotent; re-running it inserts nothing.
+
+The compose file is a laptop convenience, not a deployment artefact. KOC runs its
+own SQL Server and nothing here describes it — see Deployment.
 
 ## Deployment — NOT YET DECIDED
 
@@ -235,6 +244,10 @@ Honest list. None of these are hidden in the code.
 - **The web app reads bundled JSON fixtures, not the API.** `web/src/features/
   vessel-movement/data/` is a snapshot of the real corpus for development. Wiring
   it to `server/` is the next substantial piece of work.
+- **`dbo.Entity` is empty**, so there is nothing yet to bind units to. `001` ships
+  DDL only — no seed rows anywhere, including `Module`, `Entity` and `Status`. The
+  seven unit bindings below therefore cannot be filled from a fresh local database;
+  they need the real DWO instance.
 - **The seven unit bindings are unresolved.** `web/src/config/schema-binding.ts`
   has `entityCode: null, teamId: null` for all seven. They were not guessed —
   a wrong `TeamID` silently scopes a screen to the wrong unit's data. They need
@@ -264,4 +277,4 @@ Two conventions that keep it useful:
 - **Known gaps are listed rather than hidden.** If a thing does not work yet, it
   is in the list above.
 
-Last updated: 2026-08-12. Design system pinned at v0.1.2.
+Last updated: 2026-08-12. Design system pinned at v0.1.2. Migrations verified against a real SQL Server.

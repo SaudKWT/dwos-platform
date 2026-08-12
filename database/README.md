@@ -39,17 +39,30 @@ of every JSON file, and of the legacy schema itself (`dbo.Log.Timestamp` default
 
 ## Local setup
 
-SQL Server has no native macOS build, so it runs in a container. On Apple Silicon the
-image is amd64 and needs Rosetta, which colima provides:
+SQL Server has no native macOS build, so it runs in a container. The image is amd64
+only, so on Apple Silicon it needs Rosetta. Either runtime works:
 
 ```bash
+# Docker Desktop — enable Settings ▸ General ▸ "Use Rosetta for x86/amd64 emulation"
+# or colima:
 brew install colima docker docker-compose
 colima start --vm-type=vz --vz-rosetta --cpu 2 --memory 4 --disk 20
+```
 
-docker compose --env-file keys.env up -d   # start SQL Server
+Then, from the repo root:
+
+```bash
+docker compose --env-file keys.env up -d   # start SQL Server (container: dwos-sql)
 ./database/migrate.sh                      # apply the schema
 ./database/migrate.sh --status             # show applied / pending
 ```
+
+Verified end to end on 2026-08-12: Docker Desktop 29.2.1 on arm64 under Rosetta,
+`mcr.microsoft.com/mssql/server:2022-latest`, healthy in 20s. All five scripts applied
+clean — 56 tables, 30 foreign keys, one registered module.
+
+`keys.env` is untracked and holds `MSSQL_SA_PASSWORD`. Create it before the first run;
+any strong password will do, it is local only.
 
 Credentials live in `keys.env` at the repo root (untracked, `chmod 600`). Values there
 are single-quoted because the connection string contains `;` and spaces, which bash

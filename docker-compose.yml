@@ -1,0 +1,39 @@
+# Local SQL Server for development. Not a deployment artefact — KOC runs its own
+# SQL Server and this compose file has nothing to say about that. It exists so
+# `database/migrate.sh` has something to migrate against on a laptop.
+#
+# SQL Server has no native macOS build and the image is amd64 only, so on Apple
+# Silicon it runs under emulation. Two ways, both fine:
+#
+#   Docker Desktop — Settings ▸ General ▸ "Use Rosetta for x86/amd64 emulation"
+#   colima         — colima start --vm-type=vz --vz-rosetta --cpu 2 --memory 4 --disk 20
+#
+# Bring it up with:   docker compose --env-file keys.env up -d
+# Credentials live in keys.env at the repo root, untracked. See database/README.md.
+
+services:
+  sql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
+    # Named for the platform, not for one of its modules. The vessel app's
+    # container was `vessels-sql`; the database serves every module now.
+    container_name: dwos-sql
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+      MSSQL_PID: Developer
+    ports:
+      - "${MSSQL_PORT:-1433}:1433"
+    volumes:
+      - dwos-sql-data:/var/opt/mssql
+    healthcheck:
+      # The container reports "started" long before the engine accepts logins;
+      # without this the migration script races it and fails on a cold start.
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+volumes:
+  dwos-sql-data:

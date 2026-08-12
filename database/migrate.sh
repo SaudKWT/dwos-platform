@@ -22,7 +22,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-CONTAINER="${MSSQL_CONTAINER:-vessels-sql}"
+CONTAINER="${MSSQL_CONTAINER:-dwos-sql}"
 STATUS_ONLY=0
 [[ "${1:-}" == "--status" ]] && STATUS_ONLY=1
 
@@ -102,6 +102,10 @@ echo "==> Verifying"
 # The Module check is not bookkeeping. dbo.Log declares [ModuleID] int NOT NULL,
 # so a module with no registry row cannot write an audit entry at all — which is
 # exactly the state the vessel app shipped in before 004.
+#
+# All three checks proven to fire on 2026-08-12 by breaking each invariant in
+# turn. They share one batch, so the first RAISERROR aborts it — you see one
+# failure at a time, not all of them.
 # 000 creates the database itself and is never recorded in SchemaVersions.
 expected_scripts=$(ls "$ROOT"/database/[0-9][0-9][0-9]-*.sql | grep -vc '/000-')
 
