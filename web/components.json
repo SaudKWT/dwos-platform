@@ -13,12 +13,13 @@
   "iconLibrary": "lucide",
   "aliases": {
     "components": "@/components",
+    "utils": "@/lib/utils",
     "ui": "@/components/ui",
     "lib": "@/lib",
-    "utils": "@/lib/utils",
     "hooks": "@/hooks"
   },
   "registries": {
-    "@koc": "http://127.0.0.1:4183/{name}.json"
+    "@koc": "http://127.0.0.1:4183/{name}.json",
+    "@shadcn-space": "https://shadcnspace.com/r/{name}.json"
   }
 }
