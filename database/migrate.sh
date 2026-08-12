@@ -92,17 +92,37 @@ done
 
 echo
 echo "==> Verifying"
+
+# This block used to name the twelve marine tables literally, so it reported
+# "Migration OK" without checking a single table belonging to any module added
+# after the vessel app. The checks below are the ones that stay true as modules
+# are added: every script in the directory is recorded as applied, and every
+# module in the registry is complete enough to be usable.
+#
+# The Module check is not bookkeeping. dbo.Log declares [ModuleID] int NOT NULL,
+# so a module with no registry row cannot write an audit entry at all — which is
+# exactly the state the vessel app shipped in before 004.
+# 000 creates the database itself and is never recorded in SchemaVersions.
+expected_scripts=$(ls "$ROOT"/database/[0-9][0-9][0-9]-*.sql | grep -vc '/000-')
+
 sqlcmd -d DWO -h -1 -W -Q "
 SET NOCOUNT ON;
-DECLARE @marine int = (
-  SELECT COUNT(*) FROM sys.tables WHERE name IN (
-    'Vessel','MarineLocation','MarineLocationAlias','VesselDailyReport',
-    'VesselReportTask','VesselReportConsumable','VesselReportCrew',
-    'MovementPlan','MovementPlanVessel','MovementPlanSnapshot',
-    'MovementPlanLeg','AisPosition'));
-SELECT CONCAT('tables total   : ', (SELECT COUNT(*) FROM sys.tables));
-SELECT CONCAT('marine tables  : ', @marine, ' / 12');
-SELECT CONCAT('foreign keys   : ', (SELECT COUNT(*) FROM sys.foreign_keys));
-IF @marine <> 12 RAISERROR('expected 12 marine tables', 16, 1);
+SELECT CONCAT('tables total    : ', (SELECT COUNT(*) FROM sys.tables));
+SELECT CONCAT('foreign keys    : ', (SELECT COUNT(*) FROM sys.foreign_keys));
+SELECT CONCAT('scripts applied : ', (SELECT COUNT(*) FROM dbo.SchemaVersions), ' / $expected_scripts');
+SELECT CONCAT('modules         : ', (SELECT COUNT(*) FROM dbo.Module WHERE IsActive = 1));
+
+IF (SELECT COUNT(*) FROM dbo.SchemaVersions) <> $expected_scripts
+  RAISERROR('applied script count does not match the files in database/', 16, 1);
+
+-- A module with no forms is a menu entry that goes nowhere.
+IF EXISTS (SELECT 1 FROM dbo.Module m
+           WHERE m.IsActive = 1 AND m.IsAttachedToMenu = 1
+             AND NOT EXISTS (SELECT 1 FROM dbo.Form f WHERE f.ModuleID = m.ID))
+  RAISERROR('a menu-attached module has no forms', 16, 1);
+
+-- A module whose menu node points at no privilege is ungated.
+IF EXISTS (SELECT 1 FROM dbo.Module WHERE IsActive = 1 AND PrivilegeID IS NULL)
+  RAISERROR('an active module has no gating privilege', 16, 1);
 "
 echo "==> Migration OK"

@@ -20,7 +20,7 @@
   },
   "registries": {
     "@koc": {
-      "url": "https://api.github.com/repos/SaudKWT/koc-design-system/contents/apps/docs/public/r/{name}.json?ref=v0.1.0",
+      "url": "https://api.github.com/repos/SaudKWT/koc-design-system/contents/apps/docs/public/r/{name}.json?ref=v0.1.1",
       "headers": {
         "Authorization": "Bearer ${KOC_REGISTRY_TOKEN}",
         "Accept": "application/vnd.github.raw"
