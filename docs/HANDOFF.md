@@ -307,8 +307,46 @@ The vessel app is the worked example. Follow it, plus the step it skipped.
    with no registry row cannot write a single audit entry. The vessel app shipped
    in exactly that state and `004` is the fix.
 
-3. **API.** A controller and EF entities in `server/`. One service — do not stand
-   up a second API.
+3. **API.** A folder under `server/Koc.Vessels.Api/Modules/`, one service — do
+   not stand up a second API. The layout is:
+
+   ```
+   Modules/
+     Marine/      the vessel module: 5 controllers, ReportWriter, LiveHub
+     Platform/    not a module — the registry and org endpoints every module needs
+     <yours>/     controllers + services for module #3
+   ```
+
+   Entities go in `Koc.Vessels.Domain`, split the same way: `MarineEntities.cs`
+   for tables this platform owns and writes, `PlatformEntities.cs` for the
+   read-only slice of the corporate schema.
+
+   **Corporate tables are read-only and that is enforced, not remembered.**
+   Everything from `001-schema0726.sql` is mapped with
+   `.ToTable(..., t => t.ExcludeFromMigrations())` and read with `AsNoTracking`,
+   so a stray `SaveChanges` cannot carry a change into a table the DBA owns. Only
+   what is needed is mapped — six types out of forty-three — because scaffolding
+   the rest would create thirty-seven ways to write to one of them.
+
+   There are no EF migrations at all, deliberately: `dotnet ef migrations add`
+   against a scaffolded legacy schema will happily generate a script that drops
+   somebody else's tables. Schema changes ship as numbered SQL.
+
+   **Platform endpoints already built**, so a new module does not reinvent them:
+
+   | | |
+   |---|---|
+   | `GET /api/modules` | the registry `004` writes — modules and their forms, in menu order |
+   | `GET /api/org/entities?type=Unit` | the org hierarchy; the rows whose Id is `RigInfo.TeamID` |
+   | `GET /api/platform` | counts, including `org_seeded` |
+
+   `org_seeded` is the honest one. A fresh DWO has an **empty `dbo.Entity`** —
+   `001` ships DDL and no rows — so unit scoping cannot be resolved locally at
+   all. A client reads that count and says "not scoped to this unit yet" rather
+   than quietly showing the whole directorate. Never hardcode an Entity Id:
+   `001` declares no unique constraint anywhere, every table keys on
+   `int IDENTITY`, so ids differ between any two DWO databases. Resolve by
+   `EntityCode` at runtime.
 
 4. **Web.** A folder under `web/src/features/`, and an entry in the unit's nav in
    `web/src/config/dwos.ts`. No component is edited to add a module.

@@ -13,8 +13,14 @@ namespace Koc.Vessels.Infrastructure;
 /// generate a script that drops tables belonging to somebody else. Schema changes
 /// ship as numbered SQL scripts applied by database/migrate.sh.
 ///
-/// Only marine tables are mapped. The legacy drilling tables are read through
-/// explicit queries where needed, so a mistake here cannot write to them.
+/// Two groups are mapped. The MARINE tables, which this platform owns and
+/// writes. And a deliberately small read-only slice of the CORPORATE tables from
+/// 001-schema0726.sql that the platform needs regardless of module — the module
+/// registry, the org hierarchy, and the two reference tables marine already has
+/// foreign keys into. Everything corporate is excluded from migrations and never
+/// written; see PlatformEntities.cs. The other ~37 corporate tables stay unmapped,
+/// because scaffolding them would create thirty-seven ways to write to a table
+/// this platform does not own.
 /// </summary>
 public class DwoDbContext(DbContextOptions<DwoDbContext> options) : DbContext(options)
 {
@@ -31,8 +37,44 @@ public class DwoDbContext(DbContextOptions<DwoDbContext> options) : DbContext(op
     public DbSet<MovementPlanLeg> MovementPlanLegs => Set<MovementPlanLeg>();
     public DbSet<AisPosition> AisPositions => Set<AisPosition>();
 
+    // Corporate, read-only. See PlatformEntities.cs.
+    public DbSet<AppModule> Modules => Set<AppModule>();
+    public DbSet<AppForm> Forms => Set<AppForm>();
+    public DbSet<OrgEntity> OrgEntities => Set<OrgEntity>();
+    public DbSet<OrgEntityType> OrgEntityTypes => Set<OrgEntityType>();
+    public DbSet<Rig> Rigs => Set<Rig>();
+    public DbSet<Contractor> Contractors => Set<Contractor>();
+
     protected override void OnModelCreating(ModelBuilder b)
     {
+        // ── Corporate tables, read-only ──────────────────────────────────────
+        //
+        // ExcludeFromMigrations is belt and braces: this context has no EF
+        // migrations at all. It is here so that if anyone ever adds them, the
+        // generated script cannot contain a CREATE or DROP for a table the DBA
+        // owns. Names are given explicitly because the CLR names differ — Module
+        // and Entity are both taken in this codebase.
+        b.Entity<AppModule>(e =>
+        {
+            e.ToTable("Module", t => t.ExcludeFromMigrations());
+            e.HasMany(x => x.Forms).WithOne().HasForeignKey(x => x.ModuleId);
+        });
+        b.Entity<AppForm>(e => e.ToTable("Form", t => t.ExcludeFromMigrations()));
+        b.Entity<OrgEntity>(e =>
+        {
+            e.ToTable("Entity", t => t.ExcludeFromMigrations());
+            e.HasOne(x => x.EntityType).WithMany().HasForeignKey(x => x.EntityTypeId);
+        });
+        b.Entity<OrgEntityType>(e => e.ToTable("EntityType", t => t.ExcludeFromMigrations()));
+        b.Entity<Rig>(e => e.ToTable("Rig", t => t.ExcludeFromMigrations()));
+        b.Entity<Contractor>(e =>
+        {
+            e.ToTable("Contractor", t => t.ExcludeFromMigrations());
+            // The corporate schema spells these with a lower-case i.
+            e.Property(x => x.IsActive).HasColumnName("isActive");
+            e.Property(x => x.IsDeleted).HasColumnName("isDeleted");
+        });
+
         // Decimal precision must be declared explicitly.
         //
         // EF Core does NOT read precision back from the database. Left alone it
