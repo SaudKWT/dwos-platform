@@ -1,6 +1,8 @@
 # DWOS Platform — handoff
 
-For the in-house KOC developer taking this to KOC servers.
+For the in-house KOC developer taking this to KOC servers. How work moves
+between people — build, tag, deploy, feedback — is `WORKFLOW.md` beside this
+file; your feedback goes in `deployment-reports/`, template included.
 
 Drilling & Workover Operational Support Team. One database, one API, one web app
 with a module per unit. Adding a unit's app is a folder and a config entry — not
@@ -68,6 +70,50 @@ one registered module**. `004` is idempotent; re-running it inserts nothing.
 The compose file is a laptop convenience, not a deployment artefact. KOC runs its
 own SQL Server and nothing here describes it — see Deployment.
 
+## Building the deployable
+
+```bash
+./publish.sh            # → ./publish — the entire deployment in one folder
+```
+
+It builds `web/`, copies `web/dist` into the API's `wwwroot`, and runs
+`dotnet publish -c Release`. The output serves the API, the SPA, deep links and
+self-hosted fonts with **no internet access at runtime**. On Windows it is the
+same three steps by hand: `npm run build` in `web\`, copy `web\dist\*` into
+`server\Koc.Vessels.Api\wwwroot\`, `dotnet publish -c Release`.
+
+Run it with config from the environment — published apps read no launchSettings:
+
+```bash
+ConnectionStrings__Dwo='Server=...;Database=DWO;...' \
+ASPNETCORE_URLS=http://0.0.0.0:5280 \
+dotnet publish/Koc.Vessels.Api.dll
+```
+
+Content root is pinned to the binary's folder in code, so the working directory
+does not matter — found the hard way: run from anywhere else, the API answered
+and the entire SPA 404'd, silently. IIS sets content root itself; consoles and
+services do not.
+
+Then, against any instance:
+
+```bash
+./smoke.sh http://server:5280     # ten read-only checks; paste into the report
+```
+
+The three SPA checks fail by design against a *dev* API (`dotnet run`), where
+Vite serves the frontend. All ten pass only against a published artifact —
+which is the thing being smoke-tested.
+
+The API surface at this commit is `docs/api/openapi.json`, committed so a
+release's contract reviews as a diff.
+
+Two things the connection string carries locally that yours should not:
+`TrustServerCertificate=True` exists for the local container's self-signed
+certificate — drop it where real certificates exist. And `sa` is the local dev
+login; the app needs only read/write on the marine tables plus read on the
+corporate ones.
+
 ## Deployment — NOT YET DECIDED
 
 **This section is deliberately unfinished.** The target environment has not been
@@ -81,16 +127,30 @@ wrong. What is known:
 - `web/` builds to static files (`web/dist`) and can be served by the API, by IIS,
   or from a share. It has no server-side runtime.
 
-**To fill in when you know:**
+**Questions for the KOC developer** — each answer retires a line here, and the
+deployment-report template asks the same things so they arrive in writing:
 
-- [ ] SQL Server instance name, authentication mode, and who owns the `DWO` database
-- [ ] Where the connection string lives (IIS app settings? environment? a vault?)
-- [ ] How migrations run in that environment — `migrate.sh` is a local Docker
-      convenience. `dbo.SchemaVersions` is deliberately DbUp's default shape, so
-      the API can take over migrations and pick up from the same journal.
-- [ ] Web host and base path
-- [ ] Whether outbound internet exists on the build agent — this decides the
-      design-system question below
+- [ ] **Auth**: Windows/AD (Negotiate behind IIS) or app-level (JWT against
+      `dbo.User`)? The schema and privilege rows are staged for either; it is
+      the one thing deliberately not built on a guess, and the drop-in point is
+      marked in `Program.cs`.
+- [ ] .NET runtime on the servers — this targets **net8.0 (LTS)**; is that
+      installed, or should it pin differently?
+- [ ] Host: IIS? If so, are **WebSockets** enabled — the live map hub is
+      SignalR, and it degrades to long-polling but should not have to.
+- [ ] SQL Server version, who owns/creates `DWO`, and how you want the numbered
+      scripts run — by hand in SSMS, or DbUp'd from the API at startup?
+      `dbo.SchemaVersions` is deliberately DbUp's default shape either way.
+      If run by hand, insert the journal rows too, or a later runner re-applies.
+- [ ] Does the existing DWO hold real `dbo.Entity` rows? Send
+      `GET /api/platform` after deploy — `org_seeded` non-zero unlocks the
+      dashboard's seven unit bindings.
+- [ ] Where the connection string lives (IIS config / env var / vault).
+- [ ] Can build machines reach nuget.org / npmjs? If not, the handover is the
+      `publish.sh` output itself, which needs neither.
+- [ ] Your solution naming convention — the assemblies are still `Koc.Vessels.*`
+      after the vessel app they grew from, and the planned rename should land on
+      your convention rather than another guess.
 
 The previous repo carried a `vercel.json` for a demo deployment. It did not come
 across; do not resurrect it as a template. `docker-compose.yml` did come across,
@@ -268,9 +328,10 @@ entry from scratch — see `docs/CONSUMING.md` in the design system:
 - `@import "tw-animate-css";` must be the **second line** of `web/src/styles.css`.
   Below that and every entrance animation is inert: tooltips, dropdowns, dialogs
   and sheets pop instead of animating, with nothing in the build to say why.
-- Inter must be loaded in `web/index.html`. `--font-sans` names it first and
-  falls through to the system stack without it, so the app renders in the wrong
-  typeface and asks for contextual alternates that only exist in Inter.
+- Inter must be loaded in `web/index.html`. It is **self-hosted** at
+  `web/public/fonts/` — it was an rsms.me link, which on an intranet fails
+  silently into the system font stack. If the CSS entry is ever rebuilt, keep
+  the `/fonts/inter.css` link, not a CDN.
 
 ### Rules that are load-bearing
 
@@ -416,4 +477,4 @@ Two conventions that keep it useful:
 - **Known gaps are listed rather than hidden.** If a thing does not work yet, it
   is in the list above.
 
-Last updated: 2026-08-12. Design system pinned at v0.1.4. Migrations, the full client→API→SQL Server round trip, and the a11y suite all verified locally.
+Last updated: 2026-08-13. Design system pinned at v0.1.5. Published artifact verified end to end; smoke green. Migrations, the full client→API→SQL Server round trip, and the a11y suite all verified locally.

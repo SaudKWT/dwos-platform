@@ -3,7 +3,17 @@ using Koc.Vessels.Api.Services;
 using Koc.Vessels.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-var builder = WebApplication.CreateBuilder(args);
+// Content root pinned to the binary's own folder, not the working directory.
+// Without this, `dotnet publish/Koc.Vessels.Api.dll` run from anywhere else
+// serves the API perfectly and 404s the entire SPA — wwwroot resolves against
+// CWD. IIS sets content root itself, so the bug only appears in exactly the
+// environments where nobody is looking: a console run, a service, a smoke test.
+// Found by running the published artifact from the repo root on 2026-08-13.
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    Args = args,
+    ContentRootPath = AppContext.BaseDirectory,
+});
 
 // keys.env supplies ConnectionStrings__Dwo. Environment variables are already in
 // the default configuration chain, so nothing else is needed:
@@ -51,7 +61,8 @@ if (app.Environment.IsDevelopment())
 app.MapControllers();
 app.MapHub<LiveHub>("/hubs/live");
 
-// Serves the built React client (web/dist copied to wwwroot) in production.
+// Serves the built React client in production. publish.sh performs the
+// web/dist -> wwwroot copy; nothing else does.
 app.UseDefaultFiles();
 app.UseStaticFiles();
 

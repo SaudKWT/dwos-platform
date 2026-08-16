@@ -1,0 +1,39 @@
+/* Inter, self-hosted.
+ *
+ * This was <link href="https://rsms.me/inter/inter.css"> — a runtime internet
+ * dependency, which on a KOC intranet fails silently into the system font
+ * stack: the app renders, in the wrong typeface, asking for contextual
+ * alternates (cv02..cv11) that only exist in Inter.
+ *
+ * One variable font covers weights 100-900, so two files replace rsms.me's
+ * whole static set. Both family names the token stack asks for are declared:
+ * --font-sans is "Inter var", Inter, ... and either match must resolve here.
+ */
+@font-face {
+  font-family: "Inter var";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/InterVariable.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter var";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/InterVariable-Italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/InterVariable.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/InterVariable-Italic.woff2") format("woff2");
+}

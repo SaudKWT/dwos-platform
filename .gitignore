@@ -5,3 +5,5 @@ keys.env
 .DS_Store
 bin/
 obj/
+publish/
+server/Koc.Vessels.Api/wwwroot/
