@@ -244,6 +244,18 @@ node scripts/koc-registry.mjs add @koc/dialog --yes --overwrite   # then read th
 That overwrites the file, including local edits. This is the shadcn model, not a
 vendoring limitation — installing from GitHub behaves identically.
 
+**Re-add the importers too.** Registry dependencies point one way (`command`
+declares `@koc/dialog`); breakage flows the other way. When a component you
+re-add has changed its types, every installed component that imports it can
+stop compiling until it is also re-added — first seen 2026-08-16, when the
+Base UI dialog port broke the vendored `command.tsx` here (`tsc` failed in a
+file nobody asked to change) until `@koc/command` was re-added. Find the
+importers of an item with:
+
+```bash
+grep -l '"@koc/dialog"' vendor/koc-registry/*.json
+```
+
 **This is the easiest thing on this page to get wrong**, and it has already been
 got wrong once here. After bumping to `v0.1.1` only `theme` was re-added, so
 twelve components sat on the previous version for a day — carrying bare
