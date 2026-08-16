@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { AlertTriangle, Trash2, type LucideIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -26,11 +27,15 @@ import {
  * different record. `subject` is required for exactly that reason, so the
  * question reads "Delete report BG-1042?" and the user can catch the mistake.
  *
- * SECOND, THE CONFIRM BUTTON IS NOT AUTOFOCUSED.
- * Radix focuses the first focusable element on open. For a destructive dialog
- * that must be Cancel, not Delete — otherwise a stray Enter, which is a very
- * common way to dismiss a dialog, destroys the record. The cancel button is
- * ordered first and carries the initial focus.
+ * SECOND, THE CONFIRM BUTTON NEVER TAKES INITIAL FOCUS.
+ * On a destructive dialog focus must open on Cancel, not Delete — otherwise a
+ * stray Enter, which is a very common way to dismiss a dialog, destroys the
+ * record. Under Radix that was achieved by ordering alone (it focused the
+ * first focusable child). Base UI's default is the same — first tabbable
+ * element, or the popup itself when opened by touch, which is equally safe —
+ * but here the intent is structural: `initialFocus` points at the cancel
+ * button explicitly, so reordering the footer can never move focus onto the
+ * destructive action.
  */
 
 export interface ConfirmDialogProps {
@@ -66,10 +71,15 @@ export function ConfirmDialog({
   busy = false,
 }: ConfirmDialogProps) {
   const Icon = icon ?? (tone === "destructive" ? Trash2 : AlertTriangle);
+  const cancelRef = React.useRef<HTMLButtonElement | null>(null);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md" showCloseButton={false}>
+      <DialogContent
+        className="sm:max-w-md"
+        showCloseButton={false}
+        initialFocus={cancelRef}
+      >
         <div className="flex flex-col items-center gap-4 text-center">
           <div
             className={cn(
@@ -90,14 +100,14 @@ export function ConfirmDialog({
           </DialogHeader>
         </div>
 
-        {/* Cancel first, and it takes the initial focus. Radix focuses the first
-            focusable child on open; on a destructive dialog that must not be the
-            destructive button. */}
+        {/* Cancel first and explicitly the initial focus — see the note above.
+            Ordering alone would work today; `initialFocus` makes it survive a
+            reordering. */}
         <DialogFooter className="sm:justify-center">
           <Button
+            ref={cancelRef}
             variant="outline"
             className="flex-1"
-            autoFocus
             onClick={() => onOpenChange(false)}
           >
             {cancelLabel}
