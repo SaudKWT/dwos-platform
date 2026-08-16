@@ -6,7 +6,7 @@
       "runtimeExecutable": "sh",
       "runtimeArgs": [
         "-c",
-        "set -a; . ./keys.env; set +a; export PATH=\"/opt/homebrew/opt/dotnet@8/bin:$PATH\"; export DOTNET_ROOT=\"/opt/homebrew/opt/dotnet@8/libexec\"; exec dotnet run --project server/Koc.Vessels.Api --launch-profile http"
+        "set -a; . ./keys.env; set +a; export PATH=\"/opt/homebrew/opt/dotnet@8/bin:$PATH\"; export DOTNET_ROOT=\"/opt/homebrew/opt/dotnet@8/libexec\"; exec dotnet run --project server/Koc.Dwos.Api --launch-profile http"
       ],
       "port": 5280
     },

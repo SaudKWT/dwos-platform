@@ -1,15 +1,15 @@
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Koc.Vessels.Domain;
-using Koc.Vessels.Infrastructure;
+using Koc.Dwos.Domain;
+using Koc.Dwos.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 // =============================================================================
 // Loads the app's JSON files into the DWO database.
 //
 //   set -a; source keys.env; set +a
-//   dotnet run --project server/Koc.Vessels.Importer -- [--data <dir>] [--verify-only]
+//   dotnet run --project server/Koc.Dwos.Importer -- [--data <dir>] [--verify-only]
 //
 // Re-runnable: it clears the marine tables and reloads from the files, so it can
 // be run repeatedly during the migration and once more at cutover. It never
@@ -43,7 +43,7 @@ var conn = Environment.GetEnvironmentVariable("ConnectionStrings__Dwo");
 if (string.IsNullOrWhiteSpace(conn))
 {
     Console.Error.WriteLine("error: ConnectionStrings__Dwo is not set. Run with:");
-    Console.Error.WriteLine("  set -a; source keys.env; set +a; dotnet run --project server/Koc.Vessels.Importer");
+    Console.Error.WriteLine("  set -a; source keys.env; set +a; dotnet run --project server/Koc.Dwos.Importer");
     return 1;
 }
 

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.SignalR;
 
-namespace Koc.Vessels.Api.Hubs;
+namespace Koc.Dwos.Api.Hubs;
 
 /// <summary>
 /// Push channel to connected dashboards. Replaces the SSE endpoint the Node

@@ -6,4 +6,4 @@ keys.env
 bin/
 obj/
 publish/
-server/Koc.Vessels.Api/wwwroot/
+server/Koc.Dwos.Api/wwwroot/

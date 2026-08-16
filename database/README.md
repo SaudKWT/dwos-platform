@@ -72,8 +72,8 @@ would otherwise try to execute when the file is sourced.
 
 ```bash
 set -a; source keys.env; set +a
-dotnet run --project server/Koc.Vessels.Importer               # wipe + reload from data/*.json
-dotnet run --project server/Koc.Vessels.Importer -- --verify-only
+dotnet run --project server/Koc.Dwos.Importer               # wipe + reload from data/*.json
+dotnet run --project server/Koc.Dwos.Importer -- --verify-only
 ```
 
 The importer is re-runnable and verifies itself against the source files afterwards —

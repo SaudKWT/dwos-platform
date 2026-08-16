@@ -1,4 +1,4 @@
-namespace Koc.Vessels.Domain;
+namespace Koc.Dwos.Domain;
 
 // Entities for the corporate tables in database/001-schema0726.sql that the
 // PLATFORM needs, as opposed to any one module.
@@ -106,4 +106,89 @@ public class Contractor
     // Lower-case `i` is the corporate schema's, preserved deliberately.
     public bool? IsActive { get; set; }
     public bool? IsDeleted { get; set; }
+}
+
+// ── The authentication slice ────────────────────────────────────────────────
+//
+// Added when the KOC developer answered the auth question: Windows/AD. The
+// Windows identity arrives from Negotiate; these tables turn "DOMAIN\\jsmith"
+// into a dbo.User row and a set of privilege names. Same read-only rules as
+// everything above.
+//
+// dbo.[User] carries Password, PasswordHash and PasswordSalt columns. They are
+// DELIBERATELY not mapped: under Windows auth the app never touches a password,
+// and an entity that cannot select a credential column cannot leak one — the
+// same enforced-not-remembered posture as ExcludeFromMigrations.
+
+/// <summary>An application user. `dbo.[User]` — credential columns unmapped.</summary>
+public class AppUser
+{
+    public int Id { get; set; }
+    public string? Username { get; set; }
+    public DateTime? StartDate { get; set; }
+    public DateTime? ExpiryDate { get; set; }
+    public bool IsActive { get; set; }
+    public bool IsDeleted { get; set; }
+
+    public UserProfile? Profile { get; set; }
+}
+
+/// <summary>Person details behind a user. `dbo.UserProfile`.</summary>
+public class UserProfile
+{
+    public int Id { get; set; }
+    public int? UserId { get; set; }
+    public int KocNumber { get; set; }
+    public string FirstName { get; set; } = "";
+    public string LastName { get; set; } = "";
+    public string? Email { get; set; }
+    public string? Designation { get; set; }
+    public bool? IsKoc { get; set; }
+}
+
+/// <summary>`dbo.Role`.</summary>
+public class AppRole
+{
+    public int Id { get; set; }
+    public string RoleName { get; set; } = "";
+    public DateTime? StartDate { get; set; }
+    public DateTime? EndDate { get; set; }
+    public bool IsActive { get; set; }
+}
+
+/// <summary>`dbo.UserRole` — membership, date-windowed.</summary>
+public class UserRole
+{
+    public int Id { get; set; }
+    public int UserId { get; set; }
+    public int RoleId { get; set; }
+    public DateTime? StartDate { get; set; }
+    public DateTime? EndDate { get; set; }
+}
+
+/// <summary>`dbo.Privilege` — the tree 004 registers module gates into.</summary>
+public class Privilege
+{
+    public int Id { get; set; }
+    public string PrivilegeName { get; set; } = "";
+    public int? PrivilegeParentId { get; set; }
+    public bool IsActive { get; set; }
+}
+
+/// <summary>`dbo.UserPrivilege` — a direct grant, date-windowed.</summary>
+public class UserPrivilege
+{
+    public int Id { get; set; }
+    public int? UserId { get; set; }
+    public int? PrivilegeId { get; set; }
+    public DateTime? StartDate { get; set; }
+    public DateTime? EndDate { get; set; }
+}
+
+/// <summary>`dbo.RolePrivilege` — a grant carried by a role.</summary>
+public class RolePrivilege
+{
+    public int Id { get; set; }
+    public int? PrivilegeId { get; set; }
+    public int? RoleId { get; set; }
 }

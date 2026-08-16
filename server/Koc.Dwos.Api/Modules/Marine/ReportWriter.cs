@@ -1,9 +1,9 @@
 using System.Text.Json.Nodes;
-using Koc.Vessels.Domain;
-using Koc.Vessels.Infrastructure;
+using Koc.Dwos.Domain;
+using Koc.Dwos.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace Koc.Vessels.Api.Services;
+namespace Koc.Dwos.Api.Services;
 
 /// <summary>
 /// Writes a daily report or movement plan submitted as JSON.

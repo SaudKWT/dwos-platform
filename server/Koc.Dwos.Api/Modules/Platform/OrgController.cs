@@ -1,8 +1,8 @@
-using Koc.Vessels.Infrastructure;
+using Koc.Dwos.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Koc.Vessels.Api.Modules.Platform;
+namespace Koc.Dwos.Api.Modules.Platform;
 
 /// <summary>
 /// Platform endpoints — the things that belong to the DWOS platform itself

@@ -51,8 +51,8 @@ docker compose --env-file keys.env up -d           # local SQL Server, container
 ./database/migrate.sh                              # applies 000..004, journalled
 
 set -a; . ./keys.env; set +a                       # API and importer read ConnectionStrings__Dwo
-dotnet run --project server/Koc.Vessels.Importer -- --data reference/data
-dotnet run --project server/Koc.Vessels.Api --launch-profile http   # :5280
+dotnet run --project server/Koc.Dwos.Importer -- --data reference/data
+dotnet run --project server/Koc.Dwos.Api --launch-profile http   # :5280
 
 cd web && npm ci && npm run dev                    # :4200, proxies /api to 5280
 ```
@@ -80,14 +80,14 @@ It builds `web/`, copies `web/dist` into the API's `wwwroot`, and runs
 `dotnet publish -c Release`. The output serves the API, the SPA, deep links and
 self-hosted fonts with **no internet access at runtime**. On Windows it is the
 same three steps by hand: `npm run build` in `web\`, copy `web\dist\*` into
-`server\Koc.Vessels.Api\wwwroot\`, `dotnet publish -c Release`.
+`server\Koc.Dwos.Api\wwwroot\`, `dotnet publish -c Release`.
 
 Run it with config from the environment — published apps read no launchSettings:
 
 ```bash
 ConnectionStrings__Dwo='Server=...;Database=DWO;...' \
 ASPNETCORE_URLS=http://0.0.0.0:5280 \
-dotnet publish/Koc.Vessels.Api.dll
+dotnet publish/Koc.Dwos.Api.dll
 ```
 
 Content root is pinned to the binary's folder in code, so the working directory
@@ -114,7 +114,35 @@ certificate — drop it where real certificates exist. And `sa` is the local dev
 login; the app needs only read/write on the marine tables plus read on the
 corporate ones.
 
-## Deployment — NOT YET DECIDED
+## Authentication — Windows/AD
+
+Per your answer (2026-08-16): Windows login is the identity. Implemented with
+Negotiate, behind one environment variable:
+
+| `Auth__Mode` | behaviour |
+|---|---|
+| `Windows` | **production.** Every endpoint requires an authenticated user. Exceptions: `/api/health` (monitoring) and `/api/me` (reports auth state as JSON). |
+| `Disabled` | local-dev default (macOS has no AD). Logged loudly at startup so it cannot be mistaken for a production state. |
+
+Under IIS, enable **Windows Authentication** on the site and the identity
+arrives from IIS; self-hosted, the Negotiate handler does Kerberos/NTLM itself.
+
+`GET /api/me` turns the Windows identity into the corporate user: it matches
+`DOMAIN\user` against `dbo.[User].Username` (with or without the domain), and
+resolves privileges as the union of direct grants (`UserPrivilege`) and
+role-carried ones (`UserRole` → `RolePrivilege`), date-windowed. These are the
+same PrivilegeIDs `dbo.Module` and `dbo.Form` point at, so the client can gate
+modules from this one call. The credential columns on `dbo.[User]` are
+**not mapped at all** — under Windows auth the app never touches a password,
+and an entity that cannot select a credential column cannot leak one.
+
+Verified on 2026-08-16 as far as a non-domain machine allows: `Windows` mode
+401s everything with a correct `WWW-Authenticate: Negotiate` challenge, health
+stays 200, `/api/me` reports state. **The actual AD handshake has never run —
+your step-0 deployment verifies it. Open the app, then check `/api/me` shows
+your account.**
+
+## Deployment — the answers so far (2026-08-16)
 
 **This section is deliberately unfinished.** The target environment has not been
 confirmed, and guessing it would produce config that looks authoritative and is
@@ -127,30 +155,27 @@ wrong. What is known:
 - `web/` builds to static files (`web/dist`) and can be served by the API, by IIS,
   or from a share. It has no server-side runtime.
 
-**Questions for the KOC developer** — each answer retires a line here, and the
-deployment-report template asks the same things so they arrive in writing:
+The developer answered on 2026-08-16. Recorded verbatim-in-spirit, with what
+each answer changed:
 
-- [ ] **Auth**: Windows/AD (Negotiate behind IIS) or app-level (JWT against
-      `dbo.User`)? The schema and privilege rows are staged for either; it is
-      the one thing deliberately not built on a guess, and the drop-in point is
-      marked in `Program.cs`.
-- [ ] .NET runtime on the servers — this targets **net8.0 (LTS)**; is that
-      installed, or should it pin differently?
-- [ ] Host: IIS? If so, are **WebSockets** enabled — the live map hub is
-      SignalR, and it degrades to long-polling but should not have to.
-- [ ] SQL Server version, who owns/creates `DWO`, and how you want the numbered
-      scripts run — by hand in SSMS, or DbUp'd from the API at startup?
-      `dbo.SchemaVersions` is deliberately DbUp's default shape either way.
-      If run by hand, insert the journal rows too, or a later runner re-applies.
-- [ ] Does the existing DWO hold real `dbo.Entity` rows? Send
-      `GET /api/platform` after deploy — `org_seeded` non-zero unlocks the
-      dashboard's seven unit bindings.
-- [ ] Where the connection string lives (IIS config / env var / vault).
-- [ ] Can build machines reach nuget.org / npmjs? If not, the handover is the
-      `publish.sh` output itself, which needs neither.
-- [ ] Your solution naming convention — the assemblies are still `Koc.Vessels.*`
-      after the vessel app they grew from, and the planned rename should land on
-      your convention rather than another guess.
+- [x] **Auth: Windows/AD.** Built — see § Authentication above.
+- [x] **.NET 8 confirmed fine.** Target stays `net8.0`.
+- [~] **WebSockets: "assumed enabled."** Recorded as an assumption, not a fact —
+      the deployment report asks you to confirm the live map holds a WebSocket
+      connection rather than silently long-polling.
+- [ ] **SQL Server version / DWO ownership / how migrations run: answer coming.**
+      Still the biggest open item for step 0.
+- [x] **Org data: you control the database.** Understood — `GET /api/platform`
+      after deploy tells both of us whether `dbo.Entity` is populated;
+      `org_seeded` non-zero is what unlocks the dashboard's unit bindings.
+- [x] **Connection string: environment variable.** Exactly how it is built —
+      `ConnectionStrings__Dwo`, nothing to change.
+- [~] **NuGet/npm reachability: unknown.** The `publish.sh` output needs
+      neither, so the artifact handover path is the safe default until known.
+- [x] **Naming: read as "name by the solution"** — everything is now
+      `Koc.Dwos.*` (was `Koc.Vessels.*`, the platform named after module #2).
+      If a different convention was meant, say so now while the rename is one
+      commit deep.
 
 The previous repo carried a `vercel.json` for a demo deployment. It did not come
 across; do not resurrect it as a template. `docker-compose.yml` did come across,
@@ -312,7 +337,7 @@ First-run is above. Day to day it is:
 ```bash
 docker compose --env-file keys.env up -d          # if not already running
 set -a; . ./keys.env; set +a
-dotnet run --project server/Koc.Vessels.Api --launch-profile http &
+dotnet run --project server/Koc.Dwos.Api --launch-profile http &
 cd web && npm run dev
 ```
 
@@ -368,7 +393,7 @@ The vessel app is the worked example. Follow it, plus the step it skipped.
    with no registry row cannot write a single audit entry. The vessel app shipped
    in exactly that state and `004` is the fix.
 
-3. **API.** A folder under `server/Koc.Vessels.Api/Modules/`, one service — do
+3. **API.** A folder under `server/Koc.Dwos.Api/Modules/`, one service — do
    not stand up a second API. The layout is:
 
    ```
@@ -378,7 +403,7 @@ The vessel app is the worked example. Follow it, plus the step it skipped.
      <yours>/     controllers + services for module #3
    ```
 
-   Entities go in `Koc.Vessels.Domain`, split the same way: `MarineEntities.cs`
+   Entities go in `Koc.Dwos.Domain`, split the same way: `MarineEntities.cs`
    for tables this platform owns and writes, `PlatformEntities.cs` for the
    read-only slice of the corporate schema.
 
@@ -477,4 +502,4 @@ Two conventions that keep it useful:
 - **Known gaps are listed rather than hidden.** If a thing does not work yet, it
   is in the list above.
 
-Last updated: 2026-08-13. Design system pinned at v0.1.5. Published artifact verified end to end; smoke green. Migrations, the full client→API→SQL Server round trip, and the a11y suite all verified locally.
+Last updated: 2026-08-16. Design system pinned at v0.1.5. Windows/AD auth built (AD handshake pending step-0 verification); solution renamed Koc.Dwos.*. Migrations, the full client→API→SQL Server round trip, and the a11y suite all verified locally.

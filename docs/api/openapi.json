@@ -1,7 +1,7 @@
 {
     "openapi": "3.0.1",
     "info": {
-        "title": "Koc.Vessels.Api",
+        "title": "Koc.Dwos.Api",
         "version": "1.0"
     },
     "paths": {
@@ -105,7 +105,19 @@
         "/api/health": {
             "get": {
                 "tags": [
-                    "Koc.Vessels.Api"
+                    "Koc.Dwos.Api"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/me": {
+            "get": {
+                "tags": [
+                    "Me"
                 ],
                 "responses": {
                     "200": {

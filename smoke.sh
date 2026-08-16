@@ -26,6 +26,9 @@ check /api/reports       '"reports"'        "report index"
 check /api/movement-plans '"plans"'         "plan index"
 check /api/modules       '"Vessel Movement"' "module registry readable"
 check /api/platform      '"org_seeded"'     "$(curl -s "$BASE/api/platform")"
+# /api/me is AllowAnonymous and reports auth state as JSON in every mode —
+# paste its body into the deployment report so the auth mode is on record.
+check /api/me            '"auth_mode"'      "$(curl -s "$BASE/api/me")"
 check /                  'id="root"'        "SPA root"
 check /unit-4/vessels/reports 'id="root"'   "deep link falls back to SPA"
 check /fonts/inter.css   'Inter'            "self-hosted fonts"

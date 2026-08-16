@@ -1,8 +1,8 @@
-using Koc.Vessels.Infrastructure;
+using Koc.Dwos.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Koc.Vessels.Api.Controllers;
+namespace Koc.Dwos.Api.Controllers;
 
 /// <summary>
 /// Reference data the map needs: the fleet and the places it moves between.

@@ -1,7 +1,7 @@
-using Koc.Vessels.Domain;
+using Koc.Dwos.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace Koc.Vessels.Infrastructure;
+namespace Koc.Dwos.Infrastructure;
 
 /// <summary>
 /// EF Core context over the DWO database.
@@ -45,6 +45,15 @@ public class DwoDbContext(DbContextOptions<DwoDbContext> options) : DbContext(op
     public DbSet<Rig> Rigs => Set<Rig>();
     public DbSet<Contractor> Contractors => Set<Contractor>();
 
+    // Corporate, read-only — the authentication slice. See PlatformEntities.cs.
+    public DbSet<AppUser> Users => Set<AppUser>();
+    public DbSet<UserProfile> UserProfiles => Set<UserProfile>();
+    public DbSet<AppRole> Roles => Set<AppRole>();
+    public DbSet<UserRole> UserRoles => Set<UserRole>();
+    public DbSet<Privilege> Privileges => Set<Privilege>();
+    public DbSet<UserPrivilege> UserPrivileges => Set<UserPrivilege>();
+    public DbSet<RolePrivilege> RolePrivileges => Set<RolePrivilege>();
+
     protected override void OnModelCreating(ModelBuilder b)
     {
         // ── Corporate tables, read-only ──────────────────────────────────────
@@ -74,6 +83,25 @@ public class DwoDbContext(DbContextOptions<DwoDbContext> options) : DbContext(op
             e.Property(x => x.IsActive).HasColumnName("isActive");
             e.Property(x => x.IsDeleted).HasColumnName("isDeleted");
         });
+
+        // Auth slice — same read-only posture. dbo.[User]'s credential columns
+        // are not mapped at all; see PlatformEntities.cs.
+        b.Entity<AppUser>(e =>
+        {
+            e.ToTable("User", t => t.ExcludeFromMigrations());
+            e.HasOne(x => x.Profile).WithOne().HasForeignKey<UserProfile>(x => x.UserId);
+        });
+        b.Entity<UserProfile>(e =>
+        {
+            e.ToTable("UserProfile", t => t.ExcludeFromMigrations());
+            e.Property(x => x.KocNumber).HasColumnName("KOCNumber");
+            e.Property(x => x.IsKoc).HasColumnName("IsKOC");
+        });
+        b.Entity<AppRole>(e => e.ToTable("Role", t => t.ExcludeFromMigrations()));
+        b.Entity<UserRole>(e => e.ToTable("UserRole", t => t.ExcludeFromMigrations()));
+        b.Entity<Privilege>(e => e.ToTable("Privilege", t => t.ExcludeFromMigrations()));
+        b.Entity<UserPrivilege>(e => e.ToTable("UserPrivilege", t => t.ExcludeFromMigrations()));
+        b.Entity<RolePrivilege>(e => e.ToTable("RolePrivilege", t => t.ExcludeFromMigrations()));
 
         // Decimal precision must be declared explicitly.
         //

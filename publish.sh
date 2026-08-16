@@ -13,10 +13,10 @@
 # the connection string in the environment:
 #
 #   ConnectionStrings__Dwo='...' ASPNETCORE_URLS=http://0.0.0.0:5280 \
-#     dotnet <out>/Koc.Vessels.Api.dll
+#     dotnet <out>/Koc.Dwos.Api.dll
 #
 # On Windows the equivalent is the same three steps: `npm run build` in web\,
-# copy web\dist\* into server\Koc.Vessels.Api\wwwroot\, then
+# copy web\dist\* into server\Koc.Dwos.Api\wwwroot\, then
 # `dotnet publish -c Release`. Nothing here is mac-specific except the paths.
 #
 # WHY THIS SCRIPT EXISTS
@@ -32,7 +32,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OUT="${1:-$ROOT/publish}"
-API="$ROOT/server/Koc.Vessels.Api"
+API="$ROOT/server/Koc.Dwos.Api"
 
 # brew's dotnet@8 is keg-only; pick it up when dotnet is not already on PATH.
 if ! command -v dotnet >/dev/null 2>&1 && [ -d /opt/homebrew/opt/dotnet@8 ]; then

@@ -1,8 +1,8 @@
-using Koc.Vessels.Infrastructure;
+using Koc.Dwos.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Koc.Vessels.Api.Controllers;
+namespace Koc.Dwos.Api.Controllers;
 
 /// <summary>
 /// Imported AIS tracks. Routes and shapes mirror the Node server.

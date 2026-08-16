@@ -1,4 +1,4 @@
-namespace Koc.Vessels.Domain;
+namespace Koc.Dwos.Domain;
 
 // Entities for the marine tables created by database/002-marine-tables.sql.
 //

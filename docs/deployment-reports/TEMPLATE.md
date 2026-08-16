@@ -25,6 +25,19 @@ section gets finished.
 - Can the build machine reach nuget.org? npmjs? github.com?
 - Auth expectation: Windows/AD (Negotiate) or app-level (JWT against `dbo.User`)?
 
+## Auth verification (step 0's most important check)
+
+- Opened the app from a domain machine: did it sign you in without a prompt?
+- Paste `GET <url>/api/me` — it should show your AD account. If `user` is null,
+  your Windows account has no `dbo.[User]` row with a matching `Username`;
+  paste what `Username` values look like in your DWO so matching can be fixed:
+
+```
+```
+
+- Live map: does DevTools show a WebSocket connection to `/hubs/live`
+  (WebSockets were *assumed* enabled)?
+
 ## Did the docs hold?
 
 For each step of HANDOFF.md you followed: did it work as written?

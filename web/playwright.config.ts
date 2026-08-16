@@ -5,7 +5,7 @@ import { defineConfig, devices } from '@playwright/test'
  * would be testing a browser no KOC user has.
  *
  * The dev server is started for the run, but the API is NOT — these screens read
- * real data, so `dotnet run --project server/Koc.Vessels.Api` has to be up on
+ * real data, so `dotnet run --project server/Koc.Dwos.Api` has to be up on
  * 5280 first, with a migrated and seeded database behind it. A suite that
  * silently passed against an empty API would be worse than one that fails.
  */

@@ -1,13 +1,13 @@
 using System.Diagnostics;
 using System.Text.Json.Nodes;
-using Koc.Vessels.Api.Hubs;
-using Koc.Vessels.Api.Services;
-using Koc.Vessels.Infrastructure;
+using Koc.Dwos.Api.Hubs;
+using Koc.Dwos.Api.Services;
+using Koc.Dwos.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Koc.Vessels.Api.Controllers;
+namespace Koc.Dwos.Api.Controllers;
 
 /// <summary>
 /// Bulk PDF import of daily vessel reports — the drag-and-drop card on the
