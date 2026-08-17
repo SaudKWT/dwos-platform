@@ -105,7 +105,7 @@
       "name": "checkbox",
       "type": "registry:ui",
       "title": "Checkbox",
-      "description": "Binary control built on Radix.",
+      "description": "Binary control built on Base UI.",
       "categories": [
         "form"
       ]
@@ -257,7 +257,7 @@
       "name": "separator",
       "type": "registry:ui",
       "title": "Separator",
-      "description": "Visual divider."
+      "description": "Visual divider. Always `role=\"separator\"` — Base UI has no decorative mode, and a rule between sections legitimately is one."
     },
     {
       "name": "sheet",

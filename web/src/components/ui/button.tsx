@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
+import { useRender } from "@base-ui/react/use-render";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
@@ -59,22 +59,27 @@ const buttonVariants = cva(
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
-  /** Render as the child element instead of a <button>, keeping the styling.
-   *  Use for links that should look like buttons — preserves correct semantics. */
-  asChild?: boolean;
+  /** Render as another element instead of a <button>, keeping the styling.
+   *  Use for links that should look like buttons — preserves correct
+   *  semantics: `<Button render={<a href=… />}>label</Button>`. */
+  render?: useRender.RenderProp;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button";
-    return (
-      <Comp
-        data-slot="button"
-        className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
-        {...props}
-      />
-    );
+  ({ className, variant, size, render, ...props }, ref) => {
+    // No mergeProps needed: className is folded into the variants above and
+    // the defaults carry no event handlers; useRender itself merges the
+    // render element's own props (className included).
+    return useRender({
+      defaultTagName: "button",
+      render,
+      ref,
+      props: {
+        "data-slot": "button",
+        className: cn(buttonVariants({ variant, size, className })),
+        ...props,
+      },
+    });
   },
 );
 Button.displayName = "Button";

@@ -3,9 +3,9 @@
   "name": "separator",
   "type": "registry:ui",
   "title": "Separator",
-  "description": "Visual divider.",
+  "description": "Visual divider. Always `role=\"separator\"` — Base UI has no decorative mode, and a rule between sections legitimately is one.",
   "dependencies": [
-    "radix-ui"
+    "@base-ui/react@1.7.0"
   ],
   "registryDependencies": [
     "@koc/utils"
@@ -13,7 +13,7 @@
   "files": [
     {
       "path": "components/ui/separator.tsx",
-      "content": "import * as React from \"react\"\nimport { Separator as SeparatorPrimitive } from \"radix-ui\"\n\nimport { cn } from \"@/lib/utils\"\n\nfunction Separator({\n  className,\n  orientation = \"horizontal\",\n  decorative = true,\n  ...props\n}: React.ComponentProps<typeof SeparatorPrimitive.Root>) {\n  return (\n    <SeparatorPrimitive.Root\n      data-slot=\"separator\"\n      decorative={decorative}\n      orientation={orientation}\n      className={cn(\n        \"shrink-0 bg-border data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px\",\n        className\n      )}\n      {...props}\n    />\n  )\n}\n\nexport { Separator }\n",
+      "content": "import * as React from \"react\"\nimport { Separator as SeparatorPrimitive } from \"@base-ui/react/separator\"\n\nimport { cn } from \"@/lib/utils\"\n\n/**\n * Base UI's separator always renders `role=\"separator\"` with an\n * aria-orientation. Radix had a `decorative` prop that silenced it; Base has\n * no equivalent, and a rule between sections is legitimately a separator —\n * the prop is dropped rather than faked (a `role=\"none\"` override would leave\n * a stray aria-orientation for axe to flag). Nobody passed it.\n */\nfunction Separator({\n  className,\n  orientation = \"horizontal\",\n  ...props\n}: React.ComponentProps<typeof SeparatorPrimitive>) {\n  return (\n    <SeparatorPrimitive\n      data-slot=\"separator\"\n      orientation={orientation}\n      className={cn(\n        \"shrink-0 bg-border data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px\",\n        className\n      )}\n      {...props}\n    />\n  )\n}\n\nexport { Separator }\n",
       "type": "registry:ui",
       "target": "components/ui/separator.tsx"
     }

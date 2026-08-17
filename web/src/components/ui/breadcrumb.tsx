@@ -1,6 +1,6 @@
 import * as React from "react"
 import { ChevronRight, MoreHorizontal } from "lucide-react"
-import { Slot } from "radix-ui"
+import { useRender } from "@base-ui/react/use-render"
 
 import { cn } from "@/lib/utils"
 
@@ -32,21 +32,26 @@ function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 
 function BreadcrumbLink({
-  asChild,
   className,
+  render,
   ...props
 }: React.ComponentProps<"a"> & {
-  asChild?: boolean
+  /** Render as your router's link instead of an <a>, keeping the styling:
+   *  `<BreadcrumbLink render={<Link to=… />}>label</BreadcrumbLink>`. */
+  render?: useRender.RenderProp
 }) {
-  const Comp = asChild ? Slot.Root : "a"
-
-  return (
-    <Comp
-      data-slot="breadcrumb-link"
-      className={cn("transition-colors duration-fast ease-out hover:text-foreground", className)}
-      {...props}
-    />
-  )
+  return useRender({
+    defaultTagName: "a",
+    render,
+    props: {
+      "data-slot": "breadcrumb-link",
+      className: cn(
+        "transition-colors duration-fast ease-out hover:text-foreground",
+        className
+      ),
+      ...props,
+    },
+  })
 }
 
 function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {

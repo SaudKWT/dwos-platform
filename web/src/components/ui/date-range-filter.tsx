@@ -221,19 +221,21 @@ export function DateRangeFilter({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          aria-label={`${label}: ${describeRange(value, presetGroups)}`}
-          className={cn("h-9 justify-between gap-2 rounded-lg font-normal", className)}
-        >
-          <span className="flex items-center gap-2">
-            <CalendarIcon aria-hidden className="size-4 text-muted-foreground" />
-            <span className="font-medium">{describeRange(value, presetGroups)}</span>
-          </span>
-          <ChevronDown aria-hidden className="size-4 text-muted-foreground" />
-        </Button>
+      <PopoverTrigger
+        render={
+          <Button
+            variant="outline"
+            size="sm"
+            aria-label={`${label}: ${describeRange(value, presetGroups)}`}
+            className={cn("h-9 justify-between gap-2 rounded-lg font-normal", className)}
+          />
+        }
+      >
+        <span className="flex items-center gap-2">
+          <CalendarIcon aria-hidden className="size-4 text-muted-foreground" />
+          <span className="font-medium">{describeRange(value, presetGroups)}</span>
+        </span>
+        <ChevronDown aria-hidden className="size-4 text-muted-foreground" />
       </PopoverTrigger>
 
       <PopoverContent className="w-auto p-0" align="start">

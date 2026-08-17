@@ -74,22 +74,28 @@ export function Combobox({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          aria-label={label}
-          className={cn("justify-between font-normal", className)}
-        >
-          <span className={cn("truncate", !selected && "text-muted-foreground")}>
-            {selected?.label ?? placeholder}
-          </span>
-          <ChevronsUpDown aria-hidden className="ml-2 size-4 shrink-0 opacity-50" />
-        </Button>
+      <PopoverTrigger
+        render={
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            aria-label={label}
+            className={cn("justify-between font-normal", className)}
+          />
+        }
+      >
+        <span className={cn("truncate", !selected && "text-muted-foreground")}>
+          {selected?.label ?? placeholder}
+        </span>
+        <ChevronsUpDown aria-hidden className="ml-2 size-4 shrink-0 opacity-50" />
       </PopoverTrigger>
 
-      <PopoverContent className="w-(--radix-popover-trigger-width) p-0" align="start">
+      {/* Bracket syntax, not `w-(--anchor-width)`: tailwind-merge 2.x does not
+          classify the v4 paren shorthand as a width utility, so it cannot
+          displace PopoverContent's default w-72 — measured as a 288px popup on
+          a 182px trigger. `w-[var(…)]` merges correctly. */}
+      <PopoverContent className="w-[var(--anchor-width)] p-0" align="start">
         <Command>
           <CommandInput placeholder={searchPlaceholder} />
           <CommandList>
