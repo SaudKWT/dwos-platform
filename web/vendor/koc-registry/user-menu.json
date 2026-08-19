@@ -9,7 +9,7 @@
   ],
   "docs": "`variant=\"compact\"` is avatar-only for a header; `full` shows name and role and suits a sidebar footer. The avatar is decorative — the accessible name comes from the user's name.",
   "dependencies": [
-    "lucide-react"
+    "lucide-react@1.31.0"
   ],
   "registryDependencies": [
     "@koc/avatar",

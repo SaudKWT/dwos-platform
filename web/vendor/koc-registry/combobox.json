@@ -9,7 +9,7 @@
   ],
   "docs": "Use only when a list is long enough that scanning is work — roughly ten items. Below that Select is faster and a search box is noise. `label` is required: a trigger reading only 'Select…' tells a screen-reader user nothing.",
   "dependencies": [
-    "lucide-react"
+    "lucide-react@1.31.0"
   ],
   "registryDependencies": [
     "@koc/button",

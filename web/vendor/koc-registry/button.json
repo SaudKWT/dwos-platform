@@ -10,7 +10,7 @@
   "docs": "To render as another element while keeping the styling, pass Base UI's render prop — `<Button render={<a href=… />}>label</Button>` — in place of the old Radix slot pattern.",
   "dependencies": [
     "@base-ui/react@1.7.0",
-    "class-variance-authority"
+    "class-variance-authority@0.7.1"
   ],
   "registryDependencies": [
     "@koc/utils"

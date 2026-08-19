@@ -5,7 +5,7 @@
   "title": "Badge",
   "description": "Counts, tags and categories. `shape=\"count\"` gives a circular count that becomes a pill past two digits. For plant state use @koc/status-badge instead.",
   "dependencies": [
-    "class-variance-authority"
+    "class-variance-authority@0.7.1"
   ],
   "registryDependencies": [
     "@koc/utils"

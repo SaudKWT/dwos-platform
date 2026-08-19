@@ -10,8 +10,8 @@
   ],
   "docs": "Set `meta: { numeric: true }` on numeric columns; it right-aligns header and cells together. `empty` is for genuinely no data — a filter excluding everything gets its own message and a Clear filter action automatically. `caption` is required: screen readers announce the table by it.",
   "dependencies": [
-    "@tanstack/react-table",
-    "lucide-react"
+    "@tanstack/react-table@9.1.2",
+    "lucide-react@1.31.0"
   ],
   "registryDependencies": [
     "@koc/button",

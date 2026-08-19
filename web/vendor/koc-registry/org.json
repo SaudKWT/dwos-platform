@@ -5,7 +5,7 @@
   "title": "Org model",
   "description": "The KOC organisational model a team dashboard is configured from — Directorate › Group › Team › Unit. Adding a team dashboard is a TeamConfig, not a new component.",
   "dependencies": [
-    "lucide-react"
+    "lucide-react@1.31.0"
   ],
   "files": [
     {

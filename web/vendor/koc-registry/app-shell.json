@@ -10,7 +10,7 @@
   ],
   "docs": "The unit is a context you switch, not a nav section: seven units × five apps is 35 permanent items, 34 irrelevant to any given user. `ALL_UNITS` gives team leads the cross-unit view. Pass `renderLink` to integrate your router — the default is a plain anchor.",
   "dependencies": [
-    "lucide-react"
+    "lucide-react@1.31.0"
   ],
   "registryDependencies": [
     "@koc/collapsible",

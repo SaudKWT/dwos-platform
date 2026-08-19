@@ -10,7 +10,7 @@
   "docs": "The sliding indicator is Base UI's own part, positioned from its live `--active-tab-*` variables — style it, never re-measure it. The active tab carries a bare `data-active` attribute.",
   "dependencies": [
     "@base-ui/react@1.7.0",
-    "class-variance-authority"
+    "class-variance-authority@0.7.1"
   ],
   "registryDependencies": [
     "@koc/utils"

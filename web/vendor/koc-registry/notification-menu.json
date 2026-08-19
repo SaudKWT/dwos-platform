@@ -9,7 +9,7 @@
   ],
   "docs": "Severity carries an icon per level, not just a colour, so it survives greyscale and deuteranopia — the same rule @koc/status-badge follows. Omit the component entirely rather than rendering a bell that never rings.",
   "dependencies": [
-    "lucide-react"
+    "lucide-react@1.31.0"
   ],
   "registryDependencies": [
     "@koc/badge",

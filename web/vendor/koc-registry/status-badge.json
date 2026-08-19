@@ -10,7 +10,7 @@
   ],
   "docs": "Statuses: producing, normal, warning, critical, shutin, maintenance, offline, unknown. `critical` is the only filled variant — keep it rare so it stays pre-attentive.",
   "dependencies": [
-    "lucide-react"
+    "lucide-react@1.31.0"
   ],
   "registryDependencies": [
     "@koc/utils"

@@ -10,7 +10,7 @@
   ],
   "docs": "Adapted from shadcn-space's topbar-05 with its sidebar coupling removed — the original calls useSidebar() and throws outside a provider. Pass `renderLink` to integrate your router; it must return an element (it becomes the rendered link via Base UI's render prop).",
   "dependencies": [
-    "lucide-react"
+    "lucide-react@1.31.0"
   ],
   "registryDependencies": [
     "@koc/navigation-menu",

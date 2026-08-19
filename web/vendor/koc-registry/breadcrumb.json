@@ -10,7 +10,7 @@
   "docs": "Integrate your router by passing `render` to BreadcrumbLink: `<BreadcrumbLink render={<Link to=… />}>label</BreadcrumbLink>`.",
   "dependencies": [
     "@base-ui/react@1.7.0",
-    "lucide-react"
+    "lucide-react@1.31.0"
   ],
   "registryDependencies": [
     "@koc/utils"

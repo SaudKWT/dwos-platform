@@ -10,7 +10,7 @@
   "docs": "State styling keys off `data-checked` / `data-unchecked` (both bare attributes), not a state value.",
   "dependencies": [
     "@base-ui/react@1.7.0",
-    "lucide-react"
+    "lucide-react@1.31.0"
   ],
   "registryDependencies": [
     "@koc/utils"

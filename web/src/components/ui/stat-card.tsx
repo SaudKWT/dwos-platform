@@ -96,8 +96,13 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
         : `${delta > 0 ? "+" : ""}${delta.toLocaleString()}`
       : null;
 
+    // `gap-0` is load-bearing. Card now sets `flex flex-col gap-6`, and a
+    // StatCard's label / value / delta rows are DIRECT children of it — without
+    // this each would gain 24px of separation and the tile would triple in
+    // height. `p-5` overrides Card's `py-6` through twMerge; the gap does not
+    // resolve that way and has to be said explicitly.
     return (
-      <Card ref={ref} data-slot="stat-card" className={cn("p-5", className)} {...props}>
+      <Card ref={ref} data-slot="stat-card" className={cn("gap-0 p-5", className)} {...props}>
         <div className="flex items-start justify-between gap-3">
           <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             {label}

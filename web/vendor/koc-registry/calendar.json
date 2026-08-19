@@ -8,8 +8,8 @@
     "form"
   ],
   "dependencies": [
-    "lucide-react",
-    "react-day-picker"
+    "lucide-react@1.31.0",
+    "react-day-picker@10.0.1"
   ],
   "registryDependencies": [
     "@koc/button",

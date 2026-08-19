@@ -9,8 +9,8 @@
   ],
   "docs": "Never the only notification of an operational event — a toast is gone in four seconds. An NPT threshold or a well going critical belongs in @koc/notification-menu, where it persists until acknowledged. Diverges from canonical @shadcn/sonner twice: severity colours come from the tested KOC tokens rather than sonner's own, and it reads the `.dark` class instead of next-themes. Not because next-themes needs Next (it does not, despite the name) but because this system already owns theme state as a class, and a second source of truth would be worse than none. Pass `theme` to override.",
   "dependencies": [
-    "lucide-react",
-    "sonner"
+    "lucide-react@1.31.0",
+    "sonner@2.0.8"
   ],
   "files": [
     {

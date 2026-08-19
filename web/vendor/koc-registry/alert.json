@@ -5,7 +5,7 @@
   "title": "Alert",
   "description": "Inline message. Callers must supply an icon — colour alone cannot carry severity.",
   "dependencies": [
-    "class-variance-authority"
+    "class-variance-authority@0.7.1"
   ],
   "registryDependencies": [
     "@koc/utils"

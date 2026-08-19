@@ -9,7 +9,7 @@
   ],
   "docs": "Cancel is ordered first and initial focus is pinned to it with Base UI's `initialFocus`, so a stray Enter — a very common way to dismiss a dialog — cancels instead of destroying the record. When the dialog is opened by touch, Base focuses the popup itself, which is equally safe.",
   "dependencies": [
-    "lucide-react"
+    "lucide-react@1.31.0"
   ],
   "registryDependencies": [
     "@koc/button",

@@ -10,7 +10,7 @@
   ],
   "docs": "Set `intent` explicitly: 'higher-is-better' (production, uptime), 'lower-is-better' (flaring, emissions, downtime, water cut). Defaults to 'neutral' — an honest grey delta beats a confident wrong colour.",
   "dependencies": [
-    "lucide-react"
+    "lucide-react@1.31.0"
   ],
   "registryDependencies": [
     "@koc/card",

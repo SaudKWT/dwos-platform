@@ -7,7 +7,7 @@
   "docs": "Built on Base UI, not Radix. If you style states, the popup and backdrop carry bare `data-open` / `data-closed` attributes (Tailwind `data-open:`), a trigger carries `data-popup-open`, and the exported part names are unchanged — DialogOverlay renders Base's Backdrop, DialogContent renders its Popup. Compose a custom close control with `render={<Button/>}` rather than `asChild`.",
   "dependencies": [
     "@base-ui/react@1.7.0",
-    "lucide-react"
+    "lucide-react@1.31.0"
   ],
   "registryDependencies": [
     "@koc/button",

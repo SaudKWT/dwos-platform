@@ -10,8 +10,8 @@
   "docs": "SidebarMenuButton, SidebarMenuSubButton, SidebarMenuAction, SidebarGroupLabel and SidebarGroupAction compose via Base UI's `render` prop — `render={<a href=…/>}` or your router's Link — in place of the old slot prop.",
   "dependencies": [
     "@base-ui/react@1.7.0",
-    "class-variance-authority",
-    "lucide-react"
+    "class-variance-authority@0.7.1",
+    "lucide-react@1.31.0"
   ],
   "registryDependencies": [
     "@koc/button",

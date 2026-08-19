@@ -10,7 +10,7 @@
   "docs": "Base UI's Dialog styled as a side panel. Base's swipe-gesture Drawer was considered and declined — KOC is a desktop organisation. State styling keys off bare `data-open` / `data-closed`.",
   "dependencies": [
     "@base-ui/react@1.7.0",
-    "lucide-react"
+    "lucide-react@1.31.0"
   ],
   "registryDependencies": [
     "@koc/utils"

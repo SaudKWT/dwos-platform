@@ -10,7 +10,7 @@
   ],
   "docs": "isAnimationActive={false} is hardcoded: under StrictMode Recharts' mount tween never advances past frame zero and lines render with correct geometry, opacity 1 and zero pixels drawn — still true in recharts 3.8. Adjacent chart tokens are asserted at ΔE2000 >= 15 AND >= 1.2:1 in greyscale, so series survive a printout; choosing colours per chart throws that away.",
   "dependencies": [
-    "recharts"
+    "recharts@3.10.1"
   ],
   "registryDependencies": [
     "@koc/utils"

@@ -10,7 +10,7 @@
   "docs": "The API keeps the shadcn contract: `position` (default item-aligned) maps to Base's alignItemWithTrigger, and SelectValue keeps its `placeholder` prop. SelectLabel renders Base's GroupLabel and must sit inside a SelectGroup — standalone it throws at open. Items highlight via `data-highlighted`.",
   "dependencies": [
     "@base-ui/react@1.7.0",
-    "lucide-react"
+    "lucide-react@1.31.0"
   ],
   "registryDependencies": [
     "@koc/utils"

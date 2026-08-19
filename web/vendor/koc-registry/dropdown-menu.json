@@ -7,7 +7,7 @@
   "docs": "Items fire `onClick`, not Radix's `onSelect` — passing onSelect compiles (it is the DOM text-selection event) and silently never fires. Compose a custom trigger with `render={<Button/>}`; open triggers carry `data-popup-open`, items highlight via `data-highlighted`. DropdownMenuLabel is a plain heading div usable anywhere; Base's grouped label semantics come from wrapping items in DropdownMenuGroup.",
   "dependencies": [
     "@base-ui/react@1.7.0",
-    "lucide-react"
+    "lucide-react@1.31.0"
   ],
   "registryDependencies": [
     "@koc/utils"
