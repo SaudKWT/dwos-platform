@@ -18,6 +18,7 @@ import {
 } from './drafts'
 import { openReportPdf } from './buildReportHtml'
 import { Card, CollapsibleCard, Field, NilToggle, StatusText, inputCls } from './ui'
+import { Button } from '@/components/ui/button'
 import type { DailyReport } from '@/features/vessel-movement/api/types'
 import { cn } from '@/lib/utils'
 
@@ -978,21 +979,29 @@ function ActionBar({ busy, warnings, status, savedAt, onPrint }: {
         </ul>
       )}
       <div className="flex flex-wrap items-center gap-3">
-        <button type="submit" disabled={busy} className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50">
+        {/* The action-level controls are @koc/button; the form's dense row
+            controls stay native by the documented density decision in ui.tsx.
+            The hand-rolled originals had hover:opacity-90 (not the system's
+            hover) and no focus-visible treatment of their own — the tokens'
+            base-layer outline was the only thing keeping keyboard focus
+            visible on the single most important button on the page. */}
+        <Button type="submit" disabled={busy}>
           Submit report
-        </button>
-        <button type="button" onClick={onPrint} className="flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium hover:bg-accent">
-          <FileDown className="h-4 w-4" /> Print / PDF
-        </button>
+        </Button>
+        <Button type="button" variant="outline" onClick={onPrint}>
+          <FileDown /> Print / PDF
+        </Button>
         {warnings.length > 0 && (
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="sm"
             onClick={() => setShowWarnings(v => !v)}
             aria-expanded={showWarnings}
-            className="rounded-md border border-warning/50 bg-warning/10 px-2.5 py-1.5 text-xs font-medium hover:bg-warning/20"
+            className="border-warning/50 bg-warning/10 text-xs hover:bg-warning/20"
           >
             {warnings.length} thing{warnings.length === 1 ? '' : 's'} worth checking
-          </button>
+          </Button>
         )}
         <span className="ml-auto flex items-center gap-3">
           <StatusText status={status} />
