@@ -77,17 +77,20 @@ export function UserMenu({
 }: UserMenuProps) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className={cn(
-            variant === "compact" ? "size-9 rounded-full p-0" : "h-auto gap-2 px-2 py-1.5",
-            className,
-          )}
-          // The avatar is decorative; the name is the accessible name. Without
-          // this a compact menu announces as an unlabelled button.
-          aria-label={`Account menu for ${user.name}`}
-        >
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="ghost"
+            className={cn(
+              variant === "compact" ? "size-9 rounded-full p-0" : "h-auto gap-2 px-2 py-1.5",
+              className,
+            )}
+            // The avatar is decorative; the name is the accessible name. Without
+            // this a compact menu announces as an unlabelled button.
+            aria-label={`Account menu for ${user.name}`}
+          />
+        }
+      >
           <Avatar className="size-8">
             {user.avatarUrl && <AvatarImage src={user.avatarUrl} alt="" />}
             <AvatarFallback className="text-xs">{initials(user.name)}</AvatarFallback>
@@ -104,7 +107,6 @@ export function UserMenu({
               <ChevronsUpDown aria-hidden className="size-4 shrink-0 opacity-50" />
             </>
           )}
-        </Button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align={align} className="w-64">
@@ -129,7 +131,7 @@ export function UserMenu({
                 return (
                   <DropdownMenuItem
                     key={item.id}
-                    onSelect={item.onSelect}
+                    onClick={item.onSelect}
                     variant={item.destructive ? "destructive" : "default"}
                     className="gap-2"
                   >

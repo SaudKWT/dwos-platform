@@ -2,63 +2,41 @@
 
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { Tabs as TabsPrimitive } from "radix-ui";
+import { Tabs as TabsPrimitive } from "@base-ui/react/tabs";
 
 import { cn } from "@/lib/utils";
 
 /**
- * The active value, republished on our own context.
+ * Built on Base UI. The sliding indicator is Base's own `Tabs.Indicator`,
+ * positioned entirely from its live inline variables
+ * (`--active-tab-left/-top/-width/-height`).
  *
- * Radix keeps the value in a context only ITS components consume. When the value
- * changes React re-renders `TabsPrimitive.Trigger` — not the wrapper around it,
- * whose props are unchanged and which consumes nothing. A layout effect inside
- * our own `TabsList` or `TabsTrigger` therefore never re-runs.
- *
- * That is what defeated four earlier attempts at the sliding indicator: it
- * measured correctly on mount and never again, and no amount of
- * MutationObserver, rAF coalescing or callback-ref work fixed it, because the
- * component holding the state was simply not re-rendering. Publishing the value
- * ourselves makes `TabsList` a real consumer.
- *
- * Radix stays the source of truth; this only mirrors it.
+ * HISTORY, so nobody re-adds what this deleted: under Radix the active value
+ * lived in a context only Radix's components consumed, so a wrapper never
+ * re-rendered and a measuring layout effect ran once and never again. Four
+ * indicator attempts failed that way, and the fix was a `TabsValueContext`
+ * that republished the value plus a measure-and-suppress-first-transition
+ * dance (~60 lines). Base UI ships the measured position as CSS variables on
+ * the Indicator part, so the entire mechanism is now four utility classes.
+ * The behaviour is still asserted, not assumed — tests/tabs.spec.ts checks
+ * tracking, on-scale motion, overshoot containment and corner concentricity.
  */
-const TabsValueContext = React.createContext<string | undefined>(undefined);
 
 function Tabs({
   className,
   orientation = "horizontal",
-  value,
-  defaultValue,
-  onValueChange,
   ...props
 }: React.ComponentProps<typeof TabsPrimitive.Root>) {
-  const [uncontrolled, setUncontrolled] = React.useState(defaultValue);
-  const current = value ?? uncontrolled;
-
-  const handleValueChange = React.useCallback(
-    (next: string) => {
-      if (value === undefined) setUncontrolled(next);
-      onValueChange?.(next);
-    },
-    [value, onValueChange],
-  );
-
   return (
-    <TabsValueContext.Provider value={current}>
-      <TabsPrimitive.Root
-        data-slot="tabs"
-        data-orientation={orientation}
-        orientation={orientation}
-        value={value}
-        defaultValue={defaultValue}
-        onValueChange={handleValueChange}
-        className={cn(
-          "group/tabs flex gap-2 data-[orientation=horizontal]:flex-col",
-          className,
-        )}
-        {...props}
-      />
-    </TabsValueContext.Provider>
+    <TabsPrimitive.Root
+      data-slot="tabs"
+      orientation={orientation}
+      className={cn(
+        "group/tabs flex gap-2 data-[orientation=horizontal]:flex-col",
+        className,
+      )}
+      {...props}
+    />
   );
 }
 
@@ -84,39 +62,8 @@ function TabsList({
   ...props
 }: React.ComponentProps<typeof TabsPrimitive.List> &
   VariantProps<typeof tabsListVariants>) {
-  const value = React.useContext(TabsValueContext);
-  const ref = React.useRef<HTMLDivElement>(null);
-  const [box, setBox] = React.useState<{
-    left: number;
-    top: number;
-    width: number;
-    height: number;
-  } | null>(null);
-
-  // Keyed on `value`, which now genuinely changes — see TabsValueContext.
-  React.useLayoutEffect(() => {
-    const list = ref.current;
-    if (!list) return;
-    const active = list.querySelector<HTMLElement>('[data-state="active"]');
-    if (!active) return;
-    setBox({
-      left: active.offsetLeft,
-      top: active.offsetTop,
-      width: active.offsetWidth,
-      height: active.offsetHeight,
-    });
-  }, [value]);
-
-  // Suppress the transition until the first box lands, or every tab set slides
-  // in from the origin on mount — a page glitch, not a transition.
-  const [ready, setReady] = React.useState(false);
-  React.useEffect(() => {
-    if (box) setReady(true);
-  }, [box]);
-
   return (
     <TabsPrimitive.List
-      ref={ref}
       data-slot="tabs-list"
       data-variant={variant}
       className={cn(tabsListVariants({ variant }), className)}
@@ -130,36 +77,25 @@ function TabsList({
        * than the conventional 1.56 because an indicator sliding inside a
        * container has nowhere to put a 9.8% overshoot — see foundation.ts.
        *
-       * `left-0 top-0` is load-bearing. An absolutely positioned box with no
-       * inset uses its STATIC position as the origin — for the first child of a
-       * centred flex row that is mid-list, so the translate would offset from
-       * the wrong point and the pill would land beside the tab instead of on it.
+       * Concentric radius, not a fixed step: the list is rounded-lg (12px)
+       * with 3px of padding, so the inner corner is 12 - 3 = 9px.
        *
-       * Position and size are inline styles because they are measured pixels,
-       * not design decisions; the token layer has nothing to say about how wide
-       * the word "History" is.
+       * `left-0 top-0` is load-bearing: the translate offsets from the static
+       * position, which for a mid-list child would not be the list's corner.
        *
        * prefers-reduced-motion needs nothing here — the base layer collapses
        * transition-duration globally, so it still moves, it just arrives.
        */}
-      {variant === "default" && box && (
-        <span
+      {variant === "default" && (
+        <TabsPrimitive.Indicator
           aria-hidden
           data-slot="tabs-indicator"
           className={cn(
-            // Concentric radius, not a fixed step. The list is rounded-lg (12px) with
-            // 3px of padding, so an inner corner only looks parallel to the outer
-            // one at 12 - 3 = 9px. rounded-md (8px) is close enough to pass unnoticed
-            // and wrong enough to read as pinched corners.
             "absolute left-0 top-0 rounded-[calc(var(--radius-lg)-3px)] bg-background shadow-sm",
-            "transition-[transform,width,height] duration-slow ease-spring",
-            !ready && "transition-none",
+            "w-(--active-tab-width) h-(--active-tab-height)",
+            "translate-x-(--active-tab-left) translate-y-(--active-tab-top)",
+            "transition-[translate,width,height] duration-slow ease-spring",
           )}
-          style={{
-            transform: `translate(${box.left}px, ${box.top}px)`,
-            width: box.width,
-            height: box.height,
-          }}
         />
       )}
       {children}
@@ -170,9 +106,9 @@ function TabsList({
 function TabsTrigger({
   className,
   ...props
-}: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
+}: React.ComponentProps<typeof TabsPrimitive.Tab>) {
   return (
-    <TabsPrimitive.Trigger
+    <TabsPrimitive.Tab
       data-slot="tabs-trigger"
       className={cn(
         // `h-full`, not shadcn's `h-[calc(100%-1px)]`. That 1px leaves the
@@ -185,10 +121,10 @@ function TabsTrigger({
         "relative z-10 inline-flex h-full flex-1 items-center justify-center gap-1.5 rounded-[calc(var(--radius-lg)-3px)] border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap text-foreground/60 transition-colors duration-fast ease-out group-data-[orientation=vertical]/tabs:w-full group-data-[orientation=vertical]/tabs:justify-start hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50 dark:text-muted-foreground dark:hover:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         // The active background is the indicator's job now — a trigger that
         // paints its own background cannot slide.
-        "data-[state=active]:text-foreground",
+        "data-active:text-foreground",
         // `line` variant keeps its underline and gets no sliding pill.
-        "group-data-[variant=line]/tabs-list:bg-transparent group-data-[variant=line]/tabs-list:data-[state=active]:bg-transparent",
-        "after:absolute after:bg-foreground after:opacity-0 after:transition-opacity after:duration-fast group-data-[orientation=horizontal]/tabs:after:inset-x-0 group-data-[orientation=horizontal]/tabs:after:bottom-[-5px] group-data-[orientation=horizontal]/tabs:after:h-0.5 group-data-[orientation=vertical]/tabs:after:inset-y-0 group-data-[orientation=vertical]/tabs:after:-right-1 group-data-[orientation=vertical]/tabs:after:w-0.5 group-data-[variant=line]/tabs-list:data-[state=active]:after:opacity-100",
+        "group-data-[variant=line]/tabs-list:bg-transparent group-data-[variant=line]/tabs-list:data-active:bg-transparent",
+        "after:absolute after:bg-foreground after:opacity-0 after:transition-opacity after:duration-fast group-data-[orientation=horizontal]/tabs:after:inset-x-0 group-data-[orientation=horizontal]/tabs:after:bottom-[-5px] group-data-[orientation=horizontal]/tabs:after:h-0.5 group-data-[orientation=vertical]/tabs:after:inset-y-0 group-data-[orientation=vertical]/tabs:after:-right-1 group-data-[orientation=vertical]/tabs:after:w-0.5 group-data-[variant=line]/tabs-list:data-active:after:opacity-100",
         className,
       )}
       {...props}
@@ -199,9 +135,9 @@ function TabsTrigger({
 function TabsContent({
   className,
   ...props
-}: React.ComponentProps<typeof TabsPrimitive.Content>) {
+}: React.ComponentProps<typeof TabsPrimitive.Panel>) {
   return (
-    <TabsPrimitive.Content
+    <TabsPrimitive.Panel
       data-slot="tabs-content"
       className={cn("flex-1 outline-none", className)}
       {...props}

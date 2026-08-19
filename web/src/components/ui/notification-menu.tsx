@@ -80,17 +80,20 @@ export function NotificationMenu({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className={cn("relative", className)}
-          // The count belongs in the accessible name. A screen-reader user
-          // hearing only "Notifications" has no idea whether to open it.
-          aria-label={
-            unread > 0 ? `Notifications, ${unread} unread` : "Notifications, none unread"
-          }
-        >
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn("relative", className)}
+            // The count belongs in the accessible name. A screen-reader user
+            // hearing only "Notifications" has no idea whether to open it.
+            aria-label={
+              unread > 0 ? `Notifications, ${unread} unread` : "Notifications, none unread"
+            }
+          />
+        }
+      >
           <Bell aria-hidden className="size-4" />
           {unread > 0 && (
             <Badge
@@ -102,7 +105,6 @@ export function NotificationMenu({
               {unread > 99 ? "99+" : unread}
             </Badge>
           )}
-        </Button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align={align} className="w-88 p-0">

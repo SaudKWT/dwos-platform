@@ -51,7 +51,9 @@ export interface PageNavProps {
   /** `href` of the current screen, for the active state. */
   activeHref?: string;
   /** Routing is the consumer's — same contract as AppShell. */
-  renderLink?: (item: { href: string }, children: React.ReactNode) => React.ReactNode;
+  /** Must return an element (an `<a>`, or your router's Link) — it becomes
+   *  the rendered link via Base UI's render prop. */
+  renderLink?: (item: { href: string }, children: React.ReactNode) => React.ReactElement;
   className?: string;
 }
 
@@ -77,20 +79,18 @@ export function PageNav({
             return (
               <NavigationMenuItem key={group.label}>
                 <NavigationMenuLink
-                  asChild
                   active={active}
                   className={cn(
                     "flex-row items-center gap-2 rounded-md px-3 py-2 text-sm",
                     active && "bg-accent text-accent-foreground",
                   )}
-                >
-                  {renderLink({ href: group.href ?? "#" }, (
+                  render={renderLink({ href: group.href ?? "#" }, (
                     <>
                       {Icon && <Icon aria-hidden className="size-4" />}
                       <span>{group.label}</span>
                     </>
                   ))}
-                </NavigationMenuLink>
+                />
               </NavigationMenuItem>
             );
           }
@@ -119,14 +119,12 @@ export function PageNav({
                     return (
                       <li key={item.href}>
                         <NavigationMenuLink
-                          asChild
                           active={active}
                           className={cn(
                             "flex-row items-center gap-2 rounded-md px-2 py-2 text-sm",
                             active && "bg-accent text-accent-foreground",
                           )}
-                        >
-                          {renderLink(item, (
+                          render={renderLink(item, (
                             <>
                               {ItemIcon && (
                                 <ItemIcon aria-hidden className="size-4 shrink-0" />
@@ -141,7 +139,7 @@ export function PageNav({
                               </span>
                             </>
                           ))}
-                        </NavigationMenuLink>
+                        />
                       </li>
                     );
                   })}

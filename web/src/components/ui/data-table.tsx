@@ -232,11 +232,11 @@ export function DataTable<T extends RowData>({
         )}
 
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="ml-auto" disabled={loading}>
-              Columns
-              <ChevronDown aria-hidden className="ml-1.5 size-4" />
-            </Button>
+          <DropdownMenuTrigger
+            render={<Button variant="outline" size="sm" className="ml-auto" disabled={loading} />}
+          >
+            Columns
+            <ChevronDown aria-hidden className="ml-1.5 size-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             {table

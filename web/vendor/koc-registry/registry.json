@@ -170,7 +170,7 @@
       "name": "dropdown-menu",
       "type": "registry:ui",
       "title": "Dropdown Menu",
-      "description": "Action and option menus built on Radix."
+      "description": "Action and option menus built on Base UI."
     },
     {
       "name": "filter-tabs",
@@ -248,7 +248,7 @@
       "name": "select",
       "type": "registry:ui",
       "title": "Select",
-      "description": "Single-choice dropdown built on Radix.",
+      "description": "Single-choice dropdown built on Base UI.",
       "categories": [
         "form"
       ]

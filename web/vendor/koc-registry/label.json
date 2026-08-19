@@ -7,16 +7,13 @@
   "categories": [
     "form"
   ],
-  "dependencies": [
-    "@radix-ui/react-label"
-  ],
   "registryDependencies": [
     "@koc/utils"
   ],
   "files": [
     {
       "path": "components/ui/label.tsx",
-      "content": "import * as React from \"react\";\nimport * as LabelPrimitive from \"@radix-ui/react-label\";\nimport { cn } from \"@/lib/utils\";\n\n/**\n * Label. Always pair with a control via htmlFor — an unassociated label is\n * invisible to assistive tech and kills the click-to-focus target for everyone.\n */\nconst Label = React.forwardRef<\n  React.ElementRef<typeof LabelPrimitive.Root>,\n  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>\n>(({ className, ...props }, ref) => (\n  <LabelPrimitive.Root\n    ref={ref}\n    data-slot=\"label\"\n    className={cn(\n      \"text-sm font-medium leading-none\",\n      \"peer-disabled:cursor-not-allowed peer-disabled:opacity-70\",\n      className,\n    )}\n    {...props}\n  />\n));\nLabel.displayName = LabelPrimitive.Root.displayName;\n\nexport { Label };\n",
+      "content": "import * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\n/**\n * Label. Always pair with a control via htmlFor — an unassociated label is\n * invisible to assistive tech and kills the click-to-focus target for everyone.\n *\n * A native <label>. The Radix primitive this wrapped added only one behaviour\n * — suppressing text selection on double click — which `select-none` covers\n * without a dependency. (This file was the audit's blind spot: it imported\n * `@radix-ui/react-label` directly rather than the `radix-ui` umbrella the\n * exposure grep counted, so it never appeared in the 14.)\n */\nconst Label = React.forwardRef<\n  HTMLLabelElement,\n  React.ComponentPropsWithoutRef<\"label\">\n>(({ className, ...props }, ref) => (\n  <label\n    ref={ref}\n    data-slot=\"label\"\n    className={cn(\n      \"text-sm font-medium leading-none select-none\",\n      \"peer-disabled:cursor-not-allowed peer-disabled:opacity-70\",\n      className,\n    )}\n    {...props}\n  />\n));\nLabel.displayName = \"Label\";\n\nexport { Label };\n",
       "type": "registry:ui",
       "target": "components/ui/label.tsx"
     }

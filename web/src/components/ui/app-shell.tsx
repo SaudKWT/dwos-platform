@@ -28,10 +28,11 @@ import {
   SidebarProvider,
   SidebarRail,
   SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { NotificationMenu, type NotificationItem } from "@/components/ui/notification-menu";
-import { UserMenu, type UserMenuItem } from "@/components/ui/user-menu";
+import { initials, type UserMenuItem } from "@/components/ui/user-menu";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -83,7 +84,9 @@ export interface AppShellProps {
    * any one of those makes the shell unusable for the other two, so routing is
    * the consumer's to supply and a plain `<a>` is the default.
    */
-  renderLink?: (item: NavItem, children: React.ReactNode) => React.ReactNode;
+  /** Must return an element (an `<a>`, or your router's Link) — it becomes
+   *  the rendered control via Base UI's render prop. */
+  renderLink?: (item: NavItem, children: React.ReactNode) => React.ReactElement;
   /**
    * Operational alerts. Omit to hide the bell entirely — an empty notification
    * icon that never does anything is worse than no icon.
@@ -96,6 +99,14 @@ export interface AppShellProps {
    * put sign out in its own so it is not one pixel below Settings.
    */
   userMenu?: UserMenuItem[][];
+  /**
+   * When the figures on screen were last refreshed, shown in the top bar.
+   *
+   * Opt-in like `notifications`: omitted, nothing renders. A freshness stamp
+   * nobody wired to a real refresh is worse than none, because it is believed.
+   * Pass a Date to have it formatted, or a string to control the wording.
+   */
+  asOf?: Date | string;
   children?: React.ReactNode;
 }
 
@@ -115,6 +126,7 @@ export function AppShell({
   onNotificationSelect,
   onMarkAllRead,
   userMenu,
+  asOf,
   children,
 }: AppShellProps) {
   const [internalUnit, setInternalUnit] = React.useState(
@@ -170,14 +182,18 @@ export function AppShell({
           <SidebarMenu>
             <SidebarMenuItem>
               <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <SidebarMenuButton
-                    size="lg"
-                    /* The switcher is the one place the brand appears at full
-                       strength in the chrome — it is also the control that tells
-                       you what you are looking at, so it earns the emphasis. */
-                    className="data-[state=open]:bg-sidebar-accent"
-                  >
+                <DropdownMenuTrigger
+                  render={
+                    <SidebarMenuButton
+                      size="lg"
+                      /* The switcher is the one place the brand appears at full
+                         strength in the chrome — it is also the control that
+                         tells you what you are looking at, so it earns the
+                         emphasis. */
+                      className="data-popup-open:bg-sidebar-accent"
+                    />
+                  }
+                >
                     <div className="flex aspect-square size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
                       <PanelLeft className="size-4" />
                     </div>
@@ -196,11 +212,10 @@ export function AppShell({
                       </span>
                     </div>
                     <ChevronsUpDown className="ml-auto size-4" />
-                  </SidebarMenuButton>
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent
-                  className="w-(--radix-dropdown-menu-trigger-width) min-w-64"
+                  className="w-[var(--anchor-width)] min-w-64"
                   align="start"
                   side="bottom"
                   sideOffset={4}
@@ -216,7 +231,7 @@ export function AppShell({
                   {team.units.map((unit) => (
                     <DropdownMenuItem
                       key={unit.id}
-                      onSelect={() => selectUnit(unit.id)}
+                      onClick={() => selectUnit(unit.id)}
                       className="gap-2"
                     >
                       {/* The list keeps KOC's numbering as the primary line —
@@ -237,7 +252,7 @@ export function AppShell({
                   <DropdownMenuSeparator />
                   {/* Team leads genuinely need to see across units. Without this
                       they would be switching seven times to answer one question. */}
-                  <DropdownMenuItem onSelect={() => selectUnit(ALL_UNITS)} className="gap-2">
+                  <DropdownMenuItem onClick={() => selectUnit(ALL_UNITS)} className="gap-2">
                     <span className="flex-1">All units</span>
                     {currentUnit === ALL_UNITS && <Check className="size-4" />}
                   </DropdownMenuItem>
@@ -274,19 +289,7 @@ export function AppShell({
           <SidebarFooter>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton size="lg">
-                  <div className="flex aspect-square size-8 items-center justify-center rounded-md bg-muted text-xs font-medium">
-                    {initials(user.name)}
-                  </div>
-                  <div className="grid flex-1 text-left leading-tight">
-                    <span className="truncate text-sm font-medium">{user.name}</span>
-                    {user.role && (
-                      <span className="truncate text-xs text-muted-foreground">
-                        {user.role}
-                      </span>
-                    )}
-                  </div>
-                </SidebarMenuButton>
+                <AccountMenu user={user} groups={userMenu} />
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarFooter>
@@ -296,17 +299,54 @@ export function AppShell({
       </Sidebar>
 
       <SidebarInset>
-        <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border px-4">
+        {/*
+         * WHAT THE TOP BAR IS FOR.
+         *
+         * It held the team's full name, which is the least volatile fact on the
+         * screen — it cannot change without the whole app changing. That strip
+         * is also the only chrome that survives the rail collapsing, so spending
+         * it on something constant wastes the one place that keeps working when
+         * the nav is gone.
+         *
+         * Breadcrumbs were the obvious candidate and are rejected. PageHeader
+         * already renders them per screen, so putting them here means either two
+         * `nav` landmarks 40px apart, or removing a documented prop from
+         * @koc/page-header — a published registry item whose consumers keep the
+         * source they pulled and would get a prop that silently does nothing.
+         *
+         * What earns the space is what CHANGES and is not visible elsewhere:
+         *
+         *   scope     which unit's numbers you are reading. Derived from the
+         *             same state the switcher sets, so it cannot disagree with
+         *             it. Text, never a button — a second control that sets the
+         *             unit erodes the switcher's authority.
+         *   asOf      when the figures were last refreshed. Opt-in, because a
+         *             stale-time nobody wired up is worse than none.
+         *
+         * The middle stays deliberately empty: it is where a command palette
+         * goes, and reserving it now avoids a second redesign. Not built —
+         * searching five screens is theatre; the useful version searches records
+         * and needs a data source only the consumer has.
+         */}
+        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border px-4">
           <SidebarTrigger className="-ml-1" />
-          <div className="min-w-0 flex-1">
-            <div className="truncate text-sm font-medium">{team.name}</div>
+
+          <div className="flex min-w-0 items-center gap-2">
+            <span className="truncate text-sm font-medium">{unitLabel}</span>
+            {asOf && (
+              <span className="hidden shrink-0 text-xs text-muted-foreground sm:inline">
+                · {typeof asOf === "string" ? asOf : `as of ${asOf.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`}
+              </span>
+            )}
           </div>
 
-          {/* Notifications and the account menu live in the header, not the
-              sidebar footer: they are about *you* rather than about where you
-              are, and they need to stay reachable when the rail is collapsed to
-              32px. Both are omitted entirely when not supplied — a bell that
-              never rings is noise. */}
+          {/* Reserved: command palette. */}
+          <div className="flex-1" />
+
+          {/* Notifications stay here. They are about operational events rather
+              than about you, they must be reachable from any screen, and the
+              account menu that used to sit beside them now lives in the sidebar
+              footer where it is next to who you are. */}
           {notifications && (
             <NotificationMenu
               items={notifications}
@@ -314,17 +354,128 @@ export function AppShell({
               onMarkAllRead={onMarkAllRead}
             />
           )}
-          {user && userMenu && (
-            <UserMenu
-              variant="compact"
-              user={{ name: user.name, role: user.role }}
-              groups={userMenu}
-            />
-          )}
         </header>
         <div className="flex-1 overflow-auto">{children}</div>
       </SidebarInset>
     </SidebarProvider>
+  );
+}
+
+/**
+ * The account menu, in the sidebar footer.
+ *
+ * It was a UserMenu in the top-right, and the comment justifying that said the
+ * rail collapses to 32px so the menu had to stay in the header. That premise was
+ * simply wrong: SIDEBAR_WIDTH_ICON is 3rem — 48px — and SidebarFooter carries no
+ * collapse rule, so it stays visible. An `lg` SidebarMenuButton collapses to
+ * exactly 32px inside that 48px rail through the sidebar's own size overrides,
+ * with no extra CSS. The constraint that moved it away never existed.
+ *
+ * It also replaces a real defect. The footer previously rendered a
+ * SidebarMenuButton — a genuine <button> — with no handler: focusable, in the
+ * tab order, doing nothing. Anyone who tabbed to it got silence.
+ *
+ * TWO TRAPS, both of which fail silently:
+ *
+ *   1. NO `tooltip` PROP. With one, SidebarMenuButton returns a Tooltip root
+ *      rather than a bare button. Under Radix's slot that silently broke the
+ *      menu (props cloned onto a non-DOM component); Base's render prop
+ *      forwards props through to the real button, but the account menu still
+ *      omits the tooltip: the footer never collapses to icons, so a tooltip
+ *      here would be noise announced to every screen reader for no benefit.
+ *   2. NOT the UserMenu component. It renders a Button, which has neither
+ *      overflow-hidden nor any of the sidebar's icon-rail size overrides, so it
+ *      overflows the collapsed rail. The markup here is the sidebar's own.
+ *
+ * `side="right"` on the content is what makes it usable from the collapsed rail:
+ * a menu opening upward from a 48px column would be clipped by the viewport edge.
+ */
+function AccountMenu({
+  user,
+  groups,
+}: {
+  user: AppShellUser;
+  groups?: UserMenuItem[][];
+}) {
+  const { isMobile } = useSidebar();
+
+  const identity = (
+    <>
+      <div className="flex aspect-square size-8 shrink-0 items-center justify-center rounded-md bg-muted text-xs font-medium">
+        {initials(user.name)}
+      </div>
+      <div className="grid min-w-0 flex-1 text-left leading-tight">
+        <span className="truncate text-sm font-medium">{user.name}</span>
+        {user.role && (
+          <span className="truncate text-xs text-muted-foreground">{user.role}</span>
+        )}
+      </div>
+    </>
+  );
+
+  // No menu supplied — render the identity, but NOT as a button. A control that
+  // does nothing is worse than no control, and that is what shipped before.
+  if (!groups?.length) {
+    return (
+      <div
+        data-slot="sidebar-menu-button"
+        className="flex h-12 w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-0!"
+      >
+        {identity}
+      </div>
+    );
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <SidebarMenuButton
+            size="lg"
+            aria-label={`Account menu for ${user.name}`}
+            className="data-popup-open:bg-sidebar-accent"
+          />
+        }
+      >
+        {identity}
+        <ChevronsUpDown className="ml-auto size-4 shrink-0" />
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent
+        className="w-[var(--anchor-width)] min-w-56"
+        side={isMobile ? "bottom" : "right"}
+        align="end"
+        sideOffset={4}
+      >
+        <DropdownMenuLabel className="flex items-center gap-2 font-normal">
+          <div className="flex aspect-square size-8 items-center justify-center rounded-md bg-muted text-xs font-medium">
+            {initials(user.name)}
+          </div>
+          <div className="grid min-w-0 flex-1 leading-tight">
+            <span className="truncate text-sm font-medium">{user.name}</span>
+            {user.role && (
+              <span className="truncate text-xs text-muted-foreground">{user.role}</span>
+            )}
+          </div>
+        </DropdownMenuLabel>
+
+        {groups.map((group, gi) => (
+          <React.Fragment key={gi}>
+            <DropdownMenuSeparator />
+            {group.map((item) => (
+              <DropdownMenuItem
+                key={item.id}
+                onClick={() => item.onSelect?.()}
+                className={cn("gap-2", item.destructive && "text-destructive")}
+              >
+                {item.icon && <item.icon className="size-4" />}
+                {item.label}
+              </DropdownMenuItem>
+            ))}
+          </React.Fragment>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -352,18 +503,16 @@ function NavSection({
           ) : (
             <SidebarMenuItem key={item.id}>
               <SidebarMenuButton
-                asChild
                 isActive={item.id === activeItemId}
                 tooltip={item.label}
-              >
-                {renderLink(
+                render={renderLink(
                   item,
                   <>
                     {item.icon && <item.icon />}
                     <span>{item.label}</span>
                   </>,
                 )}
-              </SidebarMenuButton>
+              />
               {/*
                * The badge is a SIBLING of the button, not a child of it, and it
                * has to be SidebarMenuBadge rather than a span.
@@ -405,40 +554,33 @@ function CollapsibleNavItem({
   const containsActive = item.children?.some((c) => c.id === activeItemId) ?? false;
 
   return (
-    <Collapsible asChild defaultOpen={containsActive} className="group/collapsible">
-      <SidebarMenuItem>
-        <CollapsibleTrigger asChild>
-          <SidebarMenuButton tooltip={item.label}>
-            {item.icon && <item.icon />}
-            <span>{item.label}</span>
-            <ChevronRight
-              className={cn(
-                "ml-auto transition-transform duration-fast ease-out",
-                "group-data-[state=open]/collapsible:rotate-90",
-              )}
-            />
-          </SidebarMenuButton>
+    <Collapsible
+      render={<SidebarMenuItem />}
+      defaultOpen={containsActive}
+      className="group/collapsible"
+    >
+        <CollapsibleTrigger render={<SidebarMenuButton tooltip={item.label} />}>
+          {item.icon && <item.icon />}
+          <span>{item.label}</span>
+          <ChevronRight
+            className={cn(
+              "ml-auto transition-transform duration-fast ease-out",
+              "group-data-open/collapsible:rotate-90",
+            )}
+          />
         </CollapsibleTrigger>
         <CollapsibleContent>
           <SidebarMenuSub>
             {item.children?.map((child) => (
               <SidebarMenuSubItem key={child.id}>
-                <SidebarMenuSubButton asChild isActive={child.id === activeItemId}>
-                  {renderLink(child, <span>{child.label}</span>)}
-                </SidebarMenuSubButton>
+                <SidebarMenuSubButton
+                  isActive={child.id === activeItemId}
+                  render={renderLink(child, <span>{child.label}</span>)}
+                />
               </SidebarMenuSubItem>
             ))}
           </SidebarMenuSub>
         </CollapsibleContent>
-      </SidebarMenuItem>
     </Collapsible>
   );
-}
-
-function initials(name: string): string {
-  return name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((p) => p[0]?.toUpperCase() ?? "")
-    .join("");
 }
