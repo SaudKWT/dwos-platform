@@ -34,10 +34,10 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OUT="${1:-$ROOT/publish}"
 API="$ROOT/server/Koc.Dwos.Api"
 
-# brew's dotnet@8 is keg-only; pick it up when dotnet is not already on PATH.
-if ! command -v dotnet >/dev/null 2>&1 && [ -d /opt/homebrew/opt/dotnet@8 ]; then
-  export PATH="/opt/homebrew/opt/dotnet@8/bin:$PATH"
-  export DOTNET_ROOT="/opt/homebrew/opt/dotnet@8/libexec"
+# brew's dotnet@9 is keg-only; pick it up when dotnet is not already on PATH.
+if ! command -v dotnet >/dev/null 2>&1 && [ -d /opt/homebrew/opt/dotnet@9 ]; then
+  export PATH="/opt/homebrew/opt/dotnet@9/bin:$PATH"
+  export DOTNET_ROOT="/opt/homebrew/opt/dotnet@9/libexec"
 fi
 
 echo "==> web build"
