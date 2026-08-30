@@ -81,3 +81,31 @@ row counts **and** coordinate values. The value check earns its keep: row counts
 once passed a run in which every latitude was silently rounded from `28.912411` to
 `28.91` (a kilometre of error) by EF Core's default `decimal(18,2)`. Any new `decimal`
 property needs a matching `HasPrecision` in `DwoDbContext`.
+
+## Loading the data where the importer cannot run
+
+`seed-marine-data.sql` is the same data as one plain T-SQL file, for a server that
+offers no .NET and no path for the importer to connect — the KOC cluster is loaded by
+handing the DBA this file. It DELETEs the marine tables child-first and re-INSERTs
+them with identities preserved, so it is re-runnable and every foreign key matches.
+It never touches a `001-schema0726.sql` table, and it sits outside `migrate.sh`'s
+numbered glob on purpose: it is data, not schema, and wants re-running rather than
+journalling.
+
+```bash
+sqlcmd -S <server> -d DWO -E -i seed-marine-data.sql   # after 000..004
+```
+
+It is **generated — do not edit it**. The importer emits it only after its own
+verification passes, with `--emit-seed`:
+
+```bash
+dotnet run --project server/Koc.Dwos.Importer -- --data reference/data \
+  --emit-seed database/seed-marine-data.sql
+```
+
+To prove a copy is faithful, apply it locally and run the importer with
+`--verify-only`: the script is then held to the same row-count and coordinate
+checks as a direct import. Done for the shipped copy on 2026-08-30 — all checks OK,
+including the 12 deferred self-references (`Vessel.ReplacedVesselID`,
+`MovementPlanLeg.ParentLegID`) the verifier does not cover, checked by hand.

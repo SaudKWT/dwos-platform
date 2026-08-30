@@ -39,7 +39,7 @@ new — in their own SQL schema. See "Adding a module" below.
 | | |
 |---|---|
 | SQL Server | version and instance **TBD — see Deployment** |
-| .NET SDK | **8.0** — `server/*.csproj` target `net8.0`. On macOS: `brew install dotnet@8` (keg-only; export `DOTNET_ROOT` and add its `bin` to `PATH`) |
+| .NET SDK | **9.0** — `server/*.csproj` target `net9.0`. On macOS: `brew install dotnet@9` (keg-only; export `DOTNET_ROOT` and add its `bin` to `PATH`) |
 | Node | 20+, for building `web/` |
 | `keys.env` | at the repo root, untracked. See `database/README.md`. |
 
@@ -108,6 +108,37 @@ which is the thing being smoke-tested.
 The API surface at this commit is `docs/api/openapi.json`, committed so a
 release's contract reviews as a diff.
 
+### Loading the data without the importer
+
+The importer needs .NET and a connection from this repo's side, which a KOC
+cluster does not offer. So the data ships as one plain T-SQL file:
+
+```
+database/seed-marine-data.sql      # ~4 MB, generated — run with sqlcmd or SSMS
+```
+
+It clears the marine tables and reloads them (identities preserved, so every
+foreign key matches), touches nothing from `001-schema0726.sql`, and is
+re-runnable. Apply the schema scripts first, then:
+
+```
+sqlcmd -S <server> -d DWO -E -i seed-marine-data.sql
+```
+
+It is **generated, never edited**: the importer writes it from a database whose
+contents just passed the full verification (row counts, coordinate values,
+vessel particulars), and the generation is itself gated on that verification.
+To regenerate after the JSON corpus changes:
+
+```bash
+dotnet run --project server/Koc.Dwos.Importer -- --data reference/data \
+  --emit-seed database/seed-marine-data.sql
+```
+
+The round trip is provable locally: apply the generated script with `sqlcmd`,
+then `dotnet run --project server/Koc.Dwos.Importer -- --data reference/data
+--verify-only` — the same checks that gate the import gate the script.
+
 Two things the connection string carries locally that yours should not:
 `TrustServerCertificate=True` exists for the local container's self-signed
 certificate — drop it where real certificates exist. And `sa` is the local dev
@@ -159,7 +190,11 @@ The developer answered on 2026-08-16. Recorded verbatim-in-spirit, with what
 each answer changed:
 
 - [x] **Auth: Windows/AD.** Built — see § Authentication above.
-- [x] **.NET 8 confirmed fine.** Target stays `net8.0`.
+- [x] **.NET 8 confirmed fine.** ~~Target stays `net8.0`.~~ **Superseded 2026-08-26:**
+      the server runs **.NET 9.0.7**, so everything is retargeted to `net9.0`
+      (all four `server/*.csproj`, packages on 9.0.x). The publish artifact is
+      framework-dependent; a 9.0.x patch difference between build SDK and server
+      runtime rolls forward automatically.
 - [~] **WebSockets: "assumed enabled."** Recorded as an assumption, not a fact —
       the deployment report asks you to confirm the live map holds a WebSocket
       connection rather than silently long-polling.
@@ -514,4 +549,7 @@ Two conventions that keep it useful:
 - **Known gaps are listed rather than hidden.** If a thing does not work yet, it
   is in the list above.
 
-Last updated: 2026-08-16. Design system pinned at v0.1.5. Windows/AD auth built (AD handshake pending step-0 verification); solution renamed Koc.Dwos.*. Migrations, the full client→API→SQL Server round trip, and the a11y suite all verified locally.
+Last updated: 2026-08-30. Design system pinned at v0.2.0 (Base UI). Backend on
+.NET 9 (server runs 9.0.7 — his 2026-08-26 report). `database/seed-marine-data.sql`
+added for DBA-side loading, round-trip verified locally via sqlcmd + `--verify-only`.
+Windows/AD auth built (AD handshake pending step-0 verification).

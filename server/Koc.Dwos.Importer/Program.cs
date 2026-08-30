@@ -1,6 +1,8 @@
 using System.Globalization;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using Koc.Dwos.Domain;
 using Koc.Dwos.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 //
 //   set -a; source keys.env; set +a
 //   dotnet run --project server/Koc.Dwos.Importer -- [--data <dir>] [--verify-only]
+//                                                   [--emit-seed <file.sql>]
 //
 // Re-runnable: it clears the marine tables and reloads from the files, so it can
 // be run repeatedly during the migration and once more at cutover. It never
@@ -17,14 +20,22 @@ using Microsoft.EntityFrameworkCore;
 //
 // Every report and plan keeps its complete original JSON in a RawJson column, so
 // a field this importer does not understand is preserved rather than dropped.
+//
+// --emit-seed writes the verified database contents back out as a plain T-SQL
+// script (DELETE + INSERT, identities preserved), for environments where this
+// importer cannot run — the KOC cluster is loaded by handing the DBA that one
+// file. It only runs when verification passed: an unverified seed script would
+// launder a bad import into an artifact that looks authoritative.
 // =============================================================================
 
 var dataDir = "data";
 var verifyOnly = false;
+string? emitSeed = null;
 for (var i = 0; i < args.Length; i++)
 {
     if (args[i] == "--data" && i + 1 < args.Length) dataDir = args[++i];
     else if (args[i] == "--verify-only") verifyOnly = true;
+    else if (args[i] == "--emit-seed" && i + 1 < args.Length) emitSeed = args[++i];
 }
 
 // Walk up from the working directory to the repo root, so the tool runs from anywhere.
@@ -67,6 +78,12 @@ if (!verifyOnly)
 }
 
 var ok = await VerifyAsync(db, dataPath, report);
+
+if (ok && emitSeed is not null)
+    await EmitSeedAsync(db, Path.IsPathRooted(emitSeed) ? emitSeed : Path.Combine(root, emitSeed));
+else if (emitSeed is not null)
+    Console.Error.WriteLine("--emit-seed skipped: verification failed.");
+
 return ok ? 0 : 1;
 
 // -----------------------------------------------------------------------------
@@ -850,6 +867,162 @@ static decimal? AsDecimal(JsonNode? n) => n?.GetValueKind() switch
         CultureInfo.InvariantCulture, out var d) ? d : null,
     _ => null,
 };
+
+// -----------------------------------------------------------------------------
+// Seed script emission: the verified database, written back out as T-SQL.
+//
+// The KOC cluster is loaded by a DBA running one .sql file — no .NET, no network
+// access to this repo, no importer. So the deliverable must be plain INSERTs.
+// Generating them from the database (rather than from the JSON) means the seed
+// script inherits everything the import already verified: coordinate precision,
+// alias resolution, identity relationships.
+//
+// Identities are preserved with SET IDENTITY_INSERT, so every foreign key in the
+// script matches this database exactly. The two self-referencing columns
+// (Vessel.ReplacedVesselID, MovementPlanLeg.ParentLegID) are inserted as NULL
+// and wired by UPDATEs at the end — a row may reference a later row, and
+// ordering by ID cannot promise otherwise.
+// -----------------------------------------------------------------------------
+static async Task EmitSeedAsync(DwoDbContext db, string path)
+{
+    Console.WriteLine();
+    Console.WriteLine("==> Emitting seed script");
+
+    // Parents before children; the mirror image of ClearAsync.
+    string[] insertOrder =
+    [
+        "MarineLocation", "MarineLocationAlias", "Vessel",
+        "VesselDailyReport", "VesselReportTask", "VesselReportConsumable", "VesselReportCrew",
+        "MovementPlan", "MovementPlanVessel", "MovementPlanSnapshot", "MovementPlanLeg",
+        "AisPosition",
+    ];
+    // Children before parents; the same order ClearAsync uses.
+    string[] deleteOrder =
+    [
+        "AisPosition", "MovementPlanLeg", "MovementPlanSnapshot", "MovementPlanVessel",
+        "MovementPlan", "VesselReportCrew", "VesselReportConsumable", "VesselReportTask",
+        "VesselDailyReport", "Vessel", "MarineLocationAlias", "MarineLocation",
+    ];
+    var selfRefs = new Dictionary<string, string>
+    {
+        ["Vessel"] = "ReplacedVesselID",
+        ["MovementPlanLeg"] = "ParentLegID",
+    };
+
+    var sb = new StringBuilder();
+    sb.AppendLine("-- =============================================================================");
+    sb.AppendLine("-- DWO marine seed data. GENERATED — do not edit by hand.");
+    sb.AppendLine("--");
+    sb.AppendLine("--   dotnet run --project server/Koc.Dwos.Importer -- \\");
+    sb.AppendLine("--     --data reference/data --verify-only --emit-seed database/seed-marine-data.sql");
+    sb.AppendLine("--");
+    sb.AppendLine("-- Loads the marine tables (002-marine-tables.sql) with the pilot data set.");
+    sb.AppendLine("-- Requires the schema to be applied first (database/000..004). Re-runnable:");
+    sb.AppendLine("-- it clears the marine tables and reloads them, exactly like the importer.");
+    sb.AppendLine("-- It never touches a table from 001-schema0726.sql.");
+    sb.AppendLine("--");
+    sb.AppendLine("-- Run with sqlcmd or SSMS against the DWO database:");
+    sb.AppendLine("--   sqlcmd -S <server> -d DWO -E -i seed-marine-data.sql");
+    sb.AppendLine("-- =============================================================================");
+    sb.AppendLine();
+    sb.AppendLine("-- Clear, child-first, so the script is re-runnable.");
+    foreach (var t in deleteOrder) sb.AppendLine($"DELETE FROM dbo.[{t}];");
+    sb.AppendLine("GO");
+    sb.AppendLine();
+
+    var conn = db.Database.GetDbConnection();
+    if (conn.State != System.Data.ConnectionState.Open) await conn.OpenAsync();
+
+    var updates = new List<string>();
+    // Counted as written, so the guard below can tell our batch separators from
+    // a data value that happens to contain one.
+    var goCount = 1;   // the GO after the DELETE block above
+
+    foreach (var table in insertOrder)
+    {
+        await using var cmd = conn.CreateCommand();
+        cmd.CommandText = $"SELECT * FROM dbo.[{table}] ORDER BY [ID];";
+        await using var reader = await cmd.ExecuteReaderAsync();
+
+        var cols = Enumerable.Range(0, reader.FieldCount)
+            .Select(i => (Name: reader.GetName(i), Type: reader.GetDataTypeName(i)))
+            .ToArray();
+        var colList = string.Join(", ", cols.Select(c => $"[{c.Name}]"));
+
+        sb.AppendLine($"SET IDENTITY_INSERT dbo.[{table}] ON;");
+        var rows = 0;
+        while (await reader.ReadAsync())
+        {
+            var values = new string[cols.Length];
+            object? id = null;
+            for (var i = 0; i < cols.Length; i++)
+            {
+                var v = reader.GetValue(i);
+                if (cols[i].Name == "ID") id = v;
+
+                if (selfRefs.TryGetValue(table, out var selfCol) && cols[i].Name == selfCol && v is not DBNull)
+                {
+                    // Deferred: see the header comment.
+                    values[i] = "NULL";
+                    updates.Add($"UPDATE dbo.[{table}] SET [{selfCol}] = {SqlLiteral(v, cols[i].Type)} WHERE [ID] = {id};");
+                }
+                else
+                {
+                    values[i] = SqlLiteral(v, cols[i].Type);
+                }
+            }
+            sb.AppendLine($"INSERT INTO dbo.[{table}] ({colList}) VALUES ({string.Join(", ", values)});");
+            // Small batches keep SSMS and sqlcmd memory flat on the wide tables.
+            if (++rows % 500 == 0) { sb.AppendLine("GO"); goCount++; }
+        }
+        sb.AppendLine($"SET IDENTITY_INSERT dbo.[{table}] OFF;");
+        sb.AppendLine("GO");
+        goCount++;
+        sb.AppendLine();
+        Console.WriteLine($"    {table,-24} {rows} rows");
+    }
+
+    if (updates.Count > 0)
+    {
+        sb.AppendLine("-- Self-references, wired after every row exists.");
+        foreach (var u in updates) sb.AppendLine(u);
+        sb.AppendLine("GO");
+        goCount++;
+    }
+
+    // A string value containing a line that reads "GO" would be taken as a batch
+    // separator by sqlcmd and SSMS and corrupt the script silently. No current
+    // value does; if one ever appears, fail loudly rather than emit it.
+    var emitted = sb.ToString();
+    var separatorLines = Regex.Matches(emitted, @"^\s*GO\s*$", RegexOptions.Multiline | RegexOptions.IgnoreCase).Count;
+    if (separatorLines != goCount)
+        throw new InvalidOperationException(
+            "seed emission aborted: a data value contains a line that sqlcmd would read as a GO batch separator");
+
+    // UTF-8 with BOM: SSMS and sqlcmd both auto-detect it; without it, sqlcmd on
+    // Windows can read the file as the OEM codepage and mangle non-ASCII text.
+    await File.WriteAllTextAsync(path, emitted, new UTF8Encoding(encoderShouldEmitUTF8Identifier: true));
+    Console.WriteLine($"    -> {path} ({new FileInfo(path).Length / 1024} KB, {updates.Count} deferred self-references)");
+}
+
+static string SqlLiteral(object? v, string sqlType)
+{
+    if (v is null or DBNull) return "NULL";
+    return sqlType switch
+    {
+        "date" => $"'{(DateTime)v:yyyy-MM-dd}'",
+        "datetime" or "datetime2" or "smalldatetime" => $"'{(DateTime)v:yyyy-MM-ddTHH:mm:ss.fffffff}'",
+        "bit" => (bool)v ? "1" : "0",
+        _ => v switch
+        {
+            string s => "N'" + s.Replace("'", "''") + "'",
+            decimal d => d.ToString(CultureInfo.InvariantCulture),
+            double d => d.ToString("R", CultureInfo.InvariantCulture),
+            float f => f.ToString("R", CultureInfo.InvariantCulture),
+            _ => Convert.ToString(v, CultureInfo.InvariantCulture)!,
+        },
+    };
+}
 
 internal class ImportReport
 {
